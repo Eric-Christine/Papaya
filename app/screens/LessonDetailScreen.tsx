@@ -1,9 +1,7 @@
-// app/screens/LessonDetailScreen.tsx
 import React from 'react';
 import { View, Text, StyleSheet, Button, ScrollView } from 'react-native';
 
 export default function LessonDetailScreen({ route, navigation }) {
-  // Get the current lesson title from route params; default to "Climate Basics"
   const { title = 'Climate Basics' } = route.params || {};
 
   // Content for Climate Change lessons
@@ -52,10 +50,42 @@ This lesson explains the wide-ranging effects that climate change has on our wor
 
 This lesson provides insights into how we can work together to build a more sustainable future.`;
 
-  // Content for Sustainable Living lessons (treated the same for "Sustainable Living" and "Sustainable Living Basics")
-  const sustainableLivingContent = `Sustainable Living introduces the principles of eco-friendly living. Learn how small, daily actions—like reducing consumption, conserving water, recycling, and choosing sustainable products—can significantly reduce your environmental impact and help create a healthier planet.
+  // Updated Sustainable Living Content with new material
+  const sustainableLivingContent = `Sustainable Living Fundamentals explores how individual choices create collective impact. This comprehensive introduction covers:
 
-This lesson provides a practical foundation for sustainable habits.`;
+• Carbon Footprint Awareness: The average person's carbon footprint varies significantly by region - from 0.1 tons CO2e in Madagascar to 14.7 tons in the United States annually. Understanding your personal impact is the first step to reduction.
+
+• Circular Economy Participation: Moving beyond the "take-make-waste" model to embrace repair, sharing, and reuse. The global circular economy could reduce annual greenhouse gas emissions by 39% and raw material use by 28% by 2032.
+
+• Sustainable Consumer Choices: With 72% of global greenhouse gas emissions linked to household consumption, your purchasing decisions matter. Learn to evaluate products based on their full lifecycle impact.
+
+• Community Engagement: How local action creates global change - from community gardens to repair cafes, discover how collective action amplifies individual impact.
+
+This foundation will transform how you think about daily choices and their broader environmental impact.`;
+
+  // Updated Waste Reduction content
+  const wasteReductionContent = `Waste Reduction Strategies addresses our global waste crisis through practical solutions:
+
+• Zero-Waste Living: Beyond basic recycling to precycling - preventing waste before it occurs. With global waste expected to increase 73% by 2050, prevention is crucial.
+
+• Food Waste Solutions: Using AI-powered apps for meal planning, understanding date labels, and composting. Food waste contributes 8-10% of global greenhouse gas emissions.
+
+• Plastic-Free Living: Practical alternatives to single-use plastics, including new materials like mycelium packaging and seaweed-based alternatives. Only 9% of plastic ever produced has been recycled.
+
+• Digital Decluttering: The hidden environmental cost of data storage - the internet's carbon footprint equals that of global air travel. Learn digital minimalism practices.`;
+
+  // Updated Energy Efficiency content
+  const energyEfficiencyContent = `Energy Efficiency for the Modern Home combines traditional wisdom with cutting-edge technology:
+
+• Smart Home Integration: Beyond basic LED bulbs - using AI-powered systems to optimize energy use. Smart home technology can reduce energy consumption by 20-30%.
+
+• Passive Design Principles: Working with natural light and ventilation to reduce energy needs. Proper implementation can cut heating and cooling costs by 40%.
+
+• Renewable Energy Integration: From community solar projects to heat pumps, understanding the latest in clean energy technology. Heat pump adoption could reduce global CO2 emissions by 500 million tons by 2030.
+
+• Behavioral Changes: Small habits with big impact - vampire power costs U.S. households $100+ annually. Learn about energy-efficient routines and their cumulative effect.
+
+This lesson empowers you with knowledge to significantly reduce home energy consumption.`;
 
   // Determine which content to display and which next button to show based on the lesson title
   let content = `This is the content for the ${title} lesson.`;
@@ -103,7 +133,6 @@ This lesson provides a practical foundation for sustainable habits.`;
     );
   } else if (title === 'Solutions') {
     content = solutionsContent;
-    // When solutions are finished, navigate to the Quiz for this lesson's content.
     nextButton = (
       <View style={styles.nextButton}>
         <Button
@@ -113,7 +142,6 @@ This lesson provides a practical foundation for sustainable habits.`;
       </View>
     );
   } else if (title === 'Sustainable Living' || title === 'Sustainable Living Basics') {
-    // Treat both "Sustainable Living" and "Sustainable Living Basics" as the same lesson.
     content = sustainableLivingContent;
     nextButton = (
       <View style={styles.nextButton}>
@@ -124,7 +152,7 @@ This lesson provides a practical foundation for sustainable habits.`;
       </View>
     );
   } else if (title === 'Sustainable Living: Reduce Waste') {
-    content = `Reduce Waste focuses on practical strategies for minimizing waste. In this lesson, you'll learn about recycling, reusing, composting, and making smarter purchasing decisions that reduce overall waste production.`;
+    content = wasteReductionContent;
     nextButton = (
       <View style={styles.nextButton}>
         <Button
@@ -134,7 +162,7 @@ This lesson provides a practical foundation for sustainable habits.`;
       </View>
     );
   } else if (title === 'Sustainable Living: Energy Efficiency') {
-    content = `Energy Efficiency is all about using less energy to perform the same tasks. Discover tips for reducing energy consumption at home and in the workplace, including smart technology, insulation improvements, and energy-saving habits.`;
+    content = energyEfficiencyContent;
     nextButton = (
       <View style={styles.nextButton}>
         <Button
@@ -149,7 +177,6 @@ This lesson provides a practical foundation for sustainable habits.`;
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>{title}</Text>
       <Text style={styles.description}>{content}</Text>
-      {/* Render the Next (or Quiz) button above the "Go Back" button */}
       {nextButton}
       <Button title="Go Back to Lessons" onPress={() => navigation.goBack()} />
     </ScrollView>

@@ -3,7 +3,46 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Button, ScrollView } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
-// Quiz questions for Climate Change lessons
+// Revised quiz questions for Sustainable Living lessons based on lesson content
+const sustainableLivingQuizQuestions = [
+  {
+    question: "What does your carbon footprint represent?",
+    options: [
+      "The total weight of the carbon you breathe daily",
+      "The amount of greenhouse gases produced by your activities",
+      "How much carbon is stored in your body",
+      "The cost of carbon-based products you buy",
+    ],
+    correctAnswer: 1,
+  },
+  {
+    question: "Which statement best describes a circular economy?",
+    options: [
+      "An economy based on the 'take-make-waste' model",
+      "An economy that minimizes waste by emphasizing repair, reuse, and recycling",
+      "An economy that only focuses on increasing production",
+      "An economy that ignores environmental impact",
+    ],
+    correctAnswer: 1,
+  },
+  {
+    question: "Approximately what percentage of global greenhouse gas emissions is linked to household consumption?",
+    options: ["50%", "72%", "30%", "90%"],
+    correctAnswer: 1,
+  },
+  {
+    question: "How does community engagement contribute to sustainable living?",
+    options: [
+      "By isolating individual actions",
+      "By amplifying the impact of individual efforts through local initiatives",
+      "By increasing energy consumption",
+      "By focusing solely on personal benefits",
+    ],
+    correctAnswer: 1,
+  },
+];
+
+// Quiz questions for Climate Change lessons (unchanged)
 const climateQuizQuestions = [
   {
     question: "What is the primary greenhouse gas responsible for global warming?",
@@ -27,30 +66,6 @@ const climateQuizQuestions = [
   },
 ];
 
-// Quiz questions for Sustainable Living lessons
-const sustainableLivingQuizQuestions = [
-  {
-    question: "Which of the following is a key principle of sustainable living?",
-    options: ["Overconsumption", "Reduce, reuse, recycle", "Ignore waste", "None"],
-    correctAnswer: 1,
-  },
-  {
-    question: "What is one effective way to reduce household waste?",
-    options: ["Buy disposable items", "Recycle and compost", "Increase plastic use", "Ignore recycling"],
-    correctAnswer: 1,
-  },
-  {
-    question: "How does conserving water contribute to sustainability?",
-    options: ["It doesn't", "Helps reduce strain on resources", "Causes shortages", "None"],
-    correctAnswer: 1,
-  },
-  {
-    question: "Which energy source is considered renewable?",
-    options: ["Coal", "Oil", "Solar", "Natural Gas"],
-    correctAnswer: 2,
-  },
-];
-
 export default function QuizScreen() {
   const route = useRoute();
   const navigation = useNavigation();
@@ -62,7 +77,9 @@ export default function QuizScreen() {
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
+  // 'score' now represents the Seeds tally
   const [score, setScore] = useState(0);
+  const [correctCount, setCorrectCount] = useState(0);
   const [quizCompleted, setQuizCompleted] = useState(false);
   // Tracks whether the answer has been checked
   const [answerChecked, setAnswerChecked] = useState(false);
@@ -85,14 +102,18 @@ export default function QuizScreen() {
     if (!answerChecked) {
       setAnswerChecked(true);
       if (selectedOption === currentQuestion.correctAnswer) {
-        setScore(score + 1);
+        // Award +10 Seeds for a correct answer and update correct count
+        setScore(score + 10);
+        setCorrectCount(correctCount + 1);
         // Pick a random positive feedback message
         const messages = ["Great!", "Nice One!"];
         const randomMessage = messages[Math.floor(Math.random() * messages.length)];
         setFeedbackText(randomMessage);
         setIsAnswerCorrect(true);
       } else {
-        // Pick a random negative feedback message if the answer is incorrect
+        // Award +1 Seed for an incorrect answer
+        setScore(score + 1);
+        // Pick a random negative feedback message
         const messages = ["Not Quite!", "Incorrect", "Sorry!"];
         const randomMessage = messages[Math.floor(Math.random() * messages.length)];
         setFeedbackText(randomMessage);
@@ -127,15 +148,18 @@ export default function QuizScreen() {
         <View style={styles.scoreContainer}>
           <Text style={styles.scoreText}>Quiz Completed!</Text>
           <Text style={styles.scoreText}>
-            Your Score: {score} / {quizQuestions.length}
+            Seeds Gathered: {score} 🌱
+          </Text>
+          <Text style={styles.scoreText}>
+            Correct Answers: {correctCount} / {quizQuestions.length}
           </Text>
           <Button title="Finish" onPress={handleFinish} />
         </View>
       ) : (
         <View style={styles.quizContainer}>
-          <Text style={styles.questionText}>
-            {currentQuestion.question}
-          </Text>
+          {/* Real-time Seeds Tally */}
+          <Text style={styles.xpText}>Seeds: {score} 🌱</Text>
+          <Text style={styles.questionText}>{currentQuestion.question}</Text>
           {currentQuestion.options.map((option, index) => {
             // Determine styling for feedback if answer is checked
             let optionStyle = [styles.optionButton];
@@ -200,6 +224,12 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
   },
+  xpText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#FF8C00',
+    marginBottom: 10,
+  },
   questionText: {
     fontSize: 22,
     fontWeight: 'bold',
@@ -261,5 +291,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 20,
     color: '#2E7D32',
+    textAlign: 'center',
   },
 });
