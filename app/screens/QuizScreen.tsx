@@ -1,7 +1,8 @@
 // app/screens/QuizScreen.tsx
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Button, ScrollView } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import { UserContext } from '../contexts/UserContext';
 
 // Revised quiz questions for Sustainable Living lessons based on lesson content
 const sustainableLivingQuizQuestions = [
@@ -75,17 +76,17 @@ export default function QuizScreen() {
   const isSustainableLiving = lesson && lesson.toLowerCase().includes("sustainable living");
   const quizQuestions = isSustainableLiving ? sustainableLivingQuizQuestions : climateQuizQuestions;
 
+  // Get context functions to update Seeds and lessons completed
+  const { addSeeds, incrementLessons } = useContext(UserContext);
+
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
-  // 'score' now represents the Seeds tally
+  // 'score' now represents the Seeds tally for the current quiz session
   const [score, setScore] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
   const [quizCompleted, setQuizCompleted] = useState(false);
-  // Tracks whether the answer has been checked
   const [answerChecked, setAnswerChecked] = useState(false);
-  // Holds feedback text if the answer is correct or incorrect
   const [feedbackText, setFeedbackText] = useState('');
-  // Tracks if the last answer was correct
   const [isAnswerCorrect, setIsAnswerCorrect] = useState<boolean | null>(null);
 
   const currentQuestion = quizQuestions[currentQuestionIndex];
@@ -98,36 +99,36 @@ export default function QuizScreen() {
   };
 
   const handleButtonPress = () => {
-    // If answer hasn't been checked yet, check it
     if (!answerChecked) {
+      // Check the answer
       setAnswerChecked(true);
       if (selectedOption === currentQuestion.correctAnswer) {
         // Award +10 Seeds for a correct answer and update correct count
-        setScore(score + 10);
-        setCorrectCount(correctCount + 1);
-        // Pick a random positive feedback message
+        setScore(prev => prev + 10);
+        addSeeds(10);
+        setCorrectCount(prev => prev + 1);
         const messages = ["Great!", "Nice One!"];
-        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-        setFeedbackText(randomMessage);
+        setFeedbackText(messages[Math.floor(Math.random() * messages.length)]);
         setIsAnswerCorrect(true);
       } else {
         // Award +1 Seed for an incorrect answer
-        setScore(score + 1);
-        // Pick a random negative feedback message
+        setScore(prev => prev + 1);
+        addSeeds(1);
         const messages = ["Not Quite!", "Incorrect", "Sorry!"];
-        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-        setFeedbackText(randomMessage);
+        setFeedbackText(messages[Math.floor(Math.random() * messages.length)]);
         setIsAnswerCorrect(false);
       }
     } else {
-      // Reset states and move to the next question or finish quiz
+      // Move to the next question or complete the quiz
       setAnswerChecked(false);
       setFeedbackText('');
       setSelectedOption(null);
       setIsAnswerCorrect(null);
       if (currentQuestionIndex < quizQuestions.length - 1) {
-        setCurrentQuestionIndex(currentQuestionIndex + 1);
+        setCurrentQuestionIndex(prev => prev + 1);
       } else {
+        // Mark the lesson as completed and then finish the quiz
+        incrementLessons();
         setQuizCompleted(true);
       }
     }
@@ -137,9 +138,6 @@ export default function QuizScreen() {
     navigation.goBack();
   };
 
-  // Determine button label:
-  // If answer not yet checked, show "Check"
-  // Otherwise, show "Continue"
   const buttonLabel = !answerChecked ? "Check" : "Continue";
 
   return (
@@ -161,7 +159,6 @@ export default function QuizScreen() {
           <Text style={styles.xpText}>Seeds: {score} 🌱</Text>
           <Text style={styles.questionText}>{currentQuestion.question}</Text>
           {currentQuestion.options.map((option, index) => {
-            // Determine styling for feedback if answer is checked
             let optionStyle = [styles.optionButton];
             if (answerChecked) {
               if (index === currentQuestion.correctAnswer) {
@@ -170,10 +167,8 @@ export default function QuizScreen() {
                 optionStyle.push(styles.optionIncorrect);
               }
             } else if (selectedOption === index) {
-              // Option is selected but not yet checked
               optionStyle.push(styles.selectedOption);
             }
-
             return (
               <TouchableOpacity
                 key={index}
@@ -184,15 +179,8 @@ export default function QuizScreen() {
               </TouchableOpacity>
             );
           })}
-          {/* Display feedback if available with dynamic style based on correctness */}
           {answerChecked && feedbackText !== '' && (
-            <Text
-              style={
-                isAnswerCorrect
-                  ? styles.feedbackCorrect
-                  : styles.feedbackIncorrect
-              }
-            >
+            <Text style={isAnswerCorrect ? styles.feedbackCorrect : styles.feedbackIncorrect}>
               {feedbackText}
             </Text>
           )}
@@ -249,30 +237,28 @@ const styles = StyleSheet.create({
   selectedOption: {
     backgroundColor: '#cdeac0',
   },
-  // Styles for feedback on options:
   optionCorrect: {
-    backgroundColor: '#a5d6a7', // light green
+    backgroundColor: '#a5d6a7',
     borderColor: '#388E3C',
   },
   optionIncorrect: {
-    backgroundColor: '#ef9a9a', // light red
+    backgroundColor: '#ef9a9a',
     borderColor: '#d32f2f',
   },
   optionText: {
     fontSize: 18,
     color: '#333',
   },
-  // Feedback styles:
   feedbackCorrect: {
     fontSize: 20,
     fontWeight: '600',
-    color: '#2E7D32', // green for correct answers
+    color: '#2E7D32',
     marginVertical: 15,
   },
   feedbackIncorrect: {
     fontSize: 20,
     fontWeight: '600',
-    color: '#d32f2f', // red for incorrect answers
+    color: '#d32f2f',
     marginVertical: 15,
   },
   nextButtonContainer: {

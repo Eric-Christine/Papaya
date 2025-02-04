@@ -1,6 +1,5 @@
 // app/screens/ProfileScreen.tsx
-
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   View,
   Text,
@@ -9,16 +8,11 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
+import { UserContext } from '../contexts/UserContext';
 
 const ProfileScreen: React.FC = () => {
-  // Dummy user data (replace with your actual user data or state management)
-  const user = {
-    name: 'Jane Doe',
-    email: 'jane.doe@example.com',
-    avatar: 'https://placekitten.com/200/200', // Placeholder avatar URL
-    lessonsCompleted: 42,
-    points: 125,
-  };
+  // Read user data from the context
+  const { user } = useContext(UserContext);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -36,8 +30,8 @@ const ProfileScreen: React.FC = () => {
           <Text style={styles.statLabel}>Lessons Completed</Text>
         </View>
         <View style={styles.statItem}>
-          <Text style={styles.statValue}>{user.points}</Text>
-          <Text style={styles.statLabel}>Points</Text>
+          <Text style={styles.statValue}>{user.seeds} 🌱</Text>
+          <Text style={styles.statLabel}>Seeds</Text>
         </View>
       </View>
 
