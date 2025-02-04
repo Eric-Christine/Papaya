@@ -80,20 +80,3 @@ React Navigation Documentation
 Expo Router Documentation
 Community
 Join our community of developers and environmental enthusiasts:
-
-Expo Discord
-GitHub Issues
-sql
-Copy
-
-### How to Update Your Repository
-
-1. **Replace your current README.md content** with the text above.
-2. **Stage, commit, and push your changes** to GitHub:
-   ```bash
-   git add README.md
-   git commit -m "Update README with project overview and usage instructions"
-   git push origin main
-Replace main with your current branch name if necessary.
-
-This updated README provides an overview of your app, instructions to get started, and details on how the project is organized. Enjoy coding, and happy contributing!
