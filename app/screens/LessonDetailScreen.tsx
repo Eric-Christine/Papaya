@@ -6,7 +6,7 @@ export default function LessonDetailScreen({ route, navigation }) {
   // Get the current lesson title from route params; default to "Climate Basics"
   const { title = 'Climate Basics' } = route.params || {};
 
-  // Custom content for each lesson
+  // Content for Climate Change lessons
   const climateBasicsContent = `Climate Basics covers the fundamentals of climate science, including:
 
 • The Greenhouse Effect: How gases like carbon dioxide, methane, and water vapor trap heat in the atmosphere.
@@ -52,7 +52,12 @@ This lesson explains the wide-ranging effects that climate change has on our wor
 
 This lesson provides insights into how we can work together to build a more sustainable future.`;
 
-  // Determine which content to display and which button to show based on the lesson title
+  // Content for Sustainable Living lessons (treated the same for "Sustainable Living" and "Sustainable Living Basics")
+  const sustainableLivingContent = `Sustainable Living introduces the principles of eco-friendly living. Learn how small, daily actions—like reducing consumption, conserving water, recycling, and choosing sustainable products—can significantly reduce your environmental impact and help create a healthier planet.
+
+This lesson provides a practical foundation for sustainable habits.`;
+
+  // Determine which content to display and which next button to show based on the lesson title
   let content = `This is the content for the ${title} lesson.`;
   let nextButton = null;
 
@@ -62,9 +67,7 @@ This lesson provides insights into how we can work together to build a more sust
       <View style={styles.nextButton}>
         <Button
           title="Next: Greenhouse Gases"
-          onPress={() =>
-            navigation.navigate('LessonDetail', { title: 'Greenhouse Gases' })
-          }
+          onPress={() => navigation.navigate('LessonDetail', { title: 'Greenhouse Gases' })}
         />
       </View>
     );
@@ -74,9 +77,7 @@ This lesson provides insights into how we can work together to build a more sust
       <View style={styles.nextButton}>
         <Button
           title="Next: Human Impact"
-          onPress={() =>
-            navigation.navigate('LessonDetail', { title: 'Human Impact' })
-          }
+          onPress={() => navigation.navigate('LessonDetail', { title: 'Human Impact' })}
         />
       </View>
     );
@@ -86,9 +87,7 @@ This lesson provides insights into how we can work together to build a more sust
       <View style={styles.nextButton}>
         <Button
           title="Next: Consequences"
-          onPress={() =>
-            navigation.navigate('LessonDetail', { title: 'Consequences' })
-          }
+          onPress={() => navigation.navigate('LessonDetail', { title: 'Consequences' })}
         />
       </View>
     );
@@ -98,22 +97,49 @@ This lesson provides insights into how we can work together to build a more sust
       <View style={styles.nextButton}>
         <Button
           title="Next: Solutions"
-          onPress={() =>
-            navigation.navigate('LessonDetail', { title: 'Solutions' })
-          }
+          onPress={() => navigation.navigate('LessonDetail', { title: 'Solutions' })}
         />
       </View>
     );
   } else if (title === 'Solutions') {
     content = solutionsContent;
-    // Instead of "Finish", navigate to the QuizScreen for this lesson's content.
+    // When solutions are finished, navigate to the Quiz for this lesson's content.
     nextButton = (
       <View style={styles.nextButton}>
         <Button
           title="Quiz"
-          onPress={() =>
-            navigation.navigate('Quiz', { lesson: title })
-          }
+          onPress={() => navigation.navigate('Quiz', { lesson: title })}
+        />
+      </View>
+    );
+  } else if (title === 'Sustainable Living' || title === 'Sustainable Living Basics') {
+    // Treat both "Sustainable Living" and "Sustainable Living Basics" as the same lesson.
+    content = sustainableLivingContent;
+    nextButton = (
+      <View style={styles.nextButton}>
+        <Button
+          title="Next: Reduce Waste"
+          onPress={() => navigation.navigate('LessonDetail', { title: 'Sustainable Living: Reduce Waste' })}
+        />
+      </View>
+    );
+  } else if (title === 'Sustainable Living: Reduce Waste') {
+    content = `Reduce Waste focuses on practical strategies for minimizing waste. In this lesson, you'll learn about recycling, reusing, composting, and making smarter purchasing decisions that reduce overall waste production.`;
+    nextButton = (
+      <View style={styles.nextButton}>
+        <Button
+          title="Next: Energy Efficiency"
+          onPress={() => navigation.navigate('LessonDetail', { title: 'Sustainable Living: Energy Efficiency' })}
+        />
+      </View>
+    );
+  } else if (title === 'Sustainable Living: Energy Efficiency') {
+    content = `Energy Efficiency is all about using less energy to perform the same tasks. Discover tips for reducing energy consumption at home and in the workplace, including smart technology, insulation improvements, and energy-saving habits.`;
+    nextButton = (
+      <View style={styles.nextButton}>
+        <Button
+          title="Quiz"
+          onPress={() => navigation.navigate('Quiz', { lesson: title })}
         />
       </View>
     );
@@ -123,7 +149,7 @@ This lesson provides insights into how we can work together to build a more sust
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>{title}</Text>
       <Text style={styles.description}>{content}</Text>
-      {/* Next lesson / Quiz button is rendered above the "Go Back" button */}
+      {/* Render the Next (or Quiz) button above the "Go Back" button */}
       {nextButton}
       <Button title="Go Back to Lessons" onPress={() => navigation.goBack()} />
     </ScrollView>

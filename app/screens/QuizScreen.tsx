@@ -1,9 +1,10 @@
 // app/screens/QuizScreen.tsx
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Button, ScrollView } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
-const quizQuestions = [
+// Quiz questions for Climate Change lessons
+const climateQuizQuestions = [
   {
     question: "What is the primary greenhouse gas responsible for global warming?",
     options: ["Carbon Dioxide", "Oxygen", "Nitrogen", "Helium"],
@@ -26,28 +27,88 @@ const quizQuestions = [
   },
 ];
 
+// Quiz questions for Sustainable Living lessons
+const sustainableLivingQuizQuestions = [
+  {
+    question: "Which of the following is a key principle of sustainable living?",
+    options: ["Overconsumption", "Reduce, reuse, recycle", "Ignore waste", "None"],
+    correctAnswer: 1,
+  },
+  {
+    question: "What is one effective way to reduce household waste?",
+    options: ["Buy disposable items", "Recycle and compost", "Increase plastic use", "Ignore recycling"],
+    correctAnswer: 1,
+  },
+  {
+    question: "How does conserving water contribute to sustainability?",
+    options: ["It doesn't", "Helps reduce strain on resources", "Causes shortages", "None"],
+    correctAnswer: 1,
+  },
+  {
+    question: "Which energy source is considered renewable?",
+    options: ["Coal", "Oil", "Solar", "Natural Gas"],
+    correctAnswer: 2,
+  },
+];
+
 export default function QuizScreen() {
+  const route = useRoute();
   const navigation = useNavigation();
+  const { lesson } = route.params || {};
+
+  // Determine if the current quiz should be for Sustainable Living
+  const isSustainableLiving = lesson && lesson.toLowerCase().includes("sustainable living");
+  const quizQuestions = isSustainableLiving ? sustainableLivingQuizQuestions : climateQuizQuestions;
+
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [score, setScore] = useState(0);
   const [quizCompleted, setQuizCompleted] = useState(false);
+  // Tracks whether the answer has been checked
+  const [answerChecked, setAnswerChecked] = useState(false);
+  // Holds feedback text if the answer is correct or incorrect
+  const [feedbackText, setFeedbackText] = useState('');
+  // Tracks if the last answer was correct
+  const [isAnswerCorrect, setIsAnswerCorrect] = useState<boolean | null>(null);
 
   const currentQuestion = quizQuestions[currentQuestionIndex];
 
   const handleOptionPress = (index: number) => {
-    setSelectedOption(index);
+    // Prevent changing answer after checking it
+    if (!answerChecked) {
+      setSelectedOption(index);
+    }
   };
 
-  const handleNextPress = () => {
-    if (selectedOption === currentQuestion.correctAnswer) {
-      setScore(score + 1);
-    }
-    setSelectedOption(null);
-    if (currentQuestionIndex < quizQuestions.length - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
+  const handleButtonPress = () => {
+    // If answer hasn't been checked yet, check it
+    if (!answerChecked) {
+      setAnswerChecked(true);
+      if (selectedOption === currentQuestion.correctAnswer) {
+        setScore(score + 1);
+        // Pick a random positive feedback message
+        const messages = ["Great!", "Nice One!"];
+        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+        setFeedbackText(randomMessage);
+        setIsAnswerCorrect(true);
+      } else {
+        // Pick a random negative feedback message if the answer is incorrect
+        const messages = ["Not Quite!", "Incorrect", "Sorry!"];
+        const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+        setFeedbackText(randomMessage);
+        setIsAnswerCorrect(false);
+      }
     } else {
-      setQuizCompleted(true);
+      // Reset states and move to the next question or finish quiz
+      setAnswerChecked(false);
+      setFeedbackText('');
+      setSelectedOption(null);
+      setIsAnswerCorrect(null);
+      if (currentQuestionIndex < quizQuestions.length - 1) {
+        setCurrentQuestionIndex(currentQuestionIndex + 1);
+      } else {
+        setQuizCompleted(true);
+      }
     }
   };
 
@@ -55,12 +116,19 @@ export default function QuizScreen() {
     navigation.goBack();
   };
 
+  // Determine button label:
+  // If answer not yet checked, show "Check"
+  // Otherwise, show "Continue"
+  const buttonLabel = !answerChecked ? "Check" : "Continue";
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {quizCompleted ? (
         <View style={styles.scoreContainer}>
           <Text style={styles.scoreText}>Quiz Completed!</Text>
-          <Text style={styles.scoreText}>Your Score: {score} / {quizQuestions.length}</Text>
+          <Text style={styles.scoreText}>
+            Your Score: {score} / {quizQuestions.length}
+          </Text>
           <Button title="Finish" onPress={handleFinish} />
         </View>
       ) : (
@@ -68,22 +136,46 @@ export default function QuizScreen() {
           <Text style={styles.questionText}>
             {currentQuestion.question}
           </Text>
-          {currentQuestion.options.map((option, index) => (
-            <TouchableOpacity
-              key={index}
-              style={[
-                styles.optionButton,
-                selectedOption === index && styles.selectedOption,
-              ]}
-              onPress={() => handleOptionPress(index)}
+          {currentQuestion.options.map((option, index) => {
+            // Determine styling for feedback if answer is checked
+            let optionStyle = [styles.optionButton];
+            if (answerChecked) {
+              if (index === currentQuestion.correctAnswer) {
+                optionStyle.push(styles.optionCorrect);
+              } else if (index === selectedOption && selectedOption !== currentQuestion.correctAnswer) {
+                optionStyle.push(styles.optionIncorrect);
+              }
+            } else if (selectedOption === index) {
+              // Option is selected but not yet checked
+              optionStyle.push(styles.selectedOption);
+            }
+
+            return (
+              <TouchableOpacity
+                key={index}
+                style={optionStyle}
+                onPress={() => handleOptionPress(index)}
+              >
+                <Text style={styles.optionText}>{option}</Text>
+              </TouchableOpacity>
+            );
+          })}
+          {/* Display feedback if available with dynamic style based on correctness */}
+          {answerChecked && feedbackText !== '' && (
+            <Text
+              style={
+                isAnswerCorrect
+                  ? styles.feedbackCorrect
+                  : styles.feedbackIncorrect
+              }
             >
-              <Text style={styles.optionText}>{option}</Text>
-            </TouchableOpacity>
-          ))}
+              {feedbackText}
+            </Text>
+          )}
           <View style={styles.nextButtonContainer}>
             <Button
-              title={currentQuestionIndex === quizQuestions.length - 1 ? "Submit" : "Next"}
-              onPress={handleNextPress}
+              title={buttonLabel}
+              onPress={handleButtonPress}
               disabled={selectedOption === null}
             />
           </View>
@@ -127,9 +219,31 @@ const styles = StyleSheet.create({
   selectedOption: {
     backgroundColor: '#cdeac0',
   },
+  // Styles for feedback on options:
+  optionCorrect: {
+    backgroundColor: '#a5d6a7', // light green
+    borderColor: '#388E3C',
+  },
+  optionIncorrect: {
+    backgroundColor: '#ef9a9a', // light red
+    borderColor: '#d32f2f',
+  },
   optionText: {
     fontSize: 18,
     color: '#333',
+  },
+  // Feedback styles:
+  feedbackCorrect: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#2E7D32', // green for correct answers
+    marginVertical: 15,
+  },
+  feedbackIncorrect: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#d32f2f', // red for incorrect answers
+    marginVertical: 15,
   },
   nextButtonContainer: {
     marginTop: 20,

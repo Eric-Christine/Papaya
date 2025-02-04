@@ -7,14 +7,14 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 // Screens
 import LessonsScreen from '../screens/LessonsScreen';
 import LessonDetailScreen from '../screens/LessonDetailScreen';
-import QuizScreen from '../screens/QuizScreen';  // <-- QuizScreen imported
+import QuizScreen from '../screens/QuizScreen';
 import RewardsScreen from '../screens/RewardsScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
-// Create a stack for lessons, including the Quiz screen route.
+// Create a stack navigator for Lessons (with LessonDetail and Quiz screens)
 const LessonsStackNavigator = () => {
   return (
     <Stack.Navigator>
@@ -52,7 +52,11 @@ export default function AppTabs() {
           title: 'Lessons',
           headerShown: false, // Hide the inner stack header in the tab navigator
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="book-open-variant" size={size} color={color} />
+            <MaterialCommunityIcons
+              name="book-open-variant"
+              size={size}
+              color={color}
+            />
           ),
         }}
       />
