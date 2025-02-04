@@ -7,13 +7,14 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 // Screens
 import LessonsScreen from '../screens/LessonsScreen';
 import LessonDetailScreen from '../screens/LessonDetailScreen';
+import QuizScreen from '../screens/QuizScreen';  // <-- QuizScreen imported
 import RewardsScreen from '../screens/RewardsScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
-// Create a stack for lessons
+// Create a stack for lessons, including the Quiz screen route.
 const LessonsStackNavigator = () => {
   return (
     <Stack.Navigator>
@@ -26,6 +27,11 @@ const LessonsStackNavigator = () => {
         name="LessonDetail"
         component={LessonDetailScreen}
         options={{ title: 'Lesson Detail' }}
+      />
+      <Stack.Screen
+        name="Quiz"
+        component={QuizScreen}
+        options={{ title: 'Quiz' }}
       />
     </Stack.Navigator>
   );
