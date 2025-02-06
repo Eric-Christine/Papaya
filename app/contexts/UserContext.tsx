@@ -29,9 +29,9 @@ export const UserContext = createContext<UserContextType>({
 
 export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User>({
-    name: 'Jane Doe',
-    email: 'jane.doe@example.com',
-    avatar: 'https://placekitten.com/200/200', // Placeholder avatar URL
+    name: 'Rachelle',
+    email: 'rjl@gmail.com',
+    avatar: 'https://firebasestorage.googleapis.com/v0/b/papaya-b8db9.firebasestorage.app/o/Untitled%20design.png?alt=media&token=b8fbba65-86ff-41f4-bec5-ae128d77e39d', // Placeholder avatar URL
     lessonsCompleted: 0,
     seeds: 0,
   });
