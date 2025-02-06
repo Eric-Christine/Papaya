@@ -82,6 +82,37 @@ This foundation will transform how you think about daily choices and their broad
 
 This lesson empowers you with knowledge to significantly reduce home energy consumption.`;
 
+  const energyMixContent = `Energy Mix explores the diverse sources of energy we use, including:
+
+• Fossil Fuels: Coal, oil, and natural gas still play a major role, though their environmental impacts are driving a gradual shift.
+• Nuclear Power: Offers a reliable, low-carbon source of energy that complements renewables.
+• Renewables: Includes solar, wind, hydroelectric, geothermal, and biomass. These sources are rapidly expanding and transforming the energy landscape.
+• Energy Storage: Innovations in batteries, pumped hydro storage, and other storage technologies help balance supply and demand.
+• Future Trends: Emerging technologies such as hydrogen fuel cells and smart grid systems are set to further revolutionize how we generate and use energy.
+
+This lesson explores how we use different energy sources to power our homes and businesses.`; 
+
+const nuclearEnergyContent = `Although nuclear power may spark debate, it remains a key pillar in our renewable energy transition. Embracing its potential, nuclear energy offers a low-carbon, reliable, and highly efficient source of electricity. In the United States, 93 reactors generate around 20% of our power, playing a vital role in stabilizing our energy supply while significantly reducing greenhouse gas emissions.
+
+Key facts about nuclear energy worldwide:
+• France relies on nuclear power for about 70% of its electricity, showcasing the success of a long-term commitment to nuclear technology.
+• The United Kingdom and Canada are investing in next-generation reactors and small modular reactors (SMRs) to modernize their energy infrastructure.
+• South Korea and Japan are advancing new nuclear projects that promise enhanced safety and efficiency.
+• Cutting-edge nuclear technologies are emerging globally, with projects in Europe and Asia aiming to further reduce carbon emissions and provide sustainable energy solutions.
+
+With the rigorous oversight of the US Nuclear Regulatory Commission (NRC) and continuous innovation in reactor design, nuclear energy inspires hope for a cleaner, more sustainable future.`;
+
+const solarEnergyContent = `Solar power is transforming our energy future by tapping into the vast, renewable energy of the sun. Rapid technological advances and declining installation costs have made solar energy a cornerstone of the transition to cleaner power sources. Across the globe, solar installations are not only reducing greenhouse gas emissions but also promoting energy independence and local economic growth.
+
+Key facts about solar energy worldwide:
+• Germany, China, and the United States are leading the way, with large-scale solar farms and residential rooftop systems contributing to a significant share of each country's renewable capacity.
+• Technological breakthroughs such as bifacial solar panels, perovskite cells, and concentrated solar power (CSP) are pushing the boundaries of efficiency and energy output.
+• Distributed solar installations empower communities, reduce reliance on centralized power grids, and offer resilience against power outages.
+• Innovative integrations—like solar panels combined with energy storage systems and agrivoltaics, where solar panels coexist with agricultural activities—are expanding the potential and versatility of solar energy.
+
+Supported by robust government incentives, increasing private investment, and a global commitment to reducing carbon footprints, solar energy stands as a beacon of hope for a sustainable, resilient future.`;
+
+
   // Determine which content to display and which next button to show based on the lesson title
   let content = `This is the content for the ${title} lesson.`;
   let nextButton = null;
@@ -182,6 +213,39 @@ This lesson empowers you with knowledge to significantly reduce home energy cons
         <Button
           title="Quiz"
           onPress={() => navigation.navigate('Quiz', { lesson: title })}
+          color="#fff"
+        />
+      </View>
+    );
+  } else if (title === 'Energy Mix') {
+    content = energyMixContent;
+    nextButton = (
+      <View style={styles.buttonContainer}>
+        <Button
+          title="Next: Nuclear Power"
+          onPress={() => navigation.navigate('LessonDetail', { title: 'Nuclear Power' })}
+          color="#fff"
+        />
+      </View>
+    );
+  } else if (title === 'Nuclear Power') {
+    content = nuclearEnergyContent;
+    nextButton = (
+      <View style={styles.buttonContainer}>
+        <Button
+          title="Next: Solar Power"
+          onPress={() => navigation.navigate('LessonDetail', { title: 'Solar Power' })}
+          color="#fff"
+        />
+      </View>
+    );
+  } else if (title === 'Solar Power') {
+    content = solarEnergyContent;
+    nextButton = (
+      <View style={styles.buttonContainer}>
+        <Button
+          title="Quiz"
+          onPress={() => navigation.navigate('Quiz', { lesson: title }) }
           color="#fff"
         />
       </View>

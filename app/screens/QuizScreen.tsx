@@ -1,10 +1,20 @@
-// app/screens/QuizScreen.tsx
-import React, { useState, useContext } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Button, ScrollView } from 'react-native';
+import React, { useState, useContext, useRef, useEffect } from 'react';
+import { 
+  View, 
+  Text, 
+  StyleSheet, 
+  TouchableOpacity, 
+  Button, 
+  ScrollView,
+  Animated,
+  Dimensions
+} from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { UserContext } from '../contexts/UserContext';
 
-// Revised quiz questions for Sustainable Living lessons based on lesson content
+// -----------------------------------------------------------------------------
+// Quiz Questions
+// -----------------------------------------------------------------------------
 const sustainableLivingQuizQuestions = [
   {
     question: "What does your carbon footprint represent?",
@@ -43,7 +53,6 @@ const sustainableLivingQuizQuestions = [
   },
 ];
 
-// Quiz questions for Climate Change lessons (unchanged)
 const climateQuizQuestions = [
   {
     question: "What is the primary greenhouse gas responsible for global warming?",
@@ -67,32 +76,236 @@ const climateQuizQuestions = [
   },
 ];
 
+const energyQuizQuestions = [
+  {
+    question: "What does the term 'energy mix' refer to?",
+    options: [
+      "The exclusive use of fossil fuels for energy",
+      "A combination of various energy sources used to generate power",
+      "Only renewable energy sources such as solar and wind",
+      "Energy produced solely from nuclear power",
+    ],
+    correctAnswer: 1,
+  },
+  {
+    question: "Which factor most influences a country's energy mix?",
+    options: [
+      "Geographical location and the availability of natural resources",
+      "The country's internet infrastructure",
+      "Global fashion trends",
+      "The number of automobiles on the road",
+    ],
+    correctAnswer: 0,
+  },
+  {
+    question: "What is one of the primary benefits of diversifying a nation's energy mix?",
+    options: [
+      "Reducing dependency on a single energy source",
+      "Increasing the risk of power outages",
+      "Raising overall energy costs significantly",
+      "Limiting the development of renewable energy technology",
+    ],
+    correctAnswer: 0,
+  },
+];
+
+
+
+
+// -----------------------------------------------------------------------------
+// SeedReward Animation Component (for individual answer feedback)
+// -----------------------------------------------------------------------------
+interface SeedRewardProps {
+  amount: number;
+  startPosition: { top: number; left: number };
+  onAnimationComplete: () => void;
+}
+
+const SeedReward: React.FC<SeedRewardProps> = ({ amount, startPosition, onAnimationComplete }) => {
+  const translateY = useRef(new Animated.Value(0)).current;
+  const opacity = useRef(new Animated.Value(1)).current;
+  const scale = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(translateY, {
+        toValue: -200, // Moves the reward upward by 200 units
+        duration: 1000,
+        useNativeDriver: true,
+      }),
+      Animated.sequence([
+        Animated.timing(scale, {
+          toValue: 1.2,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+        Animated.timing(scale, {
+          toValue: 1,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+      ]),
+      Animated.sequence([
+        Animated.timing(opacity, {
+          toValue: 1,
+          duration: 500,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opacity, {
+          toValue: 0,
+          duration: 500,
+          useNativeDriver: true,
+        }),
+      ]),
+    ]).start(() => {
+      onAnimationComplete();
+    });
+  }, []);
+
+  return (
+    <Animated.View
+      style={[
+        styles.seedReward,
+        {
+          transform: [{ translateY }, { scale }],
+          opacity,
+          ...startPosition,
+        },
+      ]}
+    >
+      <Text style={styles.seedRewardText}>+{amount} 🌱</Text>
+    </Animated.View>
+  );
+};
+
+// -----------------------------------------------------------------------------
+// FinishSeedAnimation Component (for finishing the quiz)
+// This component animates the total seed count from its current position
+// to the bottom right corner (profile tab area).
+// -----------------------------------------------------------------------------
+interface FinishSeedAnimationProps {
+  count: number;
+  startPosition: { top: number; left: number };
+  onAnimationComplete: () => void;
+}
+
+const FinishSeedAnimation: React.FC<FinishSeedAnimationProps> = ({ count, startPosition, onAnimationComplete }) => {
+  const translateX = useRef(new Animated.Value(0)).current;
+  const translateY = useRef(new Animated.Value(0)).current;
+  const opacity = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    const windowWidth = Dimensions.get('window').width;
+    const windowHeight = Dimensions.get('window').height;
+    // Define the end position (adjust these offsets to match your profile tab)
+    const endX = windowWidth - 60;
+    const endY = windowHeight - 60;
+    // Calculate differences from the starting point
+    const dx = endX - startPosition.left;
+    const dy = endY - startPosition.top;
+    Animated.parallel([
+      Animated.timing(translateX, {
+        toValue: dx,
+        duration: 1000,
+        useNativeDriver: true,
+      }),
+      Animated.timing(translateY, {
+        toValue: dy,
+        duration: 1000,
+        useNativeDriver: true,
+      }),
+      Animated.timing(opacity, {
+        toValue: 0,
+        duration: 1000,
+        useNativeDriver: true,
+      }),
+    ]).start(() => {
+      onAnimationComplete();
+    });
+  }, []);
+
+  return (
+    <Animated.View
+      style={[
+        {
+          position: 'absolute',
+          top: startPosition.top,
+          left: startPosition.left,
+          transform: [{ translateX }, { translateY }],
+          opacity,
+          backgroundColor: 'rgba(255, 255, 255, 0.9)',
+          padding: 8,
+          borderRadius: 12,
+          zIndex: 300,
+        },
+      ]}
+    >
+      <Text style={{ fontSize: 20, fontWeight: '700', color: '#FFA000' }}>
+        {count} 🌱
+      </Text>
+    </Animated.View>
+  );
+};
+
+// -----------------------------------------------------------------------------
+// QuizScreen Component
+// -----------------------------------------------------------------------------
+interface SeedAnimation {
+  id: number;
+  amount: number;
+  position: { top: number; left: number };
+}
+
 export default function QuizScreen() {
   const route = useRoute();
   const navigation = useNavigation();
   const { lesson } = route.params || {};
 
-  // Determine if the current quiz should be for Sustainable Living
-  const isSustainableLiving = lesson && lesson.toLowerCase().includes("sustainable living");
-  const quizQuestions = isSustainableLiving ? sustainableLivingQuizQuestions : climateQuizQuestions;
+  // Choose quiz questions based on lesson type
 
-  // Get context functions to update Seeds and lessons completed
+// Create a lowercase version of the lesson for easier comparisons.
+const lessonLower = lesson?.toLowerCase() || "";
+
+// Choose the correct quiz questions based on lesson keywords.
+const quizQuestions = lessonLower.includes("sustainable living")
+  ? sustainableLivingQuizQuestions
+  : lessonLower.includes("solar power")
+    ? energyQuizQuestions
+    : climateQuizQuestions;
+
+  
+  // Context functions to update seeds and lesson completion
   const { addSeeds, incrementLessons } = useContext(UserContext);
 
+  // Quiz state
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
-  // 'score' now represents the Seeds tally for the current quiz session
-  const [score, setScore] = useState(0);
+  const [score, setScore] = useState(0); // Total Seeds for this quiz session
   const [correctCount, setCorrectCount] = useState(0);
   const [quizCompleted, setQuizCompleted] = useState(false);
   const [answerChecked, setAnswerChecked] = useState(false);
   const [feedbackText, setFeedbackText] = useState('');
   const [isAnswerCorrect, setIsAnswerCorrect] = useState<boolean | null>(null);
 
+  // State for seed animations (for answer feedback)
+  const [seedAnimations, setSeedAnimations] = useState<SeedAnimation[]>([]);
+  const animationCount = useRef(0);
+
+  // State to trigger finish animation (for total seeds)
+  const [isFinishAnimating, setIsFinishAnimating] = useState(false);
+
+  const addSeedAnimation = (amount: number, position: { top: number; left: number }) => {
+    const id = animationCount.current++;
+    setSeedAnimations(prev => [...prev, { id, amount, position }]);
+  };
+
+  const removeSeedAnimation = (id: number) => {
+    setSeedAnimations(prev => prev.filter(animation => animation.id !== id));
+  };
+
   const currentQuestion = quizQuestions[currentQuestionIndex];
 
   const handleOptionPress = (index: number) => {
-    // Prevent changing answer after checking it
     if (!answerChecked) {
       setSelectedOption(index);
     }
@@ -103,23 +316,27 @@ export default function QuizScreen() {
       // Check the answer
       setAnswerChecked(true);
       if (selectedOption === currentQuestion.correctAnswer) {
-        // Award +10 Seeds for a correct answer and update correct count
+        // Correct answer: award +10 Seeds
         setScore(prev => prev + 10);
         addSeeds(10);
         setCorrectCount(prev => prev + 1);
         const messages = ["Great!", "Nice One!"];
         setFeedbackText(messages[Math.floor(Math.random() * messages.length)]);
         setIsAnswerCorrect(true);
+        // Trigger seed animation for correct answer
+        addSeedAnimation(10, { top: 200, left: Dimensions.get('window').width / 2 - 40 });
       } else {
-        // Award +1 Seed for an incorrect answer
+        // Incorrect answer: award +1 Seed
         setScore(prev => prev + 1);
         addSeeds(1);
         const messages = ["Not Quite!", "Incorrect", "Sorry!"];
         setFeedbackText(messages[Math.floor(Math.random() * messages.length)]);
         setIsAnswerCorrect(false);
+        // Trigger seed animation for incorrect answer
+        addSeedAnimation(1, { top: 200, left: Dimensions.get('window').width / 2 - 40 });
       }
     } else {
-      // Move to the next question or complete the quiz
+      // Reset state for next question or finish quiz
       setAnswerChecked(false);
       setFeedbackText('');
       setSelectedOption(null);
@@ -127,21 +344,36 @@ export default function QuizScreen() {
       if (currentQuestionIndex < quizQuestions.length - 1) {
         setCurrentQuestionIndex(prev => prev + 1);
       } else {
-        // Mark the lesson as completed and then finish the quiz
+        // Mark the lesson as complete and finish the quiz
         incrementLessons();
         setQuizCompleted(true);
       }
     }
   };
 
-  const handleFinish = () => {
+  // Instead of immediately navigating when the finish button is pressed,
+  // trigger the finish animation.
+  const handleFinishPress = () => {
+    setIsFinishAnimating(true);
+  };
+
+  // Once finish animation completes, navigate away.
+  const onFinishAnimationComplete = () => {
     navigation.goBack();
+  };
+
+  // Define the starting position for the finish animation.
+  // This example assumes the seed tally is displayed centered near the top.
+  const finishAnimationStartPosition = {
+    top: 40,
+    left: Dimensions.get('window').width / 2 - 50,
   };
 
   const buttonLabel = !answerChecked ? "Check" : "Continue";
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    // Ensure the container is positioned relatively so the animated elements (absolute) overlay correctly.
+    <ScrollView contentContainerStyle={[styles.container, { position: 'relative' }]}>
       {quizCompleted ? (
         <View style={styles.scoreContainer}>
           <Text style={styles.scoreTitle}>Quiz Completed!</Text>
@@ -149,14 +381,34 @@ export default function QuizScreen() {
           <Text style={styles.scoreText}>
             Correct Answers: {correctCount} / {quizQuestions.length}
           </Text>
-          <View style={styles.finishButton}>
-            <Button title="Finish" onPress={handleFinish} color="#fff" />
-          </View>
+          {/* If finish animation hasn't been triggered, show the Finish button */}
+          {!isFinishAnimating && (
+            <View style={styles.finishButton}>
+              <Button title="Finish" onPress={handleFinishPress} color="#fff" />
+            </View>
+          )}
+          {/* Render finish animation overlay when triggered */}
+          {isFinishAnimating && (
+            <FinishSeedAnimation
+              count={score}
+              startPosition={finishAnimationStartPosition}
+              onAnimationComplete={onFinishAnimationComplete}
+            />
+          )}
         </View>
       ) : (
         <View style={styles.quizContainer}>
           {/* Real-time Seeds Tally */}
           <Text style={styles.xpText}>Seeds: {score} 🌱</Text>
+          {/* Render individual seed animations */}
+          {seedAnimations.map(animation => (
+            <SeedReward
+              key={animation.id}
+              amount={animation.amount}
+              startPosition={animation.position}
+              onAnimationComplete={() => removeSeedAnimation(animation.id)}
+            />
+          ))}
           <View style={styles.card}>
             <Text style={styles.questionText}>{currentQuestion.question}</Text>
           </View>
@@ -204,11 +456,14 @@ export default function QuizScreen() {
   );
 }
 
+// -----------------------------------------------------------------------------
+// Styles
+// -----------------------------------------------------------------------------
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     padding: 20,
-    backgroundColor: '#E8F5E9',
+    backgroundColor: '#F1F8E9',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -217,132 +472,197 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   xpText: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#FF8F00',
-    marginBottom: 15,
-  },
-  card: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 20,
-    width: '100%',
-    marginBottom: 20,
-    // iOS shadow
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
-    // Android shadow
-    elevation: 3,
-  },
-  questionText: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#2E7D32',
+    color: '#FFA000',
+    marginBottom: 20,
+    textShadowColor: 'rgba(0, 0, 0, 0.1)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
+  },
+  card: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 24,
+    width: '100%',
+    marginBottom: 24,
+    shadowColor: '#2E7D32',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 6,
+    borderWidth: 1,
+    borderColor: 'rgba(46, 125, 50, 0.1)',
+  },
+  questionText: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#1B5E20',
     textAlign: 'center',
+    lineHeight: 30,
   },
   optionsContainer: {
     width: '100%',
-    marginBottom: 15,
+    marginBottom: 20,
   },
   optionButton: {
-    backgroundColor: '#fff',
-    padding: 15,
-    borderRadius: 8,
-    marginBottom: 10,
-    borderWidth: 1,
-    borderColor: '#ccc',
+    backgroundColor: '#FFFFFF',
+    padding: 18,
+    borderRadius: 12,
+    marginBottom: 12,
+    borderWidth: 2,
+    borderColor: '#E0E0E0',
+    transform: [{ scale: 1 }],
   },
   selectedOption: {
-    backgroundColor: '#E0F2F1',
+    backgroundColor: '#E8F5E9',
+    borderColor: '#2E7D32',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
   optionCorrect: {
-    backgroundColor: '#C8E6C9',
-    borderColor: '#388E3C',
+    backgroundColor: '#81C784',
+    borderColor: '#2E7D32',
+    transform: [{ scale: 1.02 }],
   },
   optionIncorrect: {
-    backgroundColor: '#FFCDD2',
-    borderColor: '#D32F2F',
+    backgroundColor: '#EF9A9A',
+    borderColor: '#C62828',
+    transform: [{ scale: 0.98 }],
   },
   optionText: {
-    fontSize: 16,
+    fontSize: 17,
     color: '#424242',
+    lineHeight: 24,
+    fontWeight: '500',
   },
   feedbackCorrect: {
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: 20,
+    fontWeight: '700',
     color: '#2E7D32',
-    marginVertical: 15,
+    marginVertical: 16,
+    textShadowColor: 'rgba(46, 125, 50, 0.3)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
   feedbackIncorrect: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#D32F2F',
-    marginVertical: 15,
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#C62828',
+    marginVertical: 16,
+    opacity: 0.9,
   },
   nextButtonContainer: {
     width: '100%',
-    marginVertical: 10,
+    marginVertical: 12,
     alignItems: 'center',
   },
   actionButton: {
     backgroundColor: '#2E7D32',
-    paddingVertical: 15,
-    paddingHorizontal: 25,
-    borderRadius: 8,
+    paddingVertical: 16,
+    paddingHorizontal: 32,
+    borderRadius: 12,
     width: '100%',
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#1B5E20',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 4,
   },
   actionButtonText: {
-    color: '#fff',
+    color: '#FFFFFF',
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: '700',
+    letterSpacing: 0.5,
   },
   cancelButtonContainer: {
     width: '100%',
-    marginTop: 10,
+    marginTop: 12,
     alignItems: 'center',
   },
   cancelButton: {
-    backgroundColor: '#B0BEC5',
+    backgroundColor: 'transparent',
     paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 8,
     width: '100%',
     alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#B0BEC5',
   },
   cancelButtonText: {
-    color: '#fff',
+    color: '#546E7A',
     fontSize: 16,
     fontWeight: '600',
   },
   scoreContainer: {
     alignItems: 'center',
     width: '100%',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    padding: 32,
+    shadowColor: '#2E7D32',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.25,
+    shadowRadius: 12,
+    elevation: 8,
   },
   scoreTitle: {
-    fontSize: 26,
-    fontWeight: '700',
+    fontSize: 32,
+    fontWeight: '800',
     color: '#2E7D32',
-    marginBottom: 15,
+    marginBottom: 20,
     textAlign: 'center',
+    textShadowColor: 'rgba(46, 125, 50, 0.2)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
   },
   scoreText: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#424242',
-    marginBottom: 10,
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#1B5E20',
+    marginBottom: 12,
     textAlign: 'center',
+    opacity: 0.9,
   },
   finishButton: {
-    backgroundColor: '#2E7D32',
-    paddingVertical: 15,
-    paddingHorizontal: 25,
-    borderRadius: 8,
+    backgroundColor: '#43A047',
+    paddingVertical: 16,
+    paddingHorizontal: 32,
+    borderRadius: 12,
     width: '100%',
-    marginTop: 20,
+    marginTop: 24,
     alignItems: 'center',
+    shadowColor: '#2E7D32',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    elevation: 5,
+  },
+  seedReward: {
+    position: 'absolute',
+    zIndex: 100,
+    padding: 8,
+    borderRadius: 12,
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  seedRewardText: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#FFA000',
+    textShadowColor: 'rgba(0, 0, 0, 0.1)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
 });
-

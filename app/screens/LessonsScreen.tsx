@@ -20,8 +20,8 @@ const lessons = [
   },
   {
     id: '3',
-    title: 'Renewable Energy',
-    description: 'Learn about solar, wind, and other renewable energy sources.',
+    title: 'Energy Mix',
+    description: 'Learn about how we use solar, wind, energy storage alongside our current energy mix.',
     icon: 'solar-power',
   },
   {
