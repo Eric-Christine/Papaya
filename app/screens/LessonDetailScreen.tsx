@@ -112,6 +112,32 @@ Key facts about solar energy worldwide:
 
 Supported by robust government incentives, increasing private investment, and a global commitment to reducing carbon footprints, solar energy stands as a beacon of hope for a sustainable, resilient future.`;
 
+const energyStorageContent = `
+Energy Storage is a critical component of our clean energy future. In this lesson, you'll learn about the key technologies transforming our power systems and witness how innovative deployments across the globe are paving the way for a more sustainable energy landscape.
+
+• Battery Storage: 
+   - The most common form of energy storage, vital for both electric vehicles and grid-scale applications.
+   - Rapid advancements in lithium-ion and emerging solid-state batteries are being deployed in countries like the United States, South Korea, and Australia.
+   - Notably, China leads in both manufacturing and large-scale battery installations, driving cost reductions and performance improvements worldwide.
+
+• Pumped Hydro Storage:
+   - A mature, reliable technology offering long-duration storage by moving water between reservoirs at different elevations.
+   - Countries such as China, the United States, and Norway have harnessed pumped hydro to balance intermittent renewable generation, making it a cornerstone in their energy strategies.
+   - Recent projects in Europe and emerging markets are expanding pumped hydro capacities to further stabilize grids as renewable penetration increases.
+
+• Thermal Storage:
+   - A versatile method that uses heat to store energy, often used for balancing seasonal fluctuations in solar and wind output.
+   - Nations with high solar irradiance, including Spain, India, and parts of the Middle East, are pioneering thermal storage solutions to optimize their renewable resources.
+   - Innovations in materials and system designs continue to enhance efficiency and integration with combined heat and power systems.
+
+Worldwide, energy storage deployments are accelerating as nations strive to decarbonize their economies and improve grid resiliency. Key highlights include:
+   - **China:** Dominating both production and deployment, with massive battery storage projects supporting its expanding renewable capacity.
+   - **United States and Europe:** Investing heavily in grid-scale storage to ensure reliability, manage peak loads, and integrate increasing levels of wind and solar power.
+   - **Australia:** Leading in community and utility-scale battery projects, proving critical in remote and urban settings alike.
+   - **Emerging Markets:** Countries across Southeast Asia and the Middle East are rapidly adopting storage solutions to complement growing renewable infrastructures.
+
+This lesson explores how each of these technologies and deployments is revolutionizing the way we store energy to power our homes, businesses, and entire cities—ensuring a resilient and sustainable energy future for all.
+`;
 
   // Determine which content to display and which next button to show based on the lesson title
   let content = `This is the content for the ${title} lesson.`;
@@ -244,8 +270,19 @@ Supported by robust government incentives, increasing private investment, and a 
     nextButton = (
       <View style={styles.buttonContainer}>
         <Button
+          title="Energy Storage"
+          onPress={() => navigation.navigate('LessonDetail', { title: 'Energy Storage' })}
+          color="#fff"
+        />
+      </View>
+    );
+  } else if (title === 'Energy Storage') {
+    content = energyStorageContent;
+    nextButton = (
+      <View style={styles.buttonContainer}>
+        <Button
           title="Quiz"
-          onPress={() => navigation.navigate('Quiz', { lesson: title }) }
+          onPress={() => navigation.navigate('Quiz', { lesson: title })}
           color="#fff"
         />
       </View>

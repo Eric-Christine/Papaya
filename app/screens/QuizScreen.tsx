@@ -74,6 +74,7 @@ const climateQuizQuestions = [
     options: ["Using renewable energy", "Increasing fossil fuel use", "Deforestation", "Overfishing"],
     correctAnswer: 0,
   },
+  
 ];
 
 const energyQuizQuestions = [
@@ -106,7 +107,17 @@ const energyQuizQuestions = [
       "Limiting the development of renewable energy technology",
     ],
     correctAnswer: 0,
-  },
+  },{
+    question: "Which energy storage technology is most commonly used in both electric vehicles and grid-scale systems?",
+    options: [
+      "Pumped Hydro Storage",
+      "Thermal Storage",
+      "Battery Storage",
+      "Flywheel Storage",
+    ],
+    correctAnswer: 2,
+  }
+  
 ];
 
 
@@ -269,7 +280,7 @@ const lessonLower = lesson?.toLowerCase() || "";
 // Choose the correct quiz questions based on lesson keywords.
 const quizQuestions = lessonLower.includes("sustainable living")
   ? sustainableLivingQuizQuestions
-  : lessonLower.includes("solar power")
+  : lessonLower.includes("energy storage")
     ? energyQuizQuestions
     : climateQuizQuestions;
 
