@@ -506,11 +506,11 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(46, 125, 50, 0.1)',
   },
   questionText: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: '700',
     color: '#1B5E20',
     textAlign: 'center',
-    lineHeight: 30,
+    lineHeight: 24,
   },
   optionsContainer: {
     width: '100%',
@@ -518,9 +518,9 @@ const styles = StyleSheet.create({
   },
   optionButton: {
     backgroundColor: '#FFFFFF',
-    padding: 18,
+    padding: 14,
     borderRadius: 12,
-    marginBottom: 12,
+    marginBottom: 8,
     borderWidth: 2,
     borderColor: '#E0E0E0',
     transform: [{ scale: 1 }],
@@ -537,21 +537,21 @@ const styles = StyleSheet.create({
   optionCorrect: {
     backgroundColor: '#81C784',
     borderColor: '#2E7D32',
-    transform: [{ scale: 1.02 }],
+    // transform: [{ scale: 1.02 }],
   },
   optionIncorrect: {
     backgroundColor: '#EF9A9A',
     borderColor: '#C62828',
-    transform: [{ scale: 0.98 }],
+    // transform: [{ scale: 0.98 }],
   },
   optionText: {
-    fontSize: 17,
+    fontSize: 16,
     color: '#424242',
-    lineHeight: 24,
+    lineHeight: 20,
     fontWeight: '500',
   },
   feedbackCorrect: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '700',
     color: '#2E7D32',
     marginVertical: 16,
@@ -560,10 +560,10 @@ const styles = StyleSheet.create({
     textShadowRadius: 2,
   },
   feedbackIncorrect: {
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: '700',
     color: '#C62828',
-    marginVertical: 16,
+    marginVertical: 4,
     opacity: 0.9,
   },
   nextButtonContainer: {

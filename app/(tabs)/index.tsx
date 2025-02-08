@@ -3,6 +3,8 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import 'react-native-get-random-values';
+
 
 // Screens
 import LessonsScreen from '../screens/LessonsScreen';
@@ -10,6 +12,7 @@ import LessonDetailScreen from '../screens/LessonDetailScreen';
 import QuizScreen from '../screens/QuizScreen';
 import RewardsScreen from '../screens/RewardsScreen';
 import ProfileScreen from '../screens/ProfileScreen';
+import GardenScreen from '../screens/GardenScreen'; // GardenScreen import
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -67,6 +70,16 @@ export default function AppTabs() {
           title: 'Rewards',
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="gift" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Garden"
+        component={GardenScreen}
+        options={{
+          title: 'Garden',
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="tree" size={size} color={color} />
           ),
         }}
       />
