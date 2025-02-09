@@ -64,10 +64,10 @@ export default function AppTabs() {
         }}
       />
       <Tab.Screen
-        name="Rewards"
+        name="Shop"
         component={RewardsScreen}
         options={{
-          title: 'Rewards',
+          title: 'Shop',
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="gift" size={size} color={color} />
           ),

@@ -122,7 +122,7 @@ export default function RewardsScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.header}>Garden Rewards</Text>
+      <Text style={styles.header}>Garden Shop</Text>
       <Text style={styles.seedCount}>Seeds: {user.seeds}</Text>
       <Text style={styles.lessonCount}>Lessons Completed: {user.lessonsCompleted}</Text>
 
