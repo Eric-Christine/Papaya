@@ -6,9 +6,12 @@ import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useFonts } from 'expo-font';
 import 'react-native-reanimated';
+import * as Haptics from 'expo-haptics'; // Import Expo Haptics
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { UserProvider } from './contexts/UserContext';
+import { HapticTab } from '@/components/HapticTab'; // (This is used in your tabs layout)
+
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -22,6 +25,8 @@ export default function RootLayout() {
   useEffect(() => {
     if (loaded) {
       SplashScreen.hideAsync();
+      // Trigger a light haptic impact when the app finishes loading
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     }
   }, [loaded]);
 

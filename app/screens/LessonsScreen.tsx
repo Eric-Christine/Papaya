@@ -50,7 +50,7 @@ export default function LessonsScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Sustainability Lessons</Text>
+      <Text style={styles.header}>Lessons</Text>
       <FlatList
         data={lessons}
         keyExtractor={(item) => item.id}
@@ -64,16 +64,17 @@ export default function LessonsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5', // Light background to avoid a black screen
+    backgroundColor:'#F0F4F7',// Light background to avoid a black screen
     padding: 16,
   },
   header: {
-    fontSize: 26,
-    fontWeight: 'bold',
+    fontSize: 28,
+    fontWeight: '700',
+    color: '#00695c',
+    marginBottom: 15,
     textAlign: 'center',
-    color: '#2E7D32',
-    marginBottom: 20,
   },
+ 
   listContent: {
     paddingBottom: 20,
   },

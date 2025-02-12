@@ -21,6 +21,7 @@ const ProfileScreen: React.FC = () => {
         <Image source={{ uri: user.avatar }} style={styles.avatar} />
         <Text style={styles.name}>{user.name}</Text>
         <Text style={styles.email}>{user.email}</Text>
+        <Text style={styles.email}> lessons completed: {user.lessonsCompleted}</Text>
       </View>
 
       {/* User Statistics */}
@@ -31,7 +32,7 @@ const ProfileScreen: React.FC = () => {
         </View>
         <View style={styles.statItem}>
           <Text style={styles.statValue}>{user.seeds} 🌱</Text>
-          <Text style={styles.statLabel}>Seeds</Text>
+          <Text style={styles.statLabel}>Seeds Earned</Text>
         </View>
       </View>
 

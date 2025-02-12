@@ -4,7 +4,8 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import 'react-native-get-random-values';
-
+import { TouchableOpacity, GestureResponderEvent, StyleSheet } from 'react-native';
+import * as Haptics from 'expo-haptics';
 
 // Screens
 import LessonsScreen from '../screens/LessonsScreen';
@@ -12,10 +13,45 @@ import LessonDetailScreen from '../screens/LessonDetailScreen';
 import QuizScreen from '../screens/QuizScreen';
 import RewardsScreen from '../screens/RewardsScreen';
 import ProfileScreen from '../screens/ProfileScreen';
-import GardenScreen from '../screens/GardenScreen'; // GardenScreen import
+import GardenScreen from '../screens/GardenScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
+
+/**
+ * Custom HapticTab Component
+ * This component wraps the default tab bar button and triggers haptic feedback
+ * when the user presses the tab.
+ */
+const HapticTab = ({
+  onPress,
+  accessibilityState,
+  children,
+}: {
+  onPress: (event: GestureResponderEvent) => void;
+  accessibilityState?: { selected: boolean };
+  children: React.ReactNode;
+}) => {
+  const handlePress = (event: GestureResponderEvent) => {
+    // Trigger a light haptic impact on press
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    onPress(event);
+  };
+
+  return (
+    <TouchableOpacity onPress={handlePress} style={styles.hapticTabContainer}>
+      {children}
+    </TouchableOpacity>
+  );
+};
+
+const styles = StyleSheet.create({
+  hapticTabContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
 
 // Create a stack navigator for Lessons (with LessonDetail and Quiz screens)
 const LessonsStackNavigator = () => {
@@ -46,6 +82,9 @@ export default function AppTabs() {
       screenOptions={{
         tabBarActiveTintColor: '#2E7D32',
         tabBarInactiveTintColor: 'gray',
+        // Use our custom HapticTab for every tab button.
+        // This ensures that each time a tab is pressed, haptic feedback is triggered.
+        tabBarButton: (props) => <HapticTab {...props} />,
       }}
     >
       <Tab.Screen

@@ -112,8 +112,7 @@ Key facts about solar energy worldwide:
 
 Supported by robust government incentives, increasing private investment, and a global commitment to reducing carbon footprints, solar energy stands as a beacon of hope for a sustainable, resilient future.`;
 
-const energyStorageContent = `
-Energy Storage is a critical component of our clean energy future. In this lesson, you'll learn about the key technologies transforming our power systems and witness how innovative deployments across the globe are paving the way for a more sustainable energy landscape.
+const energyStorageContent = `Energy Storage is a critical component of our clean energy future. In this lesson, you'll learn about the key technologies transforming our power systems and witness how innovative deployments across the globe are paving the way for a more sustainable energy landscape.
 
 • Battery Storage: 
    - The most common form of energy storage, vital for both electric vehicles and grid-scale applications.

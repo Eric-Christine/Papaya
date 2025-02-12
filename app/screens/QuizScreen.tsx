@@ -1,3 +1,4 @@
+// app/screens/QuizScreen.tsx
 import React, { useState, useContext, useRef, useEffect } from 'react';
 import { 
   View, 
@@ -11,6 +12,7 @@ import {
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { UserContext } from '../contexts/UserContext';
+import * as Haptics from 'expo-haptics'; // Import Expo Haptics
 
 // -----------------------------------------------------------------------------
 // Quiz Questions
@@ -74,7 +76,6 @@ const climateQuizQuestions = [
     options: ["Using renewable energy", "Increasing fossil fuel use", "Deforestation", "Overfishing"],
     correctAnswer: 0,
   },
-  
 ];
 
 const energyQuizQuestions = [
@@ -107,7 +108,8 @@ const energyQuizQuestions = [
       "Limiting the development of renewable energy technology",
     ],
     correctAnswer: 0,
-  },{
+  },
+  {
     question: "Which energy storage technology is most commonly used in both electric vehicles and grid-scale systems?",
     options: [
       "Pumped Hydro Storage",
@@ -117,11 +119,7 @@ const energyQuizQuestions = [
     ],
     correctAnswer: 2,
   }
-  
 ];
-
-
-
 
 // -----------------------------------------------------------------------------
 // SeedReward Animation Component (for individual answer feedback)
@@ -273,19 +271,13 @@ export default function QuizScreen() {
   const { lesson } = route.params || {};
 
   // Choose quiz questions based on lesson type
+  const lessonLower = lesson?.toLowerCase() || "";
+  const quizQuestions = lessonLower.includes("sustainable living")
+    ? sustainableLivingQuizQuestions
+    : lessonLower.includes("energy storage")
+      ? energyQuizQuestions
+      : climateQuizQuestions;
 
-// Create a lowercase version of the lesson for easier comparisons.
-const lessonLower = lesson?.toLowerCase() || "";
-
-// Choose the correct quiz questions based on lesson keywords.
-const quizQuestions = lessonLower.includes("sustainable living")
-  ? sustainableLivingQuizQuestions
-  : lessonLower.includes("energy storage")
-    ? energyQuizQuestions
-    : climateQuizQuestions;
-
-  
-  // Context functions to update seeds and lesson completion
   const { addSeeds, incrementLessons } = useContext(UserContext);
 
   // Quiz state
@@ -323,6 +315,12 @@ const quizQuestions = lessonLower.includes("sustainable living")
   };
 
   const handleButtonPress = () => {
+    // --------------------------------------------------------------------------
+    // Trigger Haptic Feedback on button press
+    // --------------------------------------------------------------------------
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    // --------------------------------------------------------------------------
+    
     if (!answerChecked) {
       // Check the answer
       setAnswerChecked(true);
@@ -374,7 +372,6 @@ const quizQuestions = lessonLower.includes("sustainable living")
   };
 
   // Define the starting position for the finish animation.
-  // This example assumes the seed tally is displayed centered near the top.
   const finishAnimationStartPosition = {
     top: 40,
     left: Dimensions.get('window').width / 2 - 50,
@@ -383,7 +380,7 @@ const quizQuestions = lessonLower.includes("sustainable living")
   const buttonLabel = !answerChecked ? "Check" : "Continue";
 
   return (
-    // Ensure the container is positioned relatively so the animated elements (absolute) overlay correctly.
+    // Ensure the container is positioned relatively so the animated elements overlay correctly.
     <ScrollView contentContainerStyle={[styles.container, { position: 'relative' }]}>
       {quizCompleted ? (
         <View style={styles.scoreContainer}>
@@ -392,13 +389,11 @@ const quizQuestions = lessonLower.includes("sustainable living")
           <Text style={styles.scoreText}>
             Correct Answers: {correctCount} / {quizQuestions.length}
           </Text>
-          {/* If finish animation hasn't been triggered, show the Finish button */}
           {!isFinishAnimating && (
             <View style={styles.finishButton}>
               <Button title="Finish" onPress={handleFinishPress} color="#fff" />
             </View>
           )}
-          {/* Render finish animation overlay when triggered */}
           {isFinishAnimating && (
             <FinishSeedAnimation
               count={score}
@@ -409,9 +404,7 @@ const quizQuestions = lessonLower.includes("sustainable living")
         </View>
       ) : (
         <View style={styles.quizContainer}>
-          {/* Real-time Seeds Tally */}
           <Text style={styles.xpText}>Seeds: {score} 🌱</Text>
-          {/* Render individual seed animations */}
           {seedAnimations.map(animation => (
             <SeedReward
               key={animation.id}
@@ -537,12 +530,10 @@ const styles = StyleSheet.create({
   optionCorrect: {
     backgroundColor: '#81C784',
     borderColor: '#2E7D32',
-    // transform: [{ scale: 1.02 }],
   },
   optionIncorrect: {
     backgroundColor: '#EF9A9A',
     borderColor: '#C62828',
-    // transform: [{ scale: 0.98 }],
   },
   optionText: {
     fontSize: 16,
