@@ -138,6 +138,14 @@ Worldwide, energy storage deployments are accelerating as nations strive to deca
 
 This lesson explores how each of these technologies and deployments is revolutionizing the way we store energy to power our homes, businesses, and entire cities—ensuring a resilient and sustainable energy future for all.
 `;
+const carbonFootprintContent = `Understanding Your Carbon Footprint is key to sustainable living. This lesson explores what it means and how you can reduce it:
+
+• Definition: Your carbon footprint measures the total greenhouse gases, like carbon dioxide (CO₂) and methane (CH₄), emitted directly or indirectly by your activities—everything from driving to eating.
+• Global Impact: The average person's carbon footprint varies widely—e.g., 0.1 tons of CO₂ equivalent (CO2e) per year in Madagascar versus 14.7 tons in the United States—highlighting lifestyle and regional differences.
+• Sources: Major contributors include transportation (e.g., car emissions), energy use (e.g., electricity from fossil fuels), and consumption (e.g., food production and waste).
+• Reduction Strategies: Practical steps include using public transport, switching to renewable energy, reducing meat consumption, and minimizing waste through recycling and reuse.
+
+By grasping your carbon footprint, you’ll uncover actionable ways to lower your environmental impact and contribute to a healthier planet.`;
 
   // Determine content and next button based on title
   let content = `This is the content for the ${title} lesson.`;
@@ -278,6 +286,17 @@ This lesson explores how each of these technologies and deployments is revolutio
     );
   } else if (title === 'Energy Storage') {
     content = energyStorageContent;
+    nextButton = (
+      <View style={styles.buttonContainer}>
+        <Button
+          title="Quiz"
+          onPress={() => navigation.navigate('Quiz', { lesson: title })}
+          color="#fff"
+        />
+      </View>
+    );
+  } else if (title === 'Carbon Footprint') {
+    content = carbonFootprintContent;
     nextButton = (
       <View style={styles.buttonContainer}>
         <Button

@@ -120,6 +120,48 @@ const energyQuizQuestions = [
     correctAnswer: 2,
   }
 ];
+const carbonFootprintQuestions = [
+  {
+    question: "What does your carbon footprint measure?",
+    options: [
+      "The distance you travel daily",
+      "The total greenhouse gases emitted by your activities",
+      "The amount of energy you store",
+      "The number of trees you plant",
+    ],
+    correctAnswer: 1,
+  },
+  {
+    question: "Which activity is a major contributor to your carbon footprint?",
+    options: [
+      "Reading books",
+      "Using public transportation",
+      "Driving a gasoline-powered car",
+      "Drinking water",
+    ],
+    correctAnswer: 2,
+  },
+  {
+    question: "How can you reduce your carbon footprint?",
+    options: [
+      "Increase meat consumption",
+      "Switch to renewable energy sources",
+      "Use more single-use plastics",
+      "Drive more frequently",
+    ],
+    correctAnswer: 1,
+  },
+  {
+    question: "Why does the carbon footprint vary globally?",
+    options: [
+      "Due to differences in lifestyle and energy sources",
+      "Because of the number of people in each country",
+      "Due to the size of the country",
+      "Because everyone measures it differently",
+    ],
+    correctAnswer: 0,
+  },
+];
 
 // -----------------------------------------------------------------------------
 // SeedReward Animation Component (for individual answer feedback)
@@ -276,6 +318,8 @@ export default function QuizScreen() {
     ? sustainableLivingQuizQuestions
     : lessonLower.includes("energy storage")
       ? energyQuizQuestions
+    : lessonLower.includes("carbon footprint")
+      ? carbonFootprintQuestions
       : climateQuizQuestions;
 
   const { addSeeds, incrementLessons } = useContext(UserContext);
