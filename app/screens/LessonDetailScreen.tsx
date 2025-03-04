@@ -7,13 +7,14 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
+import GoBackToLessonsButton from '../components/GoBackToLessonsButton';
 
 export default function LessonDetailScreen({ route, navigation }) {
   const { title = 'Climate Basics' } = route.params || {};
 
-  // Content for Climate Change lessons (omitted here for brevity – keep your content strings)
+  // Content for lessons (unchanged from your original file)
   const climateBasicsContent = `Climate Basics covers the fundamentals of climate science, including:
-  
+
 • The Greenhouse Effect: How gases like carbon dioxide, methane, and water vapor trap heat in the atmosphere.
 • Human Impact: How burning fossil fuels, deforestation, and industrial processes contribute to climate change.
 • Consequences: The impacts of climate change such as rising temperatures, melting ice caps, and extreme weather events.
@@ -22,7 +23,7 @@ export default function LessonDetailScreen({ route, navigation }) {
 This lesson introduces you to the key concepts of our changing climate.`;
 
   const greenhouseGasesContent = `Greenhouse Gases are the primary contributors to global warming. In this lesson, you'll learn:
-  
+
 • Key Gases: Such as carbon dioxide (CO₂), methane (CH₄), and nitrous oxide (N₂O).
 • Sources: How both natural processes and human activities release these gases.
 • Impact: The role these gases play in trapping heat and influencing global temperatures.
@@ -31,7 +32,7 @@ This lesson introduces you to the key concepts of our changing climate.`;
 Understanding greenhouse gases is essential for grasping the scale of climate change.`;
 
   const humanImpactContent = `Human Impact examines how human activities affect our planet. In this lesson, you'll discover:
-  
+
 • Environmental Degradation: The effects of pollution, deforestation, and resource depletion.
 • Social & Economic Factors: How environmental changes influence communities and economies.
 • Sustainability Challenges: The complexities of balancing development with conservation.
@@ -40,7 +41,7 @@ Understanding greenhouse gases is essential for grasping the scale of climate ch
 This lesson shows why understanding human impact is crucial to building a sustainable future.`;
 
   const consequencesContent = `Consequences of Climate Change focus on the real-world impacts, including:
-  
+
 • Rising Sea Levels: Threatening coastal communities and ecosystems.
 • Extreme Weather Events: Increasing frequency and intensity of hurricanes, floods, droughts, and wildfires.
 • Biodiversity Loss: The decline of species unable to adapt to rapid environmental changes.
@@ -49,7 +50,7 @@ This lesson shows why understanding human impact is crucial to building a sustai
 This lesson explains the wide-ranging effects that climate change has on our world.`;
 
   const solutionsContent = `Solutions to Climate Change explore practical ways to address environmental challenges, including:
-  
+
 • Renewable Energy: Transitioning to wind, solar, and other clean energy sources.
 • Energy Efficiency: Implementing technologies and practices that reduce energy consumption.
 • Conservation and Reforestation: Protecting ecosystems and restoring natural habitats.
@@ -58,7 +59,7 @@ This lesson explains the wide-ranging effects that climate change has on our wor
 This lesson provides insights into how we can work together to build a more sustainable future.`;
 
   const sustainableLivingContent = `Sustainable Living Fundamentals explores how individual choices create collective impact. This comprehensive introduction covers:
-  
+
 • Carbon Footprint Awareness: The average person's carbon footprint varies significantly by region - from 0.1 tons CO2e in Madagascar to 14.7 tons in the United States annually. Understanding your personal impact is the first step to reduction.
 • Circular Economy Participation: Moving beyond the "take-make-waste" model to embrace repair, sharing, and reuse. The global circular economy could reduce annual greenhouse gas emissions by 39% and raw material use by 28% by 2032.
 • Sustainable Consumer Choices: With 72% of global greenhouse gas emissions linked to household consumption, your purchasing decisions matter. Learn to evaluate products based on their full lifecycle impact.
@@ -67,14 +68,14 @@ This lesson provides insights into how we can work together to build a more sust
 This foundation will transform how you think about daily choices and their broader environmental impact.`;
 
   const wasteReductionContent = `Waste Reduction Strategies addresses our global waste crisis through practical solutions:
-  
+
 • Zero-Waste Living: Beyond basic recycling to precycling - preventing waste before it occurs. With global waste expected to increase 73% by 2050, prevention is crucial.
 • Food Waste Solutions: Using AI-powered apps for meal planning, understanding date labels, and composting. Food waste contributes 8-10% of global greenhouse gas emissions.
 • Plastic-Free Living: Practical alternatives to single-use plastics, including new materials like mycelium packaging and seaweed-based alternatives. Only 9% of plastic ever produced has been recycled.
 • Digital Decluttering: The hidden environmental cost of data storage - the internet's carbon footprint equals that of global air travel. Learn digital minimalism practices.`;
 
   const energyEfficiencyContent = `Energy Efficiency for the Modern Home combines traditional wisdom with cutting-edge technology:
-  
+
 • Smart Home Integration: Beyond basic LED bulbs - using AI-powered systems to optimize energy use. Smart home technology can reduce energy consumption by 20-30%.
 • Passive Design Principles: Working with natural light and ventilation to reduce energy needs. Proper implementation can cut heating and cooling costs by 40%.
 • Renewable Energy Integration: From community solar projects to heat pumps, understanding the latest in clean energy technology. Heat pump adoption could reduce global CO2 emissions by 500 million tons by 2030.
@@ -90,9 +91,9 @@ This lesson empowers you with knowledge to significantly reduce home energy cons
 • Energy Storage: Innovations in batteries, pumped hydro storage, and other storage technologies help balance supply and demand.
 • Future Trends: Emerging technologies such as hydrogen fuel cells and smart grid systems are set to further revolutionize how we generate and use energy.
 
-This lesson explores how we use different energy sources to power our homes and businesses.`; 
+This lesson explores how we use different energy sources to power our homes and businesses.`;
 
-const nuclearEnergyContent = `Although nuclear power may spark debate, it remains a key pillar in our renewable energy transition. Embracing its potential, nuclear energy offers a low-carbon, reliable, and highly efficient source of electricity. In the United States, 93 reactors generate around 20% of our power, playing a vital role in stabilizing our energy supply while significantly reducing greenhouse gas emissions.
+  const nuclearEnergyContent = `Although nuclear power may spark debate, it remains a key pillar in our renewable energy transition. Embracing its potential, nuclear energy offers a low-carbon, reliable, and highly efficient source of electricity. In the United States, 93 reactors generate around 20% of our power, playing a vital role in stabilizing our energy supply while significantly reducing greenhouse gas emissions.
 
 Key facts about nuclear energy worldwide:
 • France relies on nuclear power for about 70% of its electricity, showcasing the success of a long-term commitment to nuclear technology.
@@ -102,7 +103,7 @@ Key facts about nuclear energy worldwide:
 
 With the rigorous oversight of the US Nuclear Regulatory Commission (NRC) and continuous innovation in reactor design, nuclear energy inspires hope for a cleaner, more sustainable future.`;
 
-const solarEnergyContent = `Solar power is transforming our energy future by tapping into the vast, renewable energy of the sun. Rapid technological advances and declining installation costs have made solar energy a cornerstone of the transition to cleaner power sources. Across the globe, solar installations are not only reducing greenhouse gas emissions but also promoting energy independence and local economic growth.
+  const solarEnergyContent = `Solar power is transforming our energy future by tapping into the vast, renewable energy of the sun. Rapid technological advances and declining installation costs have made solar energy a cornerstone of the transition to cleaner power sources. Across the globe, solar installations are not only reducing greenhouse gas emissions but also promoting energy independence and local economic growth.
 
 Key facts about solar energy worldwide:
 • Germany, China, and the United States are leading the way, with large-scale solar farms and residential rooftop systems contributing to a significant share of each country's renewable capacity.
@@ -112,9 +113,9 @@ Key facts about solar energy worldwide:
 
 Supported by robust government incentives, increasing private investment, and a global commitment to reducing carbon footprints, solar energy stands as a beacon of hope for a sustainable, resilient future.`;
 
-const energyStorageContent = `Energy Storage is a critical component of our clean energy future. In this lesson, you'll learn about the key technologies transforming our power systems and witness how innovative deployments across the globe are paving the way for a more sustainable energy landscape.
+  const energyStorageContent = `Energy Storage is a critical component of our clean energy future. In this lesson, you'll learn about the key technologies transforming our power systems and witness how innovative deployments across the globe are paving the way for a more sustainable energy landscape.
 
-• Battery Storage: 
+• Battery Storage:
    - The most common form of energy storage, vital for both electric vehicles and grid-scale applications.
    - Rapid advancements in lithium-ion and emerging solid-state batteries are being deployed in countries like the United States, South Korea, and Australia.
    - Notably, China leads in both manufacturing and large-scale battery installations, driving cost reductions and performance improvements worldwide.
@@ -138,7 +139,7 @@ Worldwide, energy storage deployments are accelerating as nations strive to deca
 This lesson explores how each of these technologies and deployments is revolutionizing the way we store energy to power our homes, businesses, and entire cities—ensuring a resilient and sustainable energy future for all.
 `;
 
-  // Determine which content to display and which next button to show based on the lesson title
+  // Determine content and next button based on title
   let content = `This is the content for the ${title} lesson.`;
   let nextButton = null;
 
@@ -296,11 +297,7 @@ This lesson explores how each of these technologies and deployments is revolutio
       </View>
       {nextButton}
       <View style={styles.secondaryButtonContainer}>
-        <Button
-          title="Go Back to Lessons"
-          onPress={() => navigation.goBack()}
-          color="#00695c"
-        />
+        <GoBackToLessonsButton />
       </View>
     </ScrollView>
   );
@@ -326,12 +323,10 @@ const styles = StyleSheet.create({
     padding: 20,
     width: '100%',
     marginBottom: 20,
-    // iOS shadow
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.15,
     shadowRadius: 4,
-    // Android shadow
     elevation: 3,
   },
   description: {
@@ -352,4 +347,3 @@ const styles = StyleSheet.create({
     width: '100%',
   },
 });
-
