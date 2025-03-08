@@ -1,4 +1,3 @@
-// app/screens/LessonsScreen.tsx
 import React from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -29,6 +28,12 @@ const lessons = [
     title: 'Carbon Footprint',
     description: 'Find out how to calculate and reduce your carbon footprint.',
     icon: 'foot-print',
+  },
+  {
+    id: '5',
+    title: 'Electric Vehicles (EVs)',
+    description: 'Explore how EVs reduce emissions and contribute to a sustainable transportation future.',
+    icon: 'car-electric',
   },
 ];
 
@@ -64,7 +69,7 @@ export default function LessonsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor:'#F0F4F7',// Light background to avoid a black screen
+    backgroundColor: '#F0F4F7', // Light background to avoid a black screen
     padding: 16,
   },
   header: {
@@ -74,7 +79,6 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     textAlign: 'center',
   },
- 
   listContent: {
     paddingBottom: 20,
   },
