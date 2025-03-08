@@ -15,7 +15,7 @@ import { UserContext } from '../contexts/UserContext';
 import * as Haptics from 'expo-haptics'; // Import Expo Haptics
 
 // -----------------------------------------------------------------------------
-// Quiz Questions
+// Quiz Questions with explanations for each question
 // -----------------------------------------------------------------------------
 const sustainableLivingQuizQuestions = [
   {
@@ -27,6 +27,7 @@ const sustainableLivingQuizQuestions = [
       "The cost of carbon-based products you buy",
     ],
     correctAnswer: 1,
+    explanation: "It represents the total amount of greenhouse gases produced by your daily activities.",
   },
   {
     question: "Which statement best describes a circular economy?",
@@ -37,11 +38,13 @@ const sustainableLivingQuizQuestions = [
       "An economy that ignores environmental impact",
     ],
     correctAnswer: 1,
+    explanation: "A circular economy minimizes waste by keeping resources in use for as long as possible.",
   },
   {
     question: "Approximately what percentage of global greenhouse gas emissions is linked to household consumption?",
     options: ["50%", "72%", "30%", "90%"],
     correctAnswer: 1,
+    explanation: "Household consumption is linked to roughly 72% of global greenhouse gas emissions.",
   },
   {
     question: "How does community engagement contribute to sustainable living?",
@@ -52,6 +55,7 @@ const sustainableLivingQuizQuestions = [
       "By focusing solely on personal benefits",
     ],
     correctAnswer: 1,
+    explanation: "Community engagement amplifies individual actions through collective local initiatives.",
   },
 ];
 
@@ -60,21 +64,25 @@ const climateQuizQuestions = [
     question: "What is the primary greenhouse gas responsible for global warming?",
     options: ["Carbon Dioxide", "Oxygen", "Nitrogen", "Helium"],
     correctAnswer: 0,
+    explanation: "Carbon Dioxide is the main greenhouse gas contributing to global warming.",
   },
   {
     question: "Which human activity significantly contributes to climate change?",
     options: ["Reading", "Burning fossil fuels", "Sleeping", "Walking"],
     correctAnswer: 1,
+    explanation: "Burning fossil fuels releases large amounts of CO₂, a major greenhouse gas.",
   },
   {
     question: "What is a common consequence of climate change?",
     options: ["Rising sea levels", "Decreased temperatures", "More snowfall", "Less extreme weather"],
     correctAnswer: 0,
+    explanation: "One consequence of climate change is rising sea levels due to melting ice caps.",
   },
   {
     question: "Which solution is most effective in mitigating climate change?",
     options: ["Using renewable energy", "Increasing fossil fuel use", "Deforestation", "Overfishing"],
     correctAnswer: 0,
+    explanation: "Transitioning to renewable energy sources is key to mitigating climate change.",
   },
 ];
 
@@ -88,6 +96,7 @@ const energyQuizQuestions = [
       "Energy produced solely from nuclear power",
     ],
     correctAnswer: 1,
+    explanation: "The energy mix is the combination of different energy sources used to produce power.",
   },
   {
     question: "Which factor most influences a country's energy mix?",
@@ -98,6 +107,7 @@ const energyQuizQuestions = [
       "The number of automobiles on the road",
     ],
     correctAnswer: 0,
+    explanation: "A country's geographical location and natural resource availability largely determine its energy mix.",
   },
   {
     question: "What is one of the primary benefits of diversifying a nation's energy mix?",
@@ -108,6 +118,7 @@ const energyQuizQuestions = [
       "Limiting the development of renewable energy technology",
     ],
     correctAnswer: 0,
+    explanation: "Diversification reduces dependency on any one energy source, leading to improved stability.",
   },
   {
     question: "Which energy storage technology is most commonly used in both electric vehicles and grid-scale systems?",
@@ -118,8 +129,10 @@ const energyQuizQuestions = [
       "Flywheel Storage",
     ],
     correctAnswer: 2,
+    explanation: "Battery storage is the most widely used technology for electric vehicles and grid-scale energy storage.",
   }
 ];
+
 const carbonFootprintQuestions = [
   {
     question: "What does your carbon footprint measure?",
@@ -130,6 +143,7 @@ const carbonFootprintQuestions = [
       "The number of trees you plant",
     ],
     correctAnswer: 1,
+    explanation: "It measures the total greenhouse gases emitted by your personal activities.",
   },
   {
     question: "Which activity is a major contributor to your carbon footprint?",
@@ -140,6 +154,7 @@ const carbonFootprintQuestions = [
       "Drinking water",
     ],
     correctAnswer: 2,
+    explanation: "Driving a gasoline-powered car is one of the main contributors to a higher carbon footprint.",
   },
   {
     question: "How can you reduce your carbon footprint?",
@@ -150,6 +165,7 @@ const carbonFootprintQuestions = [
       "Drive more frequently",
     ],
     correctAnswer: 1,
+    explanation: "Switching to renewable energy sources can significantly reduce your carbon footprint.",
   },
   {
     question: "Why does the carbon footprint vary globally?",
@@ -160,6 +176,37 @@ const carbonFootprintQuestions = [
       "Because everyone measures it differently",
     ],
     correctAnswer: 0,
+    explanation: "Differences in lifestyle and the types of energy used contribute to global variations in carbon footprints.",
+  },
+];
+
+const solarPowerQuestions = [
+  {
+    question: "True or False: Solar panels are an intermittent form of energy.",
+    options: [
+      "True",
+      "False"
+    ],
+    correctAnswer: 0,
+    explanation: "Solar panels rely on sunlight, making them intermittent compared to constant energy sources.",
+  },
+  {
+    question: "True or False: Solar panels are the most expensive form of electricity generation",
+    options: [
+      "True",
+      "False"
+    ],
+    correctAnswer: 1,
+    explanation: "While the initial installation cost may be high, solar panels are among the most cost-effective over time.",
+  },
+  {
+    question: "True or false: Solar panels can generate electricity on cloudy days.",
+    options: [
+      "True",
+      "False"
+    ],
+    correctAnswer: 0,
+    explanation: "Solar panels can still generate electricity on cloudy days, though at reduced efficiency.",
   },
 ];
 
@@ -319,8 +366,10 @@ export default function QuizScreen() {
     : lessonLower.includes("energy storage")
       ? energyQuizQuestions
     : lessonLower.includes("carbon footprint")
-      ? carbonFootprintQuestions
-      : climateQuizQuestions;
+      ? carbonFootprintQuestions 
+    : lessonLower.includes("solar power")
+      ? solarPowerQuestions
+    : climateQuizQuestions; // Default to climate quiz
 
   const { addSeeds, incrementLessons } = useContext(UserContext);
 
@@ -333,6 +382,7 @@ export default function QuizScreen() {
   const [answerChecked, setAnswerChecked] = useState(false);
   const [feedbackText, setFeedbackText] = useState('');
   const [isAnswerCorrect, setIsAnswerCorrect] = useState<boolean | null>(null);
+  const [bonusAwarded, setBonusAwarded] = useState(false); // New state for bonus feedback
 
   // State for seed animations (for answer feedback)
   const [seedAnimations, setSeedAnimations] = useState<SeedAnimation[]>([]);
@@ -397,7 +447,13 @@ export default function QuizScreen() {
       if (currentQuestionIndex < quizQuestions.length - 1) {
         setCurrentQuestionIndex(prev => prev + 1);
       } else {
-        // Mark the lesson as complete and finish the quiz
+        // Final question answered: if all answers are correct, double the seeds.
+        if (correctCount === quizQuestions.length) {
+          const bonus = score; // bonus equals current score
+          setScore(score + bonus);
+          addSeeds(bonus);
+          setBonusAwarded(true);
+        }
         incrementLessons();
         setQuizCompleted(true);
       }
@@ -433,6 +489,11 @@ export default function QuizScreen() {
           <Text style={styles.scoreText}>
             Correct Answers: {correctCount} / {quizQuestions.length}
           </Text>
+          {bonusAwarded && (
+            <Text style={styles.bonusFeedback}>
+              Amazing! All correct answers - your seeds have been doubled!
+            </Text>
+          )}
           {!isFinishAnimating && (
             <View style={styles.finishButton}>
               <Button title="Finish" onPress={handleFinishPress} color="#fff" />
@@ -486,6 +547,12 @@ export default function QuizScreen() {
           {answerChecked && feedbackText !== '' && (
             <Text style={isAnswerCorrect ? styles.feedbackCorrect : styles.feedbackIncorrect}>
               {feedbackText}
+            </Text>
+          )}
+          {/* Inline explanation for incorrect answers */}
+          {answerChecked && isAnswerCorrect === false && currentQuestion.explanation && (
+            <Text style={styles.explanationText}>
+              Correct Answer: {currentQuestion.options[currentQuestion.correctAnswer]} - {currentQuestion.explanation}
             </Text>
           )}
           <View style={styles.nextButtonContainer}>
@@ -600,6 +667,19 @@ const styles = StyleSheet.create({
     color: '#C62828',
     marginVertical: 4,
     opacity: 0.9,
+  },
+  explanationText: {
+    fontSize: 16,
+    color: '#424242',
+    marginVertical: 8,
+    textAlign: 'center',
+  },
+  bonusFeedback: {
+    fontSize: 18,
+    color: '#2E7D32',
+    fontWeight: '700',
+    marginVertical: 12,
+    textAlign: 'center',
   },
   nextButtonContainer: {
     width: '100%',

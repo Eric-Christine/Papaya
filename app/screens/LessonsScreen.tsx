@@ -35,6 +35,30 @@ const lessons = [
     description: 'Explore how EVs reduce emissions and contribute to a sustainable transportation future.',
     icon: 'car-electric',
   },
+  {
+    id: '6',
+    title: 'Agriculture & Food',
+    description: 'Learn about the environmental impact of food production and how to eat sustainably.',
+    icon: 'food-apple',
+  },
+  {
+    id: '7',
+    title: 'Achievements',
+    description: 'Learn about our progress so far',
+    icon: 'trophy',
+  },
+  {
+    id: '8',
+    title: 'Organizations',
+    description: 'Organizations that are making a difference',
+    icon: 'office-building',
+  },
+  {
+    id: '9',
+    title: 'Solar Power',
+    description: 'Learn about how solar power and debunk common myths', 
+    icon: 'solar-power',
+  },
 ];
 
 export default function LessonsScreen() {
