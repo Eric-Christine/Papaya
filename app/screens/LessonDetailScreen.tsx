@@ -73,9 +73,9 @@ By grasping your carbon footprint, you’ll uncover actionable ways to lower you
   const carbonFootprintContent3 = `Criticisms and Limitations: While carbon footprints are a useful tool, they have limitations. For example, they may not account for all emissions, and some calculations can be complex or imprecise.`;
 
   // New Achievements content split into three parts
-  const achievementsContentPart1 = `Achievements: Recent progress in climate policy and consumer behavior includes:
-• Policy Milestones: New international agreements like the 2015 Paris Climate Accords, and national commitments to reduce emissions.
-• Consumer Shifts: More consumers are embracing renewable energy, sustainable transportation, and eco-friendly products.`;
+  const achievementsContentPart1 = `Recent progress in climate policy and consumer behavior includes: \n
+Policy Milestones: \n • New international agreements like the 2015 Paris Climate Accords, and national commitments to reduce emissions.
+\nConsumer Shifts: More consumers are embracing renewable energy, sustainable transportation, and eco-friendly products.`;
   const achievementsContentPart2 = `• Technological Innovations: Advances in carbon capture, smart grids, and sustainable materials are paving the way for a cleaner future.
 • Innovations in Waste Reduction: New recycling and circular economy initiatives are transforming how we handle waste.`;
   const achievementsContentPart3 = `• Positive Trends: Declining deforestation rates and successful reforestation initiatives are helping restore natural ecosystems.
@@ -93,7 +93,7 @@ const organizationsPart4 = "Convention on Biological Diversity (CBD) (1992): The
 const solarPowerContent1= "Solar Power is now the worlds cheapest inexhaustible energy that is converted from sunlight. It is a renewable energy source that harnesses sunlight to generate electricity."
 const solarPowerContent2= "Despite being the cheapest energy source today, solar accounted for just around 6% of global electricity generation in 2023 and 1% of primary energy consumption.";
 const solarPowerContent3= "The thing to watch out for is the rate of growth of solar power. In 2004, 1 GW of solar worldwide was installed in 1 year. In 2023, 1 GW was installed in one day. \n \n Cost Rankings (2023) \n • Solar: $33/MWh \n • Wind: $35/MWhNatural \n • Gas: $75/MWh \n • Hydropower:  $78/MWh \n • Coal: $135/MWh \n •  Nuclear: $168/MWh";
-const solarPowerContent4= " Solars growth has been nothing short of exponential. Solar is projected by the Economist magazine to be the world's largest energy source by 2050.";
+const solarPowerContent4="Solars growth has been nothing short of exponential. Solar is projected by the Economist magazine to be the world's largest energy source by 2050.";
 
   // Determine content and next button based on title and step
   let content = `This is the content for the ${title} lesson.`;

@@ -182,13 +182,13 @@ const carbonFootprintQuestions = [
 
 const solarPowerQuestions = [
   {
-    question: "True or False: Solar panels are an intermittent form of energy.",
+    question: "True or False: Solar energy is classified as an intermittent power source.",
     options: [
       "True",
       "False"
     ],
     correctAnswer: 0,
-    explanation: "Solar panels rely on sunlight, making them intermittent compared to constant energy sources.",
+    explanation: "Solar panels only generate electricity when sunlight is available, making them intermittent. Unlike baseload sources (nuclear, gas) that produce power continuously, solar output varies with daylight and weather. Battery storage systems can help manage this intermittency by storing excess energy for later use.",
   },
   {
     question: "True or False: Solar panels are the most expensive form of electricity generation",
@@ -662,7 +662,7 @@ const styles = StyleSheet.create({
     textShadowRadius: 2,
   },
   feedbackIncorrect: {
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: '700',
     color: '#C62828',
     marginVertical: 4,

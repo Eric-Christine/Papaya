@@ -59,6 +59,12 @@ const lessons = [
     description: 'Learn about how solar power and debunk common myths', 
     icon: 'solar-power',
   },
+  {
+    id: '10',
+    title: 'Oceans',
+    description: 'How have our oceans changed and how to protect them', 
+    icon: 'waves',
+  },
 ];
 
 export default function LessonsScreen() {
