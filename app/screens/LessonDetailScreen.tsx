@@ -95,6 +95,19 @@ const solarPowerContent2= "Despite being the cheapest energy source today, solar
 const solarPowerContent3= "The thing to watch out for is the rate of growth of solar power. In 2004, 1 GW of solar worldwide was installed in 1 year. In 2023, 1 GW was installed in one day. \n \n Cost Rankings (2023) \n • Solar: $33/MWh \n • Wind: $35/MWhNatural \n • Gas: $75/MWh \n • Hydropower:  $78/MWh \n • Coal: $135/MWh \n •  Nuclear: $168/MWh";
 const solarPowerContent4="Solars growth has been nothing short of exponential. Solar is projected by the Economist magazine to be the world's largest energy source by 2050.";
 
+const recyclingContent1 = "Recycling is the process of converting waste materials into new materials and objects. It is an alternative to 'conventional' waste disposal that can save material and help lower greenhouse gas emissions.";
+const recyclingContent2 = "Recycling can prevent the waste of potentially useful materials and reduce the consumption of fresh raw materials, thereby reducing: energy usage, air pollution (from incineration), and water pollution (from landfilling).";
+const recyclingContent3 = "Recycling is a key component of modern waste reduction and is the third component of the 'Reduce, Reuse, Recycle' waste hierarchy. However, actual recycling rates vary widely across the country, with many materials not being processed as intended due to contamination, lack of proper facilities, or economic challenges. Understanding what is truly recyclable in your area is crucial for effective waste management.";
+const recyclingContent4 = "Some of the most recyclable items include aluminum cans, which can be recycled indefinitely without losing quality, and glass bottles, which are also highly recyclable if properly sorted. Paper and cardboard are widely accepted in recycling programs, though they must be clean and dry. Rigid plastics labeled with recycling codes #1 (PET) and #2 (HDPE) are among the most commonly recycled plastics. Ensuring these materials are clean and free of food residue can significantly improve their chances of being successfully processed.";
+
+const electricVehiclesContent1 = "Electric Vehicles (EVs) are cars, trucks, and other vehicles that run on electricity instead of gasoline or diesel. They are powered by batteries that store electricity and can be recharged at home or at charging stations.";
+const electricVehiclesContent2 = "EVs produce zero tailpipe emissions, reducing air pollution and greenhouse gas emissions that contribute to climate change. They are also quieter and require less maintenance than traditional vehicles.";
+const electricVehiclesContent3 = "The adoption of EVs is growing worldwide, driven by advancements in battery technology, government incentives, and consumer demand for cleaner transportation options. EVs are seen as a key solution to reducing emissions from the transportation sector and transitioning to a more sustainable energy future.";
+
+const oceanContent1 = "Oceans are the largest ecosystems on Earth, covering 71% of the planet's surface. They play a vital role in regulating the climate, absorbing carbon dioxide, and supporting marine life."; 
+const oceanContent2 = "Oceans are under threat from climate change, pollution, overfishing, and habitat destruction. Protecting marine ecosystems is essential for the health of the planet and future generations.";
+const oceanContent3 = "Sustainable practices like marine protected areas, responsible fishing, and reducing plastic pollution can help preserve ocean health and biodiversity.";
+
   // Determine content and next button based on title and step
   let content = `This is the content for the ${title} lesson.`;
   let nextButton = null;
@@ -405,7 +418,137 @@ const solarPowerContent4="Solars growth has been nothing short of exponential. S
               </View>
             );
           }
-        }
+        } else if (title === 'Recycling') {
+          if (step === 1) {
+            content = recyclingContent1;
+            nextButton = (
+              <View style={styles.buttonContainer}>     
+                <Button
+                  title="Next"
+                  onPress={() =>
+                    navigation.navigate('LessonDetail', { title: 'Recycling', step: 2 })
+                  }
+                  color="#fff"
+                />
+              </View>
+            );
+          } else if (step === 2) {
+            content = recyclingContent2;
+            nextButton = (
+              <View style={styles.buttonContainer}>     
+                <Button
+                  title="Next"
+                  onPress={() =>
+                    navigation.navigate('LessonDetail', { title: 'Recycling', step: 3 })
+                  }
+                  color="#fff"
+                />
+              </View>
+            );
+          } else if (step === 3) {
+            content = recyclingContent3;
+            nextButton = (
+              <View style={styles.buttonContainer}>
+                <Button
+                  title="Next"
+                  onPress={() =>
+                    navigation.navigate('LessonDetail', { title: 'Recycling', step: 4 })
+                  }
+                  color="#fff" 
+                />
+              </View>
+            );
+          } else if (step === 4) {  
+            content = recyclingContent4;
+            nextButton = (
+              <View style={styles.buttonContainer}>
+                <Button
+                  title="Quiz"
+                  onPress={() => navigation.navigate('Quiz', { lesson: title })}
+                  color="#fff"
+                />
+              </View>
+            );
+          }
+        } else if (title === 'Oceans') {
+          if (step === 1) {
+            content = oceanContent1;
+            nextButton = (
+              <View style={styles.buttonContainer}>
+                <Button
+                  title="Next"
+                  onPress={() =>
+                    navigation.navigate('LessonDetail', { title: 'Oceans', step: 2 })
+                  }
+                  color="#fff"
+                />
+              </View>
+            );
+          } else if (step === 2) {
+            content = oceanContent2;
+            nextButton = (
+              <View style={styles.buttonContainer}>     
+                <Button
+                  title="Next"
+                  onPress={() =>
+                    navigation.navigate('LessonDetail', { title: 'Oceans', step: 3 })
+                  }
+                  color="#fff"
+                />
+              </View>
+            );
+          } else if (step === 3) {
+            content = oceanContent3;
+            nextButton = (
+              <View style={styles.buttonContainer}>
+                <Button
+                  title="Quiz"
+                  onPress={() => navigation.navigate('Quiz', { lesson: title })}
+                  color="#fff"
+                />
+              </View>
+            );
+          }
+        } else if (title === 'Electric Vehicles') {
+          if (step === 1) {
+            content = electricVehiclesContent1;
+            nextButton = (
+              <View style={styles.buttonContainer}>
+                <Button
+                  title="Next"
+                  onPress={() =>
+                    navigation.navigate('LessonDetail', { title: 'Electric Vehicles', step: 2 })
+                  }
+                  color="#fff"
+                />
+              </View>
+            );
+          } else if (step === 2) {
+            content = electricVehiclesContent2;
+            nextButton = (
+              <View style={styles.buttonContainer}>
+                <Button
+                  title="Next"
+                  onPress={() =>
+                    navigation.navigate('LessonDetail', { title: 'Electric Vehicles', step: 3 })
+                  }
+                  color="#fff"
+                />
+              </View>
+            );
+          } else if (step === 3) {
+            content = electricVehiclesContent3;
+            nextButton = (
+              <View style={styles.buttonContainer}>
+                <Button
+                  title="Quiz"
+                  onPress={() => navigation.navigate('Quiz', { lesson: title })}
+                  color="#fff"
+                />
+              </View>
+            );
+          }
+        } 
   
   
   return (

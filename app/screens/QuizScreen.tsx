@@ -13,6 +13,7 @@ import {
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { UserContext } from '../contexts/UserContext';
 import * as Haptics from 'expo-haptics'; // Import Expo Haptics
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // -----------------------------------------------------------------------------
 // Quiz Questions with explanations for each question
@@ -355,6 +356,14 @@ interface SeedAnimation {
 }
 
 export default function QuizScreen() {
+  const LIVES_KEY = 'quizLives';
+  const LIVES_RESET_KEY = 'quizLivesReset';
+  const MAX_LIVES = 5;
+  const RESET_INTERVAL = 24 * 60 * 60 * 1000; // 24 hours in ms
+
+  const [lives, setLives] = useState<number>(MAX_LIVES);
+  const [livesResetTime, setLivesResetTime] = useState<number>(Date.now());
+
   const route = useRoute();
   const navigation = useNavigation();
   const { lesson } = route.params || {};
@@ -386,6 +395,50 @@ export default function QuizScreen() {
 
   // State for seed animations (for answer feedback)
   const [seedAnimations, setSeedAnimations] = useState<SeedAnimation[]>([]);
+  useEffect(() => {
+    const initializeLives = async () => {
+      try {
+        const storedLives = await AsyncStorage.getItem(LIVES_KEY);
+        const storedReset = await AsyncStorage.getItem(LIVES_RESET_KEY);
+        const now = Date.now();
+        if (storedLives !== null && storedReset !== null) {
+          const lastReset = parseInt(storedReset, 10);
+          if (now - lastReset >= RESET_INTERVAL) {
+            // Reset lives if 24 hours have passed
+            setLives(MAX_LIVES);
+            setLivesResetTime(now);
+            await AsyncStorage.setItem(LIVES_KEY, MAX_LIVES.toString());
+            await AsyncStorage.setItem(LIVES_RESET_KEY, now.toString());
+          } else {
+            setLives(parseInt(storedLives, 10));
+            setLivesResetTime(lastReset);
+          }
+        } else {
+          // No stored lives, initialize
+          setLives(MAX_LIVES);
+          setLivesResetTime(now);
+          await AsyncStorage.setItem(LIVES_KEY, MAX_LIVES.toString());
+          await AsyncStorage.setItem(LIVES_RESET_KEY, now.toString());
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    };
+
+    initializeLives();
+
+    const interval = setInterval(async () => {
+      const now = Date.now();
+      if (now - livesResetTime >= RESET_INTERVAL) {
+        setLives(MAX_LIVES);
+        setLivesResetTime(now);
+        await AsyncStorage.setItem(LIVES_KEY, MAX_LIVES.toString());
+        await AsyncStorage.setItem(LIVES_RESET_KEY, now.toString());
+      }
+    }, 60000); // check every minute
+
+    return () => clearInterval(interval);
+  }, [livesResetTime]);
   const animationCount = useRef(0);
 
   // State to trigger finish animation (for total seeds)
@@ -408,7 +461,7 @@ export default function QuizScreen() {
     }
   };
 
-  const handleButtonPress = () => {
+  const handleButtonPress = async () => {
     // --------------------------------------------------------------------------
     // Trigger Haptic Feedback on button press
     // --------------------------------------------------------------------------
@@ -435,6 +488,9 @@ export default function QuizScreen() {
         const messages = ["Not Quite!", "Incorrect", "Sorry!"];
         setFeedbackText(messages[Math.floor(Math.random() * messages.length)]);
         setIsAnswerCorrect(false);
+        const newLives = lives - 1;
+        setLives(newLives);
+        await AsyncStorage.setItem(LIVES_KEY, newLives.toString());
         // Trigger seed animation for incorrect answer
         addSeedAnimation(1, { top: 200, left: Dimensions.get('window').width / 2 - 40 });
       }
@@ -479,6 +535,19 @@ export default function QuizScreen() {
 
   const buttonLabel = !answerChecked ? "Check" : "Continue";
 
+  if (lives === 0 && !quizCompleted) {
+    return (
+      <View style={styles.lockedContainer}>
+        <Text style={styles.lockedText}>
+          You have used all your lives. Please wait 24 hours to take another quiz.
+        </Text>
+        <TouchableOpacity style={styles.cancelButton} onPress={() => navigation.goBack()}>
+          <Text style={styles.cancelButtonText}>Go Back</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
   return (
     // Ensure the container is positioned relatively so the animated elements overlay correctly.
     <ScrollView contentContainerStyle={[styles.container, { position: 'relative' }]}>
@@ -509,6 +578,9 @@ export default function QuizScreen() {
         </View>
       ) : (
         <View style={styles.quizContainer}>
+          <View style={styles.livesContainer}>
+            <Text style={styles.heartsIndicatorText}>{'❤️'.repeat(lives)}</Text>
+          </View>
           <Text style={styles.xpText}>Seeds: {score} 🌱</Text>
           {seedAnimations.map(animation => (
             <SeedReward
@@ -790,5 +862,24 @@ const styles = StyleSheet.create({
     textShadowColor: 'rgba(0, 0, 0, 0.1)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,
+  },
+  lockedContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+    backgroundColor: '#F1F8E9',
+  },
+  lockedText: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#C62828',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  livesContainer: {
+    width: '100%',
+    alignItems: 'flex-end',
+    marginBottom: 8,
   },
 });

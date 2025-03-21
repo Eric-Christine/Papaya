@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import UserContext from '../contexts/UserContext';
 import { v4 as uuidv4 } from 'uuid'; // UUID generator
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Updated items include a harvestDuration property (in milliseconds)
 // and some items require a minimum number of lessons to be redeemed.
@@ -22,7 +23,6 @@ const itemsData = [
     description: 'A fresh zucchini to brighten your garden.',
     cost: 150,
     harvestDuration: 10000, // 10 seconds
-    // No lessons required
   },
   {
     id: '2',
@@ -61,6 +61,13 @@ const itemsData = [
     harvestDuration: 10800000, // 3 hours
     requiredLessons: 10, // Only redeemable if 10 lessons have been completed
   },
+  {
+    id: '7',
+    title: 'Heart',
+    description: 'Buy a heart (extra life) for quizzes. Each heart costs 100 seeds.',
+    cost: 100,
+    harvestDuration: 0,
+  },
 ];
 
 const badgesData = [
@@ -86,6 +93,9 @@ export default function RewardsScreen() {
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [modalVisible, setModalVisible] = useState(false);
 
+  const MAX_LIVES = 5;
+  const LIVES_KEY = 'quizLives';
+
   // Handle tapping an item for purchase.
   const handleItemPress = (item: typeof itemsData[0]) => {
     setSelectedItem(item);
@@ -93,8 +103,31 @@ export default function RewardsScreen() {
   };
 
   // Handle confirming a purchase.
-  const handlePurchase = (item: typeof itemsData[0]) => {
-    // Check for lessons requirement if present.
+  const handlePurchase = async (item: typeof itemsData[0]) => {
+    // If purchasing a Heart, handle differently
+    if (item.title === 'Heart') {
+      if (user.seeds >= item.cost) {
+        // Retrieve current lives from AsyncStorage
+        const storedLives = await AsyncStorage.getItem(LIVES_KEY);
+        let currentLives = storedLives ? parseInt(storedLives, 10) : MAX_LIVES;
+        if (currentLives >= MAX_LIVES) {
+          Alert.alert('Hearts Full', 'Your hearts are already full.');
+          return;
+        }
+        addSeeds(-item.cost);
+        currentLives += 1;
+        await AsyncStorage.setItem(LIVES_KEY, currentLives.toString());
+        Alert.alert('Purchase Successful', `You purchased a heart. You now have ${currentLives} heart(s).`);
+        setModalVisible(false);
+        setSelectedItem(null);
+        return;
+      } else {
+        Alert.alert('Insufficient Seeds', 'You do not have enough seeds to purchase a heart.');
+        return;
+      }
+    }
+
+    // For other items, check lessons requirement if present.
     if (item.requiredLessons && user.lessonsCompleted < item.requiredLessons) {
       Alert.alert(
         'Not Eligible',

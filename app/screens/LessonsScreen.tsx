@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Sample lessons data with descriptions
 const lessons = [
@@ -31,7 +32,7 @@ const lessons = [
   },
   {
     id: '5',
-    title: 'Electric Vehicles (EVs)',
+    title: 'Electric Vehicles',
     description: 'Explore how EVs reduce emissions and contribute to a sustainable transportation future.',
     icon: 'car-electric',
   },
@@ -65,21 +66,70 @@ const lessons = [
     description: 'How have our oceans changed and how to protect them', 
     icon: 'waves',
   },
+  {
+    id: '11',
+    title: 'Recycling',
+    description: 'Recycling misconceptions and how to recycle properly', 
+    icon: 'recycle',
+  },
 ];
+
+const COMPLETED_LESSONS_KEY = 'completedLessons';
 
 export default function LessonsScreen() {
   const navigation = useNavigation();
+  const [completedLessons, setCompletedLessons] = useState<string[]>([]);
+
+  // Load completed lessons from AsyncStorage on mount
+  useEffect(() => {
+    const loadCompletedLessons = async () => {
+      try {
+        const stored = await AsyncStorage.getItem(COMPLETED_LESSONS_KEY);
+        if (stored) {
+          setCompletedLessons(JSON.parse(stored));
+        }
+      } catch (error) {
+        console.error('Error loading completed lessons:', error);
+      }
+    };
+    loadCompletedLessons();
+  }, []);
+
+  // Mark a lesson as complete and persist the change
+  const markLessonComplete = async (lessonId: string) => {
+    try {
+      if (!completedLessons.includes(lessonId)) {
+        const updated = [...completedLessons, lessonId];
+        setCompletedLessons(updated);
+        await AsyncStorage.setItem(COMPLETED_LESSONS_KEY, JSON.stringify(updated));
+      }
+    } catch (error) {
+      console.error('Error marking lesson as complete:', error);
+    }
+  };
 
   const renderLesson = ({ item }: { item: typeof lessons[0] }) => (
     <TouchableOpacity
       style={styles.lessonItem}
-      onPress={() => navigation.navigate('LessonDetail', { title: item.title })}
+      onPress={() => {
+        // Mark the lesson as complete if not already
+        if (!completedLessons.includes(item.id)) {
+          markLessonComplete(item.id);
+        }
+        navigation.navigate('LessonDetail', { title: item.title });
+      }}
     >
       <MaterialCommunityIcons name={item.icon} size={32} color="#2E7D32" style={styles.icon} />
       <View style={styles.lessonContent}>
         <Text style={styles.lessonTitle}>{item.title}</Text>
         <Text style={styles.lessonDescription}>{item.description}</Text>
       </View>
+      {/* Display the "New" badge only if the lesson hasn't been completed */}
+      {!completedLessons.includes(item.id) && (
+        <View style={styles.newBadge}>
+          <Text style={styles.newBadgeText}>New</Text>
+        </View>
+      )}
     </TouchableOpacity>
   );
 
@@ -99,7 +149,7 @@ export default function LessonsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F0F4F7', // Light background to avoid a black screen
+    backgroundColor: '#F0F4F7',
     padding: 16,
   },
   header: {
@@ -118,13 +168,12 @@ const styles = StyleSheet.create({
     padding: 15,
     marginBottom: 12,
     borderRadius: 8,
-    // Shadows for iOS
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.2,
     shadowRadius: 2,
-    // Elevation for Android
     elevation: 3,
+    position: 'relative',
   },
   icon: {
     marginRight: 12,
@@ -141,5 +190,19 @@ const styles = StyleSheet.create({
   lessonDescription: {
     fontSize: 14,
     color: '#666',
+  },
+  newBadge: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    backgroundColor: '#FF5252',
+    borderRadius: 4,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+  },
+  newBadgeText: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: 'bold',
   },
 });
