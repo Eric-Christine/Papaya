@@ -5,7 +5,7 @@ const HuggingfaceExample = () => {
   const [input, setInput] = useState('');
   const [result, setResult] = useState(null);
   const API_URL = 'https://api-inference.huggingface.co/models/google/flan-t5-large';
-  const API_TOKEN = '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'; // Replace with your token
+  const API_TOKEN = 'TOKEN'; // Replace with your token
 
   const generateResponse = async () => {
     try {
