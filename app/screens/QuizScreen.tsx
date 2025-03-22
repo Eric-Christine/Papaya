@@ -87,7 +87,7 @@ const climateQuizQuestions = [
   },
 ];
 
-const energyQuizQuestions = [
+const energyMixQuestions = [
   {
     question: "What does the term 'energy mix' refer to?",
     options: [
@@ -208,6 +208,275 @@ const solarPowerQuestions = [
     ],
     correctAnswer: 0,
     explanation: "Solar panels can still generate electricity on cloudy days, though at reduced efficiency.",
+  },
+];
+
+const organizationsQuizQuestions = [
+  {
+    question: "What is the primary role of the Intergovernmental Panel on Climate Change (IPCC)?",
+    options: [
+      "To fund climate mitigation projects",
+      "To assess scientific research on climate change and its impacts",
+      "To enforce climate-related laws",
+      "To negotiate international climate treaties",
+    ],
+    correctAnswer: 1,
+    explanation: "The IPCC assesses scientific research on climate change and its impacts, producing comprehensive reports that inform global climate policy.",
+  },
+  {
+    question: "Which of the following best describes the United Nations Framework Convention on Climate Change (UNFCCC)?",
+    options: [
+      "A financial institution that supports renewable energy projects",
+      "A treaty that serves as the backbone of global climate negotiations",
+      "An organization responsible for implementing local environmental policies",
+      "A research center for climate science",
+    ],
+    correctAnswer: 1,
+    explanation: "The UNFCCC is a treaty that forms the backbone of global climate negotiations and has enabled landmark agreements like the Kyoto Protocol and the Paris Agreement.",
+  },
+  {
+    question: "What is the key function of the Green Climate Fund (GCF)?",
+    options: [
+      "To produce scientific reports on climate change",
+      "To facilitate international climate negotiations",
+      "To provide financial support to developing countries for climate projects",
+      "To enforce global environmental regulations",
+    ],
+    correctAnswer: 2,
+    explanation: "The Green Climate Fund provides financial support to developing countries for projects aimed at reducing greenhouse gas emissions and enhancing resilience to climate change.",
+  },
+];
+
+const energyQuizQuestions = [
+  {   
+    question: "What does the term 'energy mix' refer to?",
+    options: [
+      "The exclusive use of fossil fuels for energy",
+      "A combination of various energy sources used to generate power",
+      "Only renewable energy sources such as solar and wind",
+      "Energy produced solely from nuclear power",
+    ],
+    correctAnswer: 1,
+    explanation: "The energy mix is the combination of different energy sources used to produce power.",
+  },
+  {
+    question: "Which factor most influences a country's energy mix?",
+    options: [
+      "Geographical location and the availability of natural resources",
+      "The country's internet infrastructure",
+      "Global fashion trends",
+      "The number of automobiles on the road",
+    ],
+    correctAnswer: 0,
+    explanation: "A country's geographical location and natural resource availability largely determine its energy mix.",
+  },
+  {
+    question: "What is one of the primary benefits of diversifying a nation's energy mix?",
+    options: [
+      "Reducing dependency on a single energy source",
+      "Increasing the risk of power outages",
+      "Raising overall energy costs significantly",
+      "Limiting the development of renewable energy technology",
+    ],
+    correctAnswer: 0,
+    explanation: "Diversification reduces dependency on any one energy source, leading to improved stability.",
+  },
+  {
+    question: "Which energy storage technology is most commonly used in both electric vehicles and grid-scale systems?",
+    options: [
+      "Pumped Hydro Storage",
+      "Thermal Storage",
+      "Battery Storage",
+      "Flywheel Storage",
+    ],
+    correctAnswer: 2,
+    explanation: "Battery storage is the most widely used technology for electric vehicles and grid-scale energy storage.",
+  },
+]; 
+const recyclingQuizQuestions = [
+  {
+    question: "What is the primary goal of recycling?",
+    options: [
+      "To reduce waste sent to landfills",
+      "To increase energy consumption",
+      "To produce more plastic products",
+      "To reduce the cost of goods",
+    ],
+    correctAnswer: 0,
+    explanation: "Recycling aims to reduce waste sent to landfills by reusing materials to create new products.",
+  },
+  {
+    question: "Which of the following materials can be recycled?",
+    options: [
+      "Plastic bottles",
+      "Glass jars",
+      "Aluminum cans",
+      "All of the above",
+    ],
+    correctAnswer: 3,
+    explanation: "Plastic bottles, glass jars, and aluminum cans are all recyclable materials.",
+  },
+  {
+    question: "What is the first step in the recycling process?",
+    options: [
+      "Sorting materials",
+      "Melting materials",
+      "Creating new products",
+      "Collecting materials",
+    ],
+    correctAnswer: 3,
+    explanation: "The first step in recycling is collecting materials to be processed and reused.",
+  },
+  {
+    question: "How does recycling help the environment?",
+    options: [
+      "By increasing pollution",
+      "By conserving natural resources",
+      "By reducing energy efficiency",
+      "By creating more waste",
+    ],
+    correctAnswer: 1,
+    explanation: "Recycling helps the environment by conserving natural resources and reducing waste sent to landfills.",
+  },
+];
+
+const oceanQuizQuestions = [
+  {
+    question: "What percentage of the Earth's surface is covered by oceans?",
+    options: [
+      "50%",
+      "70%",
+      "90%",
+      "30%",
+    ],
+    correctAnswer: 1,
+    explanation: "Oceans cover approximately 70% of the Earth's surface.",
+  },
+  {
+    question: "Which of the following is a major threat to ocean health?",
+    options: [
+      "Plastic pollution",
+      "Increased biodiversity",
+      "Reduced carbon emissions",
+      "Sustainable fishing practices",
+    ],
+    correctAnswer: 0,
+    explanation: "Plastic pollution poses a significant threat to ocean health, harming marine life and ecosystems.",
+  },
+  {
+    question: "What is the primary cause of coral bleaching?",
+    options: [
+      "Increased water temperature",
+      "Decreased water salinity",
+      "Overfishing",
+      "Oil spills",
+    ],
+    correctAnswer: 0,
+    explanation: "Coral bleaching is primarily caused by increased water temperatures, which stress coral reefs and lead to their decline.",
+  },
+  {
+    question: "How do oceans help regulate the Earth's climate?",
+    options: [
+      "By trapping heat in the atmosphere",
+      "By absorbing excess carbon dioxide",
+      "By increasing global temperatures",
+      "By reducing sea levels",
+    ],
+    correctAnswer: 1,
+    explanation: "Oceans help regulate the Earth's climate by absorbing excess carbon dioxide from the atmosphere, which helps mitigate global warming.",
+  },
+];
+
+const agricultureQuizQuestions = [
+  {  
+    question: "What is the environmental impact of industrial agriculture?",
+    options: [
+      "Increased biodiversity",
+      "Reduced water pollution",
+      "Deforestation and habitat loss",
+      "Enhanced soil health",
+    ],
+    correctAnswer: 2,
+    explanation: "Industrial agriculture contributes to deforestation and habitat loss, impacting ecosystems and biodiversity.",
+  },
+  {
+    question: "How does food production contribute to climate change?",
+    options: [
+      "By reducing greenhouse gas emissions",
+      "By increasing carbon sequestration",
+      "By deforestation for agriculture",
+      "By promoting sustainable farming practices",
+    ],
+    correctAnswer: 2,
+    explanation: "Food production contributes to climate change through deforestation for agriculture, which releases stored carbon into the atmosphere.",
+  },
+  {
+    question: "What is one way to reduce the environmental impact of food production?",
+    options: [
+      "Increase food waste",
+      "Adopt sustainable farming practices",
+      "Use more pesticides",
+      "Expand monoculture farming", 
+    ],
+    correctAnswer: 1,
+    explanation: "Adopting sustainable farming practices can help reduce the environmental impact of food production, promoting biodiversity and soil health.",
+  },
+  {
+    question: "How does the food system impact water resources?",
+    options: [
+      "By reducing water pollution",
+      "By increasing water scarcity",
+      "By promoting water conservation",
+      "By improving water quality",
+    ],
+    correctAnswer: 1,
+    explanation: "The food system contributes to water scarcity through intensive irrigation and water-intensive crop production.",
+  },
+]; 
+const electricVehiclesQuizQuestions = [
+  {  
+    question: "What is a primary benefit of electric vehicles (EVs) compared to gasoline-powered cars?",
+    options: [
+      "Lower fuel efficiency",
+      "Higher greenhouse gas emissions",
+      "Reduced air pollution",
+      "Increased noise pollution",
+    ],
+    correctAnswer: 2,
+    explanation: "Electric vehicles produce fewer emissions and reduce air pollution compared to gasoline-powered cars.",
+  },
+  {
+    question: "How do electric vehicles help reduce greenhouse gas emissions?",
+    options: [
+      "By burning fossil fuels",
+      "By increasing energy consumption",
+      "By using renewable energy sources",
+      "By promoting deforestation",
+    ],
+    correctAnswer: 2,
+    explanation: "Electric vehicles help reduce greenhouse gas emissions by using electricity from renewable energy sources.",
+  },
+  {
+    question: "What is a common environmental concern about electric vehicle batteries?",
+    options: [
+      "They are too heavy",
+      "They are too expensive",
+      "They are not recyclable",
+      "They require intensive lithium and cobalt mining"
+    ],
+    correctAnswer: 3,
+    explanation: "EV batteries depend on lithium and cobalt mining, which can cause water depletion, habitat damage, and other environmental harms ."
+  },
+  {
+    question: "What is one way to increase the adoption of electric vehicles?",
+    options: [
+      "Reduce charging infrastructure",
+      "Increase gasoline prices",
+      "Offer incentives and rebates",
+      "Promote fossil fuel use",
+    ],
+    correctAnswer: 2,
+    explanation: "Offering incentives and rebates can help increase the adoption of electric vehicles by making them more affordable for consumers.",
   },
 ];
 
@@ -370,15 +639,35 @@ export default function QuizScreen() {
 
   // Choose quiz questions based on lesson type
   const lessonLower = lesson?.toLowerCase() || "";
-  const quizQuestions = lessonLower.includes("sustainable living")
-    ? sustainableLivingQuizQuestions
-    : lessonLower.includes("energy storage")
-      ? energyQuizQuestions
-    : lessonLower.includes("carbon footprint")
-      ? carbonFootprintQuestions 
-    : lessonLower.includes("solar power")
-      ? solarPowerQuestions
-    : climateQuizQuestions; // Default to climate quiz
+
+  const getQuizQuestions = (lessonType: string) => {
+    switch (true) {
+      case lessonType.includes("sustainable living"):
+        return sustainableLivingQuizQuestions;
+      case lessonType.includes("energy storage"):
+        return energyQuizQuestions;
+      case lessonType.includes("carbon footprint"):
+        return carbonFootprintQuestions;
+      case lessonType.includes("solar power"):
+        return solarPowerQuestions;
+      case lessonType.includes("organizations"):
+        return organizationsQuizQuestions;
+      case lessonType.includes("energy mix"):
+        return energyMixQuestions;
+      case lessonType.includes("recycling"):
+        return recyclingQuizQuestions;
+      case lessonType.includes("ocean"):
+        return oceanQuizQuestions;
+      case lessonType.includes("agriculture"):
+        return agricultureQuizQuestions;
+      case lessonType.includes("electric vehicles"):
+        return electricVehiclesQuizQuestions;
+      default: 
+        return climateQuizQuestions; // Default to climate quiz
+    }
+  };
+
+  const quizQuestions = getQuizQuestions(lessonLower);
 
   const { addSeeds, incrementLessons } = useContext(UserContext);
 
@@ -546,7 +835,7 @@ export default function QuizScreen() {
         </TouchableOpacity>
       </View>
     );
-  }
+  } 
 
   return (
     // Ensure the container is positioned relatively so the animated elements overlay correctly.
@@ -641,7 +930,7 @@ export default function QuizScreen() {
       )}
     </ScrollView>
   );
-}
+} 
 
 // -----------------------------------------------------------------------------
 // Styles

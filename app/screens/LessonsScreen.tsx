@@ -3,6 +3,7 @@ import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native
 import { useNavigation } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import HuggingfaceExample from '../../components/HuggingfaceExample';
 
 // Sample lessons data with descriptions
 const lessons = [
@@ -38,7 +39,7 @@ const lessons = [
   },
   {
     id: '6',
-    title: 'Agriculture & Food',
+    title: 'Agriculture',
     description: 'Learn about the environmental impact of food production and how to eat sustainably.',
     icon: 'food-apple',
   },
@@ -141,6 +142,12 @@ export default function LessonsScreen() {
         keyExtractor={(item) => item.id}
         renderItem={renderLesson}
         contentContainerStyle={styles.listContent}
+        // Render the Hugging Face Component as a footer
+        // ListFooterComponent={
+        //   <View style={styles.huggingFaceContainer}>
+        //     <HuggingfaceExample />
+        //   </View>
+        // }
       />
     </View>
   );
@@ -204,5 +211,9 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 12,
     fontWeight: 'bold',
+  },
+  huggingFaceContainer: {
+    marginVertical: 20,
+    alignItems: 'center',
   },
 });

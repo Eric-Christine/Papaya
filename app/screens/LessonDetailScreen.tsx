@@ -8,6 +8,70 @@ import {
 } from 'react-native';
 import GoBackToLessonsButton from '../components/GoBackToLessonsButton';
 
+function getRecyclingContentAndButton(step, navigation) {
+  let content = '';
+  let nextButton = null;
+
+  switch (step) {
+    case 1:
+      content = recyclingContent1;
+      nextButton = (
+        <View style={styles.buttonContainer}>
+          <Button
+            title="Next"
+            onPress={() =>
+              navigation.navigate('LessonDetail', { title: 'Recycling', step: 2 })
+            }
+            color="#fff"
+          />
+        </View>
+      );
+      break;
+    case 2:
+      content = recyclingContent2;
+      nextButton = (
+        <View style={styles.buttonContainer}>
+          <Button
+            title="Next"
+            onPress={() =>
+              navigation.navigate('LessonDetail', { title: 'Recycling', step: 3 })
+            }
+            color="#fff"
+          />
+        </View>
+      );
+      break;
+    case 3:
+      content = recyclingContent3;
+      nextButton = (
+        <View style={styles.buttonContainer}>
+          <Button
+            title="Next"
+            onPress={() =>
+              navigation.navigate('LessonDetail', { title: 'Recycling', step: 4 })
+            }
+            color="#fff"
+          />
+        </View>
+      );
+      break;
+    case 4:
+      content = recyclingContent4;
+      nextButton = (
+        <View style={styles.buttonContainer}>
+          <Button
+            title="Quiz"
+            onPress={() => navigation.navigate('Quiz', { lesson: 'Recycling' })}
+            color="#fff"
+          />
+        </View>
+      );
+      break;
+  }
+
+  return { content, nextButton };
+}
+
 export default function LessonDetailScreen({ route, navigation }) {
   const { title = 'Climate Basics', step = 1 } = route.params || {};
 
@@ -86,7 +150,8 @@ These achievements highlight the promising progress being made toward a more sus
 const organizationsPart1 = "Intergovernmental Panel on Climate Change (IPCC) (1988): Established by the United Nations, the IPCC assesses scientific research on climate change and its impacts. It produces comprehensive reports that inform global climate policy.";
 
 const organizationsPart2 = "United Nations Framework Convention on Climate Change (UNFCCC) (1992)Although technically a treaty rather than an organization, the UNFCCC forms the backbone of global climate negotiations and has enabled landmark agreements like the Kyoto Protocol and the Paris Agreement.";
-const organizationsPart3 = "United Nations Framework Convention on Climate Change (UNFCCC) (1992)Although technically a treaty rather than an organization, the UNFCCC forms the backbone of global climate negotiations and has enabled landmark agreements like the Kyoto Protocol and the Paris Agreement.";
+const organizationsPart3 = "Green Climate Fund (GCF) (2010): Established under the UNFCCC, the GCF provides financial support to developing countries for projects aimed at reducing greenhouse gas emissions and enhancing resilience to climate change. It plays a pivotal role in mobilizing investments for sustainable, low-emission development pathways.";
+
 
 const organizationsPart4 = "Convention on Biological Diversity (CBD) (1992): The CBD aims to conserve biodiversity, promote sustainable use of natural resources, and ensure fair sharing of benefits from genetic resources.";
 
@@ -103,10 +168,21 @@ const recyclingContent4 = "Some of the most recyclable items include aluminum ca
 const electricVehiclesContent1 = "Electric Vehicles (EVs) are cars, trucks, and other vehicles that run on electricity instead of gasoline or diesel. They are powered by batteries that store electricity and can be recharged at home or at charging stations.";
 const electricVehiclesContent2 = "EVs produce zero tailpipe emissions, reducing air pollution and greenhouse gas emissions that contribute to climate change. They are also quieter and require less maintenance than traditional vehicles.";
 const electricVehiclesContent3 = "The adoption of EVs is growing worldwide, driven by advancements in battery technology, government incentives, and consumer demand for cleaner transportation options. EVs are seen as a key solution to reducing emissions from the transportation sector and transitioning to a more sustainable energy future.";
+const electricVehiclesContent4 = "Challenges remain in expanding EV infrastructure, increasing battery range, and addressing the environmental impacts of battery production and disposal. However, ongoing research and development are focused on overcoming these obstacles and making EVs a viable and widespread transportation option."; 
+const electricVehiclesContent5 = "In 2024, the electric vehicle market reached new milestones, with China and Europe at the forefront of this transformation. In China, industry reports indicate that EV production hit approximately 7.5 million units—up around 35% from 2023—driven by substantial government incentives and an expansive domestic manufacturing network. \n\nAcross Europe, stringent emissions regulations and supportive policies fueled a surge in EV adoption, with new sales exceeding 2.8 million units in 2024, marking nearly a 40% year-over-year increase. \n\nThese figures underscore a robust global shift toward sustainable transportation, as both regions continue to invest heavily in next-generation battery technology and charging infrastructure to meet growing consumer demand.";
+
 
 const oceanContent1 = "Oceans are the largest ecosystems on Earth, covering 71% of the planet's surface. They play a vital role in regulating the climate, absorbing carbon dioxide, and supporting marine life."; 
 const oceanContent2 = "Oceans are under threat from climate change, pollution, overfishing, and habitat destruction. Protecting marine ecosystems is essential for the health of the planet and future generations.";
 const oceanContent3 = "Sustainable practices like marine protected areas, responsible fishing, and reducing plastic pollution can help preserve ocean health and biodiversity.";
+
+const energyMixContent1 = "The Energy Mix refers to the combination of energy sources used to generate electricity and power our society. It includes both renewable sources like solar and wind, as well as traditional sources like coal and natural gas.";
+const energyMixContent2 = "The Energy Mix is shifting towards cleaner, more sustainable sources as we seek to reduce greenhouse gas emissions and combat climate change. Transitioning to a low-carbon energy mix is essential for a sustainable future."; 
+const energyMixContent3 = "Renewable energy sources like solar, wind, and hydropower are becoming increasingly competitive with fossil fuels, driving the transition to a cleaner energy mix. Energy storage technologies are also playing a key role in integrating renewables into the grid.";
+
+const agricultureContent1 = "Agriculture and Food production are major contributors to environmental degradation, deforestation, and greenhouse gas emissions. Sustainable agriculture practices aim to reduce the environmental impact of food production and promote biodiversity.";
+const agricultureContent2 = "Sustainable agriculture practices include organic farming, crop rotation, and agroforestry, which help maintain soil health, conserve water, and reduce the need for chemical inputs. These practices support ecosystem health and resilience.";
+const agricultureContent3 = "Consumers can also make a difference by choosing sustainably produced foods, reducing food waste, and supporting local farmers. By adopting sustainable food practices, we can help protect the environment and promote a healthier food system.";
 
   // Determine content and next button based on title and step
   let content = `This is the content for the ${title} lesson.`;
@@ -357,15 +433,27 @@ const oceanContent3 = "Sustainable practices like marine protected areas, respon
         );
       } else if (step === 3) {
         content = organizationsPart3;
-        nextButton = (
+        nextButton = ( 
           <View style={styles.buttonContainer}>
             <Button
-                 title="Quiz"
-                 onPress={() => navigation.navigate('Quiz', { lesson: title })}
+              title="Next"
+              onPress={() =>
+                navigation.navigate('LessonDetail', { title: 'Organizations', step: 4 })
+              }
               color="#fff"
             />
-          </View>
-        );
+          </View>);
+      } else if (step === 4) {
+        content = organizationsPart4;
+        nextButton = (
+          <View style={styles.buttonContainer}>    
+            <Button
+              title="Quiz"
+              onPress={() => navigation.navigate('Quiz', { lesson: title })}
+              color="#fff"
+            /> 
+          </View> 
+        );  
       }  }  else if (title === 'Solar Power') {
           if (step === 1) {
             content = solarPowerContent1;
@@ -469,7 +557,7 @@ const oceanContent3 = "Sustainable practices like marine protected areas, respon
                 />
               </View>
             );
-          }
+          } 
         } else if (title === 'Oceans') {
           if (step === 1) {
             content = oceanContent1;
@@ -541,6 +629,33 @@ const oceanContent3 = "Sustainable practices like marine protected areas, respon
             nextButton = (
               <View style={styles.buttonContainer}>
                 <Button
+                  title="Next"
+                  onPress={() =>
+                    navigation.navigate('LessonDetail', { title: 'Electric Vehicles', step: 4 })
+                  }
+                  color="#fff"
+                />
+              </View>
+            );
+          } else if (step === 4) {
+            content = electricVehiclesContent4;
+            nextButton = (
+              <View style={styles.buttonContainer}>
+                <Button
+                  title="Next"
+                  onPress={() =>
+                    navigation.navigate('LessonDetail', { title: 'Electric Vehicles', step: 5 })
+                  }
+                  color="#fff"
+                />
+              </View>
+            );
+          }
+          else if (step === 5) {
+            content = electricVehiclesContent5;
+            nextButton = (
+              <View style={styles.buttonContainer}>
+                <Button
                   title="Quiz"
                   onPress={() => navigation.navigate('Quiz', { lesson: title })}
                   color="#fff"
@@ -548,8 +663,86 @@ const oceanContent3 = "Sustainable practices like marine protected areas, respon
               </View>
             );
           }
-        } 
-  
+        }   else if (title === 'Energy Mix') {
+          if (step === 1) {
+            content = energyMixContent1;
+            nextButton = (
+              <View style={styles.buttonContainer}>
+                <Button
+                  title="Next"
+                  onPress={() =>
+                    navigation.navigate('LessonDetail', { title: 'Energy Mix', step: 2 })
+                  }
+                  color="#fff"
+                />
+              </View>
+            );
+          } else if (step === 2) {
+            content = energyMixContent2;
+            nextButton = (
+              <View style={styles.buttonContainer}>
+                <Button
+                  title="Next"
+                  onPress={() =>
+                    navigation.navigate('LessonDetail', { title: 'Energy Mix', step: 3 })
+                  }
+                  color="#fff"
+                />
+              </View>
+            );
+          } else if (step === 3) {
+            content = energyMixContent3;
+            nextButton = (
+              <View style={styles.buttonContainer}>
+                <Button
+                  title="Quiz"
+                  onPress={() => navigation.navigate('Quiz', { lesson: title })}
+                  color="#fff"
+                />
+              </View>
+            );
+          }
+        } else if (title === 'Agriculture') {
+          if (step === 1) {
+            content = agricultureContent1 ;
+            nextButton = (
+              <View style={styles.buttonContainer}>
+                <Button
+                  title="Next"
+                  onPress={() =>
+                    navigation.navigate('LessonDetail', { title: 'Agriculture', step: 2 })
+                  }
+                  color="#fff"
+                />
+              </View>
+            );
+          } else if (step === 2) {
+            content = agricultureContent2;
+            nextButton = (
+              <View style={styles.buttonContainer}>
+                <Button
+                  title="Next"
+                  onPress={() =>
+                    navigation.navigate('LessonDetail', { title: 'Agriculture', step: 3 })
+                  }
+                  color="#fff"
+                />
+              </View>
+            );
+          } else if (step === 3) {
+            content = agricultureContent3;
+            nextButton = (
+              <View style={styles.buttonContainer}>
+                <Button
+                  title="Quiz"
+                  onPress={() => navigation.navigate('Quiz', { lesson: title })}
+                  color="#fff"
+                />
+              </View>
+            );
+          }  
+        }
+ 
   
   return (
     <ScrollView contentContainerStyle={styles.container}>
