@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 60">
+  <!-- Seed Stage -->
+  <g transform="translate(10, 10)">
+    <!-- Soil -->
+    <rect x="0" y="25" width="40" height="15" fill="#8D6E63"/>
+    <rect x="0" y="25" width="40" height="3" fill="#5D4037"/>
+    <rect x="0" y="31" width="40" height="3" fill="#5D4037" opacity="0.5"/>
+    <rect x="0" y="37" width="40" height="3" fill="#5D4037" opacity="0.3"/>
+    <!-- Seed -->
+    <ellipse cx="20" cy="28" rx="3" ry="2" fill="#FB8C00"/>
+    <rect x="19" y="24" width="2" height="2" fill="#558B2F"/>
+  </g>
+
+  <!-- Sprout Stage -->
+  <g transform="translate(70, 10)">
+    <!-- Soil -->
+    <rect x="0" y="25" width="40" height="15" fill="#8D6E63"/>
+    <rect x="0" y="25" width="40" height="3" fill="#5D4037"/>
+    <rect x="0" y="31" width="40" height="3" fill="#5D4037" opacity="0.5"/>
+    <rect x="0" y="37" width="40" height="3" fill="#5D4037" opacity="0.3"/>
+    <!-- Leaves -->
+    <path d="M15,25 Q15,15 20,15 Q25,15 25,25" fill="#66BB6A" stroke="#2E7D32" stroke-width="1"/>
+    <path d="M18,25 Q18,18 20,18 Q22,18 22,25" fill="#66BB6A" stroke="#2E7D32" stroke-width="1"/>
+  </g>
+
+  <!-- Growing Stage -->
+  <g transform="translate(130, 10)">
+    <!-- Soil -->
+    <rect x="0" y="25" width="40" height="15" fill="#8D6E63"/>
+    <rect x="0" y="25" width="40" height="3" fill="#5D4037"/>
+    <rect x="0" y="31" width="40" height="3" fill="#5D4037" opacity="0.5"/>
+    <rect x="0" y="37" width="40" height="3" fill="#5D4037" opacity="0.3"/>
+    <!-- Leaves -->
+    <path d="M10,25 Q10,10 20,10 Q30,10 30,25" fill="#66BB6A" stroke="#2E7D32" stroke-width="1"/>
+    <path d="M13,25 Q13,13 20,13 Q27,13 27,25" fill="#66BB6A" stroke="#2E7D32" stroke-width="1"/>
+    <path d="M16,25 Q16,16 20,16 Q24,16 24,25" fill="#66BB6A" stroke="#2E7D32" stroke-width="1"/>
+    <!-- Carrot Top -->
+    <rect x="19" y="25" width="2" height="5" fill="#FB8C00"/>
+  </g>
+
+  <!-- Mature Stage -->
+  <g transform="translate(190, 10)">
+    <!-- Soil -->
+    <rect x="0" y="25" width="40" height="15" fill="#8D6E63"/>
+    <rect x="0" y="25" width="40" height="3" fill="#5D4037"/>
+    <rect x="0" y="31" width="40" height="3" fill="#5D4037" opacity="0.5"/>
+    <rect x="0" y="37" width="40" height="3" fill="#5D4037" opacity="0.3"/>
+    <!-- Leaves -->
+    <path d="M5,25 Q5,5 20,5 Q35,5 35,25" fill="#66BB6A" stroke="#2E7D32" stroke-width="1"/>
+    <path d="M10,25 Q10,10 20,10 Q30,10 30,25" fill="#66BB6A" stroke="#2E7D32" stroke-width="1"/>
+    <path d="M15,25 Q15,15 20,15 Q25,15 25,25" fill="#66BB6A" stroke="#2E7D32" stroke-width="1"/>
+    <!-- Carrot Top Visible -->
+    <path d="M18,25 L16,30 L24,30 L22,25" fill="#FB8C00" stroke="#E65100" stroke-width="1"/>
+  </g>
+</svg>

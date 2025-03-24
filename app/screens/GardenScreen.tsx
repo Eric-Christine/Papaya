@@ -6,43 +6,53 @@ import UserContext, { GardenItem } from '../contexts/UserContext';
 export default function GardenScreen() {
   const { user, harvestItem, sellItem } = useContext(UserContext);
   const { garden, inventory } = user;
-  // This state forces a re-render every second to update progress.
   const [tick, setTick] = useState(0);
+  const MAX_PLOTS = 4;
+  
+  // Gamification: XP and Level (optional)
+  const [xp, setXp] = useState(0);
+  const level = Math.floor(xp / 100) + 1;
+  const xpProgress = xp % 100;
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setTick(t => t + 1);
-    }, 1000);
+    const interval = setInterval(() => setTick(t => t + 1), 1000);
     return () => clearInterval(interval);
   }, []);
 
-  // Helper to calculate remaining time (in seconds) until an item is ready to harvest.
   const getRemainingTime = (item: GardenItem) => {
     const elapsed = Date.now() - item.plantedAt;
     const remaining = Math.max(item.harvestDuration - elapsed, 0);
     return Math.ceil(remaining / 1000);
   };
 
-  // Helper to calculate progress percentage (0 to 1)
   const getProgress = (item: GardenItem) => {
     const elapsed = Date.now() - item.plantedAt;
     return Math.min(elapsed / item.harvestDuration, 1);
   };
 
+  const handleHarvest = (item: GardenItem) => {
+    harvestItem(item.id);
+    setXp(prev => prev + 50); // Award 50 XP per harvest
+    Alert.alert('Harvested!', `${item.title} harvested! +50 XP`);
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.header}>Your Garden</Text>
-      
-      {/* Garden Items Section */}
+      <View style={styles.gamificationHeader}>
+        <Text style={styles.gamificationText}>Garden Level: {level}</Text>
+        <Text style={styles.gamificationText}>XP: {xp} ({xpProgress}/100)</Text>
+      </View>
+
       {garden.length === 0 ? (
         <Text style={styles.emptyText}>
-          No items planted yet. Purchase items from the Rewards Shop and plant them here!
+          No crops planted yet. Please visit the Rewards Shop to plant new crops.
         </Text>
       ) : (
         garden.map(item => {
           const elapsed = Date.now() - item.plantedAt;
           const ready = elapsed >= item.harvestDuration;
-          const progress = getProgress(item); // Value between 0 and 1
+          const progress = getProgress(item);
           return (
             <View key={item.id} style={styles.plantedItem}>
               <Text style={styles.itemTitle}>{item.title}</Text>
@@ -50,11 +60,10 @@ export default function GardenScreen() {
               {ready ? (
                 <>
                   <Text style={styles.readyText}>Ready to Harvest!</Text>
-                  <Button title="Harvest" onPress={() => harvestItem(item.id)} />
+                  <Button title="Harvest" onPress={() => handleHarvest(item)} />
                 </>
               ) : (
                 <>
-                  {/* Progress Bar */}
                   <View style={styles.progressBarBackground}>
                     <View style={[styles.progressBarFill, { width: `${progress * 100}%` }]} />
                   </View>
@@ -68,7 +77,20 @@ export default function GardenScreen() {
         })
       )}
 
-      {/* Inventory Section */}
+      {/* Show empty plot placeholders if garden is not full */}
+      {garden.length < MAX_PLOTS && (
+        <View style={styles.emptyPlotsContainer}>
+          {[...Array(MAX_PLOTS - garden.length)].map((_, index) => (
+            <View key={`empty-${index}`} style={styles.emptyPlot}>
+              <Text style={styles.emptyPlotText}>Empty Plot</Text>
+            </View>
+          ))}
+          <Text style={styles.infoText}>
+            To plant new crops, please use the Rewards Shop.
+          </Text>
+        </View>
+      )}
+
       <View style={styles.inventorySection}>
         <Text style={styles.sectionHeader}>Inventory</Text>
         {inventory.length === 0 ? (
@@ -97,7 +119,7 @@ export default function GardenScreen() {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: '#E8F5E9', // A garden-inspired green background
+    backgroundColor: '#E8F5E9',
     padding: 20,
     alignItems: 'center',
   },
@@ -105,7 +127,19 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: 'bold',
     color: '#2E7D32',
+    marginBottom: 10,
+  },
+  gamificationHeader: {
+    backgroundColor: '#C8E6C9',
+    padding: 10,
+    borderRadius: 8,
     marginBottom: 20,
+    width: '100%',
+    alignItems: 'center',
+  },
+  gamificationText: {
+    fontSize: 18,
+    color: '#1B5E20',
   },
   emptyText: {
     fontSize: 18,
@@ -159,6 +193,31 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#2E7D32',
     marginTop: 5,
+  },
+  emptyPlotsContainer: {
+    width: '100%',
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  emptyPlot: {
+    backgroundColor: '#FFF',
+    borderWidth: 1,
+    borderColor: '#CCC',
+    padding: 20,
+    marginVertical: 5,
+    borderRadius: 8,
+    width: '90%',
+    alignItems: 'center',
+  },
+  emptyPlotText: {
+    fontSize: 16,
+    color: '#888',
+  },
+  infoText: {
+    fontSize: 16,
+    color: '#666',
+    marginTop: 10,
+    textAlign: 'center',
   },
   inventorySection: {
     width: '100%',

@@ -478,7 +478,54 @@ const electricVehiclesQuizQuestions = [
     correctAnswer: 2,
     explanation: "Offering incentives and rebates can help increase the adoption of electric vehicles by making them more affordable for consumers.",
   },
+]; 
+const fashionQuizQuestions = [
+  { 
+    question: "What is fast fashion?",
+    options: [
+      "High-quality, long-lasting clothing",
+      "Clothing designed for durability and sustainability",
+      "A trend of rapidly changing fashion styles",
+      "A movement to reduce waste in the fashion industry",
+    ],
+    correctAnswer: 2,
+    explanation: "Fast fashion refers to the trend of rapidly changing fashion styles, leading to increased consumption and waste.",
+  },
+  {
+    question: "What is one environmental impact of the fashion industry?",
+    options: [
+      "Reduced water usage",
+      "Increased textile recycling",
+      "Water pollution from dyeing processes",
+      "Promotion of sustainable materials",
+    ],
+    correctAnswer: 2,
+    explanation: "The fashion industry contributes to water pollution through dyeing processes and chemical discharge.",
+  },
+  {
+    question: "How does the fashion industry contribute to waste?",
+    options: [
+      "By promoting durable, long-lasting clothing",
+      "By encouraging clothing repair and reuse",
+      "By producing large quantities of low-quality garments",
+      "By supporting sustainable fashion brands",
+    ],
+    correctAnswer: 2,
+    explanation: "The fashion industry produces large quantities of low-quality garments, leading to increased waste and environmental impact.",
+  },
+  {
+    question: "What is one way to reduce the environmental impact of fashion?",
+    options: [
+      "Increase clothing production",
+      "Promote fast fashion trends",
+      "Support sustainable and ethical brands",
+      "Encourage disposable fashion",
+    ],
+    correctAnswer: 2,
+    explanation: "Supporting sustainable and ethical fashion brands can help reduce the environmental impact of the fashion industry."
+  },
 ];
+
 
 // -----------------------------------------------------------------------------
 // SeedReward Animation Component (for individual answer feedback)
@@ -662,6 +709,8 @@ export default function QuizScreen() {
         return agricultureQuizQuestions;
       case lessonType.includes("electric vehicles"):
         return electricVehiclesQuizQuestions;
+     case lessonType.includes("fashion"):
+        return fashionQuizQuestions;
       default: 
         return climateQuizQuestions; // Default to climate quiz
     }

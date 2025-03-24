@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 120">
+  <!-- Empty Plot -->
+  <g transform="translate(10, 10)">
+    <rect x="0" y="0" width="40" height="40" rx="5" ry="5" fill="#A1887F" stroke="#5D4037" stroke-width="4" stroke-dasharray="4 2"/>
+    <text x="20" y="24" font-family="Arial" font-size="24" fill="#5D4037" text-anchor="middle">+</text>
+  </g>
+
+  <!-- Water Button -->
+  <g transform="translate(70, 10)">
+    <!-- Button background -->
+    <rect x="0" y="0" width="40" height="20" rx="10" ry="10" fill="#29B6F6" stroke="#0288D1" stroke-width="2"/>
+    
+    <!-- Water Icon -->
+    <path d="M15,5 Q20,0 25,5 Q30,10 25,15 Q20,20 15,15 Q10,10 15,5 Z" fill="#E1F5FE" stroke="#0288D1" stroke-width="1"/>
+    
+    <!-- Text -->
+    <text x="30" y="13" font-family="Arial" font-size="8" fill="#FFFFFF" font-weight="bold" text-anchor="middle">Water</text>
+  </g>
+
+  <!-- Harvest Button -->
+  <g transform="translate(130, 10)">
+    <!-- Button background -->
+    <rect x="0" y="0" width="40" height="20" rx="10" ry="10" fill="#FFA000" stroke="#FF8F00" stroke-width="2"/>
+    
+    <!-- Scissors Icon -->
+    <path d="M15,5 L20,10 L15,15" stroke="#FFFFFF" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <path d="M15,15 Q10,15 10,10 Q10,5 15,5" stroke="#FFFFFF" stroke-width="1" fill="none"/>
+    
+    <!-- Text -->
+    <text x="30" y="13" font-family="Arial" font-size="8" fill="#FFFFFF" font-weight="bold" text-anchor="middle">Harvest</text>
+  </g>
+
+  <!-- Progress Bar -->
+  <g transform="translate(10, 70)">
+    <!-- Background -->
+    <rect x="0" y="0" width="60" height="10" rx="5" ry="5" fill="#5D4037"/>
+    
+    <!-- Progress (half filled) -->
+    <rect x="0" y="0" width="30" height="10" rx="5" ry="5" fill="#81C784"/>
+  </g>
+
+  <!-- Watering Can -->
+  <g transform="translate(90, 50)">
+    <!-- Can body -->
+    <path d="M5,30 L5,15 L20,10 L40,10 L45,15 L45,30 Z" fill="#78909C" stroke="#455A64" stroke-width="2"/>
+    
+    <!-- Spout -->
+    <path d="M5,20 L0,15 L0,10 L5,5 L10,10 L10,15 Z" fill="#78909C" stroke="#455A64" stroke-width="2"/>
+    
+    <!-- Handle -->
+    <path d="M25,10 C25,0 40,0 40,10" stroke="#455A64" stroke-width="2" fill="none"/>
+    
+    <!-- Water droplets -->
+    <circle cx="2" cy="20" r="1" fill="#4FC3F7"/>
+    <circle cx="4" cy="25" r="1" fill="#4FC3F7"/>
+    <circle cx="1" cy="22" r="1" fill="#4FC3F7"/>
+  </g>
+
+  <!-- Seeds Pouch -->
+  <g transform="translate(150, 50)">
+    <!-- Pouch -->
+    <path d="M10,5 L30,5 L35,15 L35,35 Q22.5,40 5,35 L5,15 Z" fill="#8D6E63" stroke="#5D4037" stroke-width="2"/>
+    
+    <!-- Seeds -->
+    <circle cx="15" cy="20" r="2" fill="#FFF59D"/>
+    <circle cx="22" cy="22" r="2" fill="#FFF59D"/>
+    <circle cx="18" cy="25" r="2" fill="#FFF59D"/>
+    <circle cx="25" cy="18" r="2" fill="#FFF59D"/>
+    <circle cx="12" cy="15" r="2" fill="#FFF59D"/>
+    
+    <!-- String -->
+    <path d="M10,5 Q20,0 30,5" stroke="#5D4037" stroke-width="1" fill="none"/>
+  </g>
+</svg>

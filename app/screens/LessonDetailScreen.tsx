@@ -184,6 +184,10 @@ const agricultureContent1 = "Agriculture and Food production are major contribut
 const agricultureContent2 = "Sustainable agriculture practices include organic farming, crop rotation, and agroforestry, which help maintain soil health, conserve water, and reduce the need for chemical inputs. These practices support ecosystem health and resilience.";
 const agricultureContent3 = "Consumers can also make a difference by choosing sustainably produced foods, reducing food waste, and supporting local farmers. By adopting sustainable food practices, we can help protect the environment and promote a healthier food system.";
 
+const fashionContent1 = "The Fashion Industry has a significant environmental impact, from raw material production to garment manufacturing and distribution. Fast fashion, in particular, contributes to resource depletion, pollution, and waste.";
+const fashionContent2 = "Sustainable Fashion aims to reduce the environmental and social impact of clothing production and consumption. It includes eco-friendly materials, ethical labor practices, and circular fashion models that promote reuse and recycling.";
+const fashionContent3 = "Consumers can support sustainable fashion by choosing quality, timeless pieces, buying secondhand, and supporting brands with transparent and ethical practices. By making conscious fashion choices, we can help create a more sustainable and ethical industry.";
+const fashionContent4 = "In 2024, about 34% of overall apparel spending went toward pre-owned items, with Gen Z dedicating up to 46% of their clothing budgets to secondhand purchases. As the industry embraces sustainability, brands now pair eco-friendly materials like organic cotton and recycled polyester with innovative technologies that reduce water and energy use. \n\nDigital resale platforms such as Depop, Vinted, and ThredUp have surged in popularity, helping to mitigate the environmental impact of fast fashion by promoting a circular economy where garments are reused and upcycled. This shift not only cuts waste but also paves the way for a more sustainable fashion future.";
   // Determine content and next button based on title and step
   let content = `This is the content for the ${title} lesson.`;
   let nextButton = null;
@@ -741,6 +745,58 @@ const agricultureContent3 = "Consumers can also make a difference by choosing su
               </View>
             );
           }  
+        } else if (title === 'Fashion') {
+          if (step === 1) {
+            content = fashionContent1;
+            nextButton = (
+              <View style={styles.buttonContainer}>
+                <Button
+                  title="Next"
+                  onPress={() =>
+                    navigation.navigate('LessonDetail', { title: 'Fashion', step: 2 })
+                  }
+                  color="#fff"
+                />
+              </View>
+            );
+          } else if (step === 2) {
+            content = fashionContent2;
+            nextButton = (
+              <View style={styles.buttonContainer}>
+                <Button
+                  title="Next"
+                  onPress={() =>
+                    navigation.navigate('LessonDetail', { title: 'Fashion', step: 3 })
+                  }
+                  color="#fff"
+                />
+              </View>
+            );
+          } else if (step === 3) {
+            content = fashionContent3;
+            nextButton = (
+              <View style={styles.buttonContainer}>
+                <Button
+                  title="Next"
+                  onPress={() =>
+                    navigation.navigate('LessonDetail', { title: 'Fashion', step: 4 })
+                  }
+                  color="#fff"
+                />
+              </View>
+            );
+          } else if (step === 4) {
+            content = fashionContent4;
+            nextButton = (
+              <View style={styles.buttonContainer}>
+                <Button
+                  title="Quiz"
+                  onPress={() => navigation.navigate('Quiz', { lesson: title })}
+                  color="#fff"
+                />
+              </View>
+            );
+          }
         }
  
   

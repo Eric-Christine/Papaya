@@ -1,4 +1,3 @@
-// app/contexts/UserContext.tsx
 import React, { createContext, useState, ReactNode } from 'react';
 
 export type GardenItem = {
@@ -8,7 +7,7 @@ export type GardenItem = {
   growth: string;           // e.g., "Planted", "Ready to Harvest"
   plantedAt: number;        // Timestamp when planted
   harvestDuration: number;  // Duration (in ms) until ready to harvest
-  cost: number;             // The purchase cost (to later calculate sell price)
+  cost: number;             // The purchase cost
 };
 
 export type InventoryItem = {
@@ -34,7 +33,7 @@ type UserContextType = {
   user: User;
   addSeeds: (amount: number) => void;
   incrementLessons: () => void;
-  plantItem: (item: GardenItem) => void;
+  plantItem: (item: GardenItem) => boolean;  // <-- Return a boolean
   harvestItem: (id: string) => void;
   sellItem: (id: string) => void;
 };
@@ -51,10 +50,12 @@ export const UserContext = createContext<UserContextType>({
   },
   addSeeds: () => {},
   incrementLessons: () => {},
-  plantItem: () => {},
+  plantItem: () => false,
   harvestItem: () => {},
   sellItem: () => {},
 });
+
+const MAX_PLOTS = 4;
 
 export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User>({
@@ -63,7 +64,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     avatar:
       'https://firebasestorage.googleapis.com/v0/b/papaya-b8db9.firebasestorage.app/o/Untitled%20design.png?alt=media&token=b8fbba65-86ff-41f4-bec5-ae128d77e39d',
     lessonsCompleted: 0,
-    seeds: 300, // Start with 300 seeds for testing
+    seeds: 1000,
     garden: [],
     inventory: [],
   });
@@ -76,18 +77,27 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setUser(prev => ({ ...prev, lessonsCompleted: prev.lessonsCompleted + 1 }));
   };
 
-  const plantItem = (item: GardenItem) => {
-    setUser(prev => ({ ...prev, garden: [...prev.garden, item] }));
+  // Return `true` if successfully planted, `false` if garden is full
+  const plantItem = (item: GardenItem): boolean => {
+    let didPlant = false;
+    setUser(prev => {
+      if (prev.garden.length >= MAX_PLOTS) {
+        console.warn('Cannot plant item: Garden is full (maximum 4 plots).');
+        return prev;
+      }
+      didPlant = true;
+      return { ...prev, garden: [...prev.garden, item] };
+    });
+    return didPlant;
   };
 
-  // When an item is harvested, remove it from the garden and add it to inventory.
   const harvestItem = (id: string) => {
     setUser(prev => {
       const itemToHarvest = prev.garden.find(item => item.id === id);
       if (!itemToHarvest) return prev;
       const updatedGarden = prev.garden.filter(item => item.id !== id);
       const inventoryItem: InventoryItem = {
-        id: itemToHarvest.id, // Optionally, you could generate a new unique id
+        id: itemToHarvest.id,
         title: itemToHarvest.title,
         description: itemToHarvest.description,
         cost: itemToHarvest.cost,
@@ -98,7 +108,6 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     });
   };
 
-  // When an inventory item is sold, remove it from inventory and add seeds.
   const sellItem = (id: string) => {
     setUser(prev => {
       const itemToSell = prev.inventory.find(item => item.id === id);
@@ -109,7 +118,16 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   return (
-    <UserContext.Provider value={{ user, addSeeds, incrementLessons, plantItem, harvestItem, sellItem }}>
+    <UserContext.Provider
+      value={{
+        user,
+        addSeeds,
+        incrementLessons,
+        plantItem,
+        harvestItem,
+        sellItem,
+      }}
+    >
       {children}
     </UserContext.Provider>
   );

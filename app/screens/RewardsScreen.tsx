@@ -1,4 +1,3 @@
-// app/screens/RewardsScreen.tsx
 import React, { useState, useContext } from 'react';
 import {
   View,
@@ -11,11 +10,9 @@ import {
   Alert,
 } from 'react-native';
 import UserContext from '../contexts/UserContext';
-import { v4 as uuidv4 } from 'uuid'; // UUID generator
+import { v4 as uuidv4 } from 'uuid';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// Updated items include a harvestDuration property (in milliseconds)
-// and some items require a minimum number of lessons to be redeemed.
 const itemsData = [
   {
     id: '1',
@@ -51,7 +48,7 @@ const itemsData = [
     description: 'An elegant orchid that only blooms after dedication.',
     cost: 400,
     harvestDuration: 7200000, // 2 hours
-    requiredLessons: 5, // Only redeemable if 5 lessons have been completed
+    requiredLessons: 5,
   },
   {
     id: '6',
@@ -59,7 +56,7 @@ const itemsData = [
     description: 'A magical gnome that rewards your garden wisdom.',
     cost: 500,
     harvestDuration: 10800000, // 3 hours
-    requiredLessons: 10, // Only redeemable if 10 lessons have been completed
+    requiredLessons: 10,
   },
   {
     id: '7',
@@ -88,28 +85,36 @@ const badgesData = [
   },
 ];
 
+const MAX_PLOTS = 4;
+const MAX_LIVES = 5;
+const LIVES_KEY = 'quizLives';
+
 export default function RewardsScreen() {
   const { user, addSeeds, plantItem } = useContext(UserContext);
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [modalVisible, setModalVisible] = useState(false);
 
-  const MAX_LIVES = 5;
-  const LIVES_KEY = 'quizLives';
-
-  // Handle tapping an item for purchase.
   const handleItemPress = (item: typeof itemsData[0]) => {
     setSelectedItem(item);
     setModalVisible(true);
   };
 
-  // Handle confirming a purchase.
   const handlePurchase = async (item: typeof itemsData[0]) => {
-    // If purchasing a Heart, handle differently
+    // If the item is not a Heart, check garden capacity first
+    if (item.title !== 'Heart' && user.garden.length >= MAX_PLOTS) {
+      Alert.alert(
+        'Garden Full',
+        'Your garden is full. Please harvest existing crops before planting new ones.'
+      );
+      return;
+    }
+
+    // If item is a Heart, handle special logic
     if (item.title === 'Heart') {
       if (user.seeds >= item.cost) {
-        // Retrieve current lives from AsyncStorage
         const storedLives = await AsyncStorage.getItem(LIVES_KEY);
         let currentLives = storedLives ? parseInt(storedLives, 10) : MAX_LIVES;
+
         if (currentLives >= MAX_LIVES) {
           Alert.alert('Hearts Full', 'Your hearts are already full.');
           return;
@@ -117,7 +122,10 @@ export default function RewardsScreen() {
         addSeeds(-item.cost);
         currentLives += 1;
         await AsyncStorage.setItem(LIVES_KEY, currentLives.toString());
-        Alert.alert('Purchase Successful', `You purchased a heart. You now have ${currentLives} heart(s).`);
+        Alert.alert(
+          'Purchase Successful',
+          `You purchased a heart. You now have ${currentLives} heart(s).`
+        );
         setModalVisible(false);
         setSelectedItem(null);
         return;
@@ -127,7 +135,7 @@ export default function RewardsScreen() {
       }
     }
 
-    // For other items, check lessons requirement if present.
+    // Check lessons requirement
     if (item.requiredLessons && user.lessonsCompleted < item.requiredLessons) {
       Alert.alert(
         'Not Eligible',
@@ -135,17 +143,23 @@ export default function RewardsScreen() {
       );
       return;
     }
+
+    // Check if user has enough seeds
     if (user.seeds >= item.cost) {
-      // Deduct seeds.
+      // Deduct seeds
       addSeeds(-item.cost);
-      // Plant the item with a plantedAt timestamp, harvestDuration, and a unique id.
-      plantItem({
+
+      // Attempt to plant
+      const didPlant = plantItem({
         ...item,
         growth: 'Planted',
         plantedAt: Date.now(),
-        id: uuidv4(), // Generate a unique key for the planted item
+        id: uuidv4(),
       });
-      Alert.alert('Purchase Successful', `You purchased and planted ${item.title}.`);
+
+      if (didPlant) {
+        Alert.alert('Purchase Successful', `You purchased and planted ${item.title}.`);
+      }
       setModalVisible(false);
       setSelectedItem(null);
     } else {
@@ -159,12 +173,18 @@ export default function RewardsScreen() {
       <Text style={styles.seedCount}>Seeds: {user.seeds}</Text>
       <Text style={styles.lessonCount}>Lessons Completed: {user.lessonsCompleted}</Text>
 
-      {/* Items for Purchase Section */}
+      {/* Show message if garden is full */}
+      {user.garden.length >= MAX_PLOTS && (
+        <Text style={styles.fullGardenNotice}>
+          Your garden is full. Please harvest existing crops before purchasing new ones.
+        </Text>
+      )}
+
       <View style={styles.section}>
         <Text style={styles.sectionHeader}>Items for Purchase</Text>
         {itemsData.map(item => (
           <TouchableOpacity
-            key={item.id} // These keys are static since itemsData is fixed.
+            key={item.id}
             style={styles.itemCard}
             onPress={() => handleItemPress(item)}
           >
@@ -182,7 +202,6 @@ export default function RewardsScreen() {
         ))}
       </View>
 
-      {/* Badges Section */}
       <View style={styles.section}>
         <Text style={styles.sectionHeader}>Badges</Text>
         {badgesData.map(badge => (
@@ -193,7 +212,6 @@ export default function RewardsScreen() {
         ))}
       </View>
 
-      {/* Purchase Confirmation Modal */}
       <Modal visible={modalVisible} animationType="slide" transparent>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
@@ -256,6 +274,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#333',
     marginBottom: 20,
+  },
+  fullGardenNotice: {
+    fontSize: 16,
+    color: '#d9534f',
+    fontWeight: 'bold',
+    marginBottom: 15,
+    textAlign: 'center',
   },
   section: {
     width: '100%',
