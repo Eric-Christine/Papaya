@@ -3,7 +3,7 @@ import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 const GoBackToLessonsButton = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
 
   return (
     <TouchableOpacity

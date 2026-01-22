@@ -1,11 +1,11 @@
 // app/screens/QuizScreen.tsx
 import React, { useState, useContext, useRef, useEffect } from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  TouchableOpacity, 
-  Button, 
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Button,
   ScrollView,
   Animated,
   Dimensions
@@ -13,6 +13,7 @@ import {
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { UserContext } from '../contexts/UserContext';
 import * as Haptics from 'expo-haptics'; // Import Expo Haptics
+import ConfettiCannon from 'react-native-confetti-cannon';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // -----------------------------------------------------------------------------
@@ -248,7 +249,7 @@ const organizationsQuizQuestions = [
 ];
 
 const energyQuizQuestions = [
-  {   
+  {
     question: "What does the term 'energy mix' refer to?",
     options: [
       "The exclusive use of fossil fuels for energy",
@@ -292,7 +293,7 @@ const energyQuizQuestions = [
     correctAnswer: 2,
     explanation: "Battery storage is the most widely used technology for electric vehicles and grid-scale energy storage.",
   },
-]; 
+];
 const recyclingQuizQuestions = [
   {
     question: "What is the primary goal of recycling?",
@@ -388,7 +389,7 @@ const oceanQuizQuestions = [
 ];
 
 const agricultureQuizQuestions = [
-  {  
+  {
     question: "What is the environmental impact of industrial agriculture?",
     options: [
       "Increased biodiversity",
@@ -416,7 +417,7 @@ const agricultureQuizQuestions = [
       "Increase food waste",
       "Adopt sustainable farming practices",
       "Use more pesticides",
-      "Expand monoculture farming", 
+      "Expand monoculture farming",
     ],
     correctAnswer: 1,
     explanation: "Adopting sustainable farming practices can help reduce the environmental impact of food production, promoting biodiversity and soil health.",
@@ -432,9 +433,9 @@ const agricultureQuizQuestions = [
     correctAnswer: 1,
     explanation: "The food system contributes to water scarcity through intensive irrigation and water-intensive crop production.",
   },
-]; 
+];
 const electricVehiclesQuizQuestions = [
-  {  
+  {
     question: "What is a primary benefit of electric vehicles (EVs) compared to gasoline-powered cars?",
     options: [
       "Lower fuel efficiency",
@@ -478,9 +479,9 @@ const electricVehiclesQuizQuestions = [
     correctAnswer: 2,
     explanation: "Offering incentives and rebates can help increase the adoption of electric vehicles by making them more affordable for consumers.",
   },
-]; 
+];
 const fashionQuizQuestions = [
-  { 
+  {
     question: "What is fast fashion?",
     options: [
       "High-quality, long-lasting clothing",
@@ -523,6 +524,53 @@ const fashionQuizQuestions = [
     ],
     correctAnswer: 2,
     explanation: "Supporting sustainable and ethical fashion brands can help reduce the environmental impact of the fashion industry."
+  },
+];
+
+const renewableEnergyQuizQuestions = [
+  {
+    question: "Which renewable energy source provides approximately 16% of global electricity and is the largest renewable energy source?",
+    options: [
+      "Wind energy",
+      "Solar power",
+      "Hydroelectric power",
+      "Geothermal energy",
+    ],
+    correctAnswer: 2,
+    explanation: "Hydroelectric power provides approximately 16% of global electricity and remains the largest renewable energy source worldwide.",
+  },
+  {
+    question: "What makes geothermal energy particularly valuable compared to solar and wind?",
+    options: [
+      "It's cheaper to install",
+      "It operates 24/7 providing reliable baseload power",
+      "It requires no infrastructure",
+      "It generates more power per installation",
+    ],
+    correctAnswer: 1,
+    explanation: "Geothermal plants operate continuously 24/7 with minimal environmental impact, providing reliable baseload power unlike intermittent solar and wind sources.",
+  },
+  {
+    question: "Which country generates nearly 100% of its electricity from renewable sources, with geothermal playing a major role?",
+    options: [
+      "Germany",
+      "Denmark",
+      "Iceland",
+      "China",
+    ],
+    correctAnswer: 2,
+    explanation: "Iceland generates nearly 100% of its electricity from renewable sources, with geothermal energy playing a major role alongside hydropower.",
+  },
+  {
+    question: "What is one major benefit of renewable energy beyond climate change mitigation?",
+    options: [
+      "Increases dependence on imported fuels",
+      "Reduces job opportunities",
+      "Enhances energy independence and national security",
+      "Increases air pollution",
+    ],
+    correctAnswer: 2,
+    explanation: "Renewable energy reduces reliance on imported fossil fuels, enhancing energy independence and national security while also creating jobs and improving air quality.",
   },
 ];
 
@@ -674,7 +722,7 @@ interface SeedAnimation {
 export default function QuizScreen() {
   const LIVES_KEY = 'quizLives';
   const LIVES_RESET_KEY = 'quizLivesReset';
-  const MAX_LIVES = 5;
+  const MAX_LIVES = 10;
   const RESET_INTERVAL = 24 * 60 * 60 * 1000; // 24 hours in ms
 
   const [lives, setLives] = useState<number>(MAX_LIVES);
@@ -682,7 +730,7 @@ export default function QuizScreen() {
 
   const route = useRoute();
   const navigation = useNavigation();
-  const { lesson } = route.params || {};
+  const { lesson } = (route.params as any) || {};
 
   // Choose quiz questions based on lesson type
   const lessonLower = lesson?.toLowerCase() || "";
@@ -709,9 +757,11 @@ export default function QuizScreen() {
         return agricultureQuizQuestions;
       case lessonType.includes("electric vehicles"):
         return electricVehiclesQuizQuestions;
-     case lessonType.includes("fashion"):
+      case lessonType.includes("fashion"):
         return fashionQuizQuestions;
-      default: 
+      case lessonType.includes("renewable energy"):
+        return renewableEnergyQuizQuestions;
+      default:
         return climateQuizQuestions; // Default to climate quiz
     }
   };
@@ -795,6 +845,7 @@ export default function QuizScreen() {
 
   const handleOptionPress = (index: number) => {
     if (!answerChecked) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       setSelectedOption(index);
     }
   };
@@ -803,14 +854,16 @@ export default function QuizScreen() {
     // --------------------------------------------------------------------------
     // Trigger Haptic Feedback on button press
     // --------------------------------------------------------------------------
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+
     // --------------------------------------------------------------------------
-    
+
     if (!answerChecked) {
       // Check the answer
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
       setAnswerChecked(true);
       if (selectedOption === currentQuestion.correctAnswer) {
         // Correct answer: award +10 Seeds
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         setScore(prev => prev + 10);
         addSeeds(10);
         setCorrectCount(prev => prev + 1);
@@ -821,6 +874,7 @@ export default function QuizScreen() {
         addSeedAnimation(10, { top: 200, left: Dimensions.get('window').width / 2 - 40 });
       } else {
         // Incorrect answer: award +1 Seed
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
         setScore(prev => prev + 1);
         addSeeds(1);
         const messages = ["Not Quite!", "Incorrect", "Sorry!"];
@@ -847,6 +901,18 @@ export default function QuizScreen() {
           setScore(score + bonus);
           addSeeds(bonus);
           setBonusAwarded(true);
+        }
+        const params = route.params as any;
+        if (params?.lesson) {
+          try {
+            const lessonTitle = params.lesson;
+            const completedMapJson = await AsyncStorage.getItem('completedLessonsMap');
+            const completedMap = completedMapJson ? JSON.parse(completedMapJson) : {};
+            completedMap[lessonTitle] = true;
+            await AsyncStorage.setItem('completedLessonsMap', JSON.stringify(completedMap));
+          } catch (e) {
+            console.error('Failed to save completed lesson:', e);
+          }
         }
         incrementLessons();
         setQuizCompleted(true);
@@ -884,13 +950,14 @@ export default function QuizScreen() {
         </TouchableOpacity>
       </View>
     );
-  } 
+  }
 
   return (
     // Ensure the container is positioned relatively so the animated elements overlay correctly.
     <ScrollView contentContainerStyle={[styles.container, { position: 'relative' }]}>
       {quizCompleted ? (
         <View style={styles.scoreContainer}>
+          <ConfettiCannon count={200} origin={{ x: -10, y: 0 }} fallSpeed={2500} fadeOut={true} autoStart={true} />
           <Text style={styles.scoreTitle}>Quiz Completed!</Text>
           <Text style={styles.scoreText}>Seeds Gathered: {score} 🌱</Text>
           <Text style={styles.scoreText}>
@@ -933,7 +1000,7 @@ export default function QuizScreen() {
           </View>
           <View style={styles.optionsContainer}>
             {currentQuestion.options.map((option, index) => {
-              let optionStyle = [styles.optionButton];
+              let optionStyle: any[] = [styles.optionButton];
               if (answerChecked) {
                 if (index === currentQuestion.correctAnswer) {
                   optionStyle.push(styles.optionCorrect);
@@ -979,7 +1046,7 @@ export default function QuizScreen() {
       )}
     </ScrollView>
   );
-} 
+}
 
 // -----------------------------------------------------------------------------
 // Styles
@@ -1219,5 +1286,8 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'flex-end',
     marginBottom: 8,
+  },
+  heartsIndicatorText: {
+    fontSize: 20,
   },
 });

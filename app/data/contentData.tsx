@@ -123,5 +123,87 @@ Worldwide, energy storage deployments are accelerating as nations strive to deca
    - **Australia:** Leading in community and utility-scale battery projects, proving critical in remote and urban settings alike.
    - **Emerging Markets:** Countries across Southeast Asia and the Middle East are rapidly adopting storage solutions to complement growing renewable infrastructures.
 
-This lesson explores how each of these technologies and deployments is revolutionizing the way we store energy to power our homes, businesses, and entire cities—ensuring a resilient and sustainable energy future for all.`
+This lesson explores how each of these technologies and deployments is revolutionizing the way we store energy to power our homes, businesses, and entire cities—ensuring a resilient and sustainable energy future for all.`,
+
+  'Renewable Energy': `Renewable Energy represents the cornerstone of our transition to a sustainable future. Unlike fossil fuels that deplete over time and contribute to climate change, renewable energy sources harness the Earth's natural processes to generate clean, abundant power. This comprehensive lesson explores the diverse landscape of renewable energy technologies and their transformative impact on our global energy systems.
+
+• Wind Energy:
+   - Wind turbines convert kinetic energy from moving air into electricity through rotating blades.
+   - Modern offshore wind farms can generate enough electricity to power millions of homes.
+   - Wind energy has seen dramatic cost reductions, making it one of the cheapest forms of electricity generation.
+   - Global leaders include Denmark (producing over 40% of electricity from wind), China (largest installed capacity), and the United States.
+   - Advanced turbine designs now capture energy even at lower wind speeds, expanding viable deployment locations.
+
+• Solar Power:
+   - Photovoltaic (PV) panels directly convert sunlight into electricity using semiconductor materials.
+   - Concentrated Solar Power (CSP) uses mirrors to focus sunlight, generating heat for electricity production.
+   - Solar panel efficiency continues to improve, with some cutting-edge panels exceeding 25% efficiency.
+   - Distributed rooftop solar democratizes energy production, allowing homes and businesses to generate their own power.
+   - Countries like Germany, Australia, and India are rapidly expanding solar installations to meet climate goals.
+
+• Hydroelectric Power:
+   - Dams and run-of-river systems harness the energy of flowing water to generate electricity.
+   - Hydropower provides approximately 16% of global electricity and remains the largest renewable energy source.
+   - Pumped-storage hydroelectricity acts as a massive battery, storing energy by pumping water uphill during low demand.
+   - Modern designs minimize environmental impact while maximizing energy output.
+   - Notable installations include China's Three Gorges Dam and Norway's extensive hydropower network.
+
+• Geothermal Energy:
+   - Taps into the Earth's internal heat to generate electricity and provide direct heating.
+   - Geothermal plants operate 24/7 with minimal environmental impact, providing reliable baseload power.
+   - Iceland generates nearly 100% of its electricity from renewable sources, with geothermal playing a major role.
+   - Enhanced Geothermal Systems (EGS) are expanding potential locations beyond traditional volcanic regions.
+   - Direct-use applications include district heating, greenhouse agriculture, and industrial processes.
+
+• Biomass and Bioenergy:
+   - Converts organic materials (wood, agricultural waste, algae) into electricity, heat, or biofuels.
+   - When managed sustainably, biomass can be carbon-neutral by replanting what is harvested.
+   - Advanced biofuels offer alternatives to gasoline and diesel for transportation.
+   - Waste-to-energy facilities reduce landfill use while generating power.
+   - Caution is needed to ensure biomass production doesn't compete with food crops or drive deforestation.
+
+• Tidal and Wave Energy:
+   - Harnesses the predictable movement of ocean tides and waves to generate electricity.
+   - Still in early development stages but offers immense potential, particularly for coastal nations.
+   - Tidal energy is highly predictable, unlike solar and wind, providing reliable generation schedules.
+   - Pilot projects in Scotland, France, and South Korea are demonstrating commercial viability.
+
+The renewable energy transition offers multiple benefits beyond climate change mitigation:
+   - **Energy Independence:** Reduces reliance on imported fossil fuels and enhances national security.
+   - **Job Creation:** The renewable sector employs millions worldwide, with job growth outpacing fossil fuel industries.
+   - **Air Quality:** Eliminates local air pollution from power generation, improving public health.
+   - **Economic Resilience:** Renewable energy costs are stable and predictable, unlike volatile fossil fuel prices.
+   - **Rural Development:** Wind and solar farms provide income to rural landowners and communities.
+
+Challenges and solutions in renewable energy deployment:
+   - **Intermittency:** Battery storage, grid modernization, and diversified energy mix address variable generation.
+   - **Infrastructure:** Upgrading transmission grids to handle distributed generation requires investment.
+   - **Land Use:** Careful siting and multi-use approaches (like agrivoltaics) minimize environmental impact.
+   - **Material Supply:** Recycling programs and alternative materials reduce reliance on rare earth elements.
+
+This lesson demonstrates how renewable energy is not just environmentally necessary but economically advantageous, creating a pathway toward a clean, sustainable, and prosperous energy future for all.`
+};
+
+export const lessonImages: { [key: string]: string } = {
+  'Climate Basics': 'https://placehold.co/600x400/2E7D32/ffffff/png?text=Climate+Basics',
+  'Greenhouse Gases': 'https://placehold.co/600x400/4CAF50/ffffff/png?text=Greenhouse+Gases',
+  'Human Impact': 'https://placehold.co/600x400/EF5350/ffffff/png?text=Human+Impact',
+  'Consequences': 'https://placehold.co/600x400/FFA726/ffffff/png?text=Consequences',
+  'Solutions': 'https://placehold.co/600x400/29B6F6/ffffff/png?text=Solutions',
+  'Sustainable Living': 'https://placehold.co/600x400/66BB6A/ffffff/png?text=Sustainable+Living',
+  'Sustainable Living: Reduce Waste': 'https://placehold.co/600x400/8D6E63/ffffff/png?text=Reduce+Waste',
+  'Sustainable Living: Energy Efficiency': 'https://placehold.co/600x400/FFEB3B/000000/png?text=Energy+Efficiency',
+  'Energy Mix': 'https://placehold.co/600x400/AB47BC/ffffff/png?text=Energy+Mix',
+  'Nuclear Power': 'https://placehold.co/600x400/9C27B0/ffffff/png?text=Nuclear+Power',
+  'Solar Power': 'https://placehold.co/600x400/FFC107/000000/png?text=Solar+Power',
+  'Energy Storage': 'https://placehold.co/600x400/7E57C2/ffffff/png?text=Energy+Storage',
+  'Renewable Energy': 'https://placehold.co/600x400/009688/ffffff/png?text=Renewable+Energy',
+  'Electric Vehicles': 'https://placehold.co/600x400/0288D1/ffffff/png?text=Electric+Vehicles',
+  'Agriculture': 'https://placehold.co/600x400/558B2F/ffffff/png?text=Agriculture',
+  'Fashion': 'https://placehold.co/600x400/E91E63/ffffff/png?text=Fashion',
+  'Oceans': 'https://placehold.co/600x400/0277BD/ffffff/png?text=Oceans',
+  'Recycling': 'https://placehold.co/600x400/388E3C/ffffff/png?text=Recycling',
+  'Carbon Footprint': 'https://placehold.co/600x400/455A64/ffffff/png?text=Carbon+Footprint',
+  'Achievements': 'https://placehold.co/600x400/FFD700/000000/png?text=Achievements',
+  'Organizations': 'https://placehold.co/600x400/1976D2/ffffff/png?text=Organizations',
 };

@@ -25,6 +25,8 @@ type User = {
   avatar: string;
   lessonsCompleted: number;
   seeds: number;
+  xp: number;
+  fertilizer: number; // Added Fertilizer count
   garden: GardenItem[];
   inventory: InventoryItem[];
 };
@@ -32,8 +34,11 @@ type User = {
 type UserContextType = {
   user: User;
   addSeeds: (amount: number) => void;
+  addXp: (amount: number) => void;
+  buyFertilizer: (amount: number, cost: number) => void; // Added buyFertilizer
+  fertilizeItem: (id: string) => boolean; // Added fertilizeItem
   incrementLessons: () => void;
-  plantItem: (item: GardenItem) => boolean;  // <-- Return a boolean
+  plantItem: (item: GardenItem) => boolean;
   harvestItem: (id: string) => void;
   sellItem: (id: string) => void;
 };
@@ -45,14 +50,19 @@ export const UserContext = createContext<UserContextType>({
     avatar: '',
     lessonsCompleted: 0,
     seeds: 0,
+    xp: 0,
+    fertilizer: 0, // Initial Fertilizer
     garden: [],
     inventory: [],
   },
-  addSeeds: () => {},
-  incrementLessons: () => {},
+  addSeeds: () => { },
+  addXp: () => { },
+  buyFertilizer: () => { },
+  fertilizeItem: () => false,
+  incrementLessons: () => { },
   plantItem: () => false,
-  harvestItem: () => {},
-  sellItem: () => {},
+  harvestItem: () => { },
+  sellItem: () => { },
 });
 
 const MAX_PLOTS = 4;
@@ -65,12 +75,63 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       'https://firebasestorage.googleapis.com/v0/b/papaya-b8db9.firebasestorage.app/o/Untitled%20design.png?alt=media&token=b8fbba65-86ff-41f4-bec5-ae128d77e39d',
     lessonsCompleted: 0,
     seeds: 1000,
+    xp: 0,
+    fertilizer: 0, // Initial Fertilizer
     garden: [],
     inventory: [],
   });
 
   const addSeeds = (amount: number) => {
     setUser(prev => ({ ...prev, seeds: prev.seeds + amount }));
+  };
+
+  const addXp = (amount: number) => {
+    setUser(prev => ({ ...prev, xp: prev.xp + amount }));
+  };
+
+  const buyFertilizer = (amount: number, cost: number) => {
+    setUser(prev => ({
+      ...prev,
+      seeds: prev.seeds - cost,
+      fertilizer: prev.fertilizer + amount
+    }));
+  };
+
+  const fertilizeItem = (id: string): boolean => {
+    let success = false;
+    setUser(prev => {
+      if (prev.fertilizer <= 0) return prev;
+
+      const itemIndex = prev.garden.findIndex(item => item.id === id);
+      if (itemIndex === -1) return prev;
+
+      const updatedGarden = [...prev.garden];
+      const item = updatedGarden[itemIndex];
+
+      // Calculate remaining time
+      const elapsed = Date.now() - item.plantedAt;
+      const remaining = Math.max(item.harvestDuration - elapsed, 0);
+
+      if (remaining <= 0) return prev; // Don't fertilize if already ready
+
+      // Magic: To "cut remaining time in half", we can virtually increase "elapsed" time
+      // or effectively decrease harvestDuration. Let's decrease harvestDuration.
+      // But wait, `plantedAt` is fixed.
+      // Better approach: Shift `plantedAt` back in time by half the remaining duration.
+      // New Remaining = Old Remaining / 2
+      // New Elapsed = HarvestDuration - New Remaining
+      // Shift = New Elapsed - Old Elapsed = (HarvestDuration - Rem/2) - (HarvestDuration - Rem) = Rem/2
+
+      const timeToSkip = Math.floor(remaining / 2);
+      updatedGarden[itemIndex] = {
+        ...item,
+        plantedAt: item.plantedAt - timeToSkip,
+      };
+
+      success = true;
+      return { ...prev, garden: updatedGarden, fertilizer: prev.fertilizer - 1 };
+    });
+    return success;
   };
 
   const incrementLessons = () => {
@@ -122,6 +183,9 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       value={{
         user,
         addSeeds,
+        addXp,
+        buyFertilizer,
+        fertilizeItem,
         incrementLessons,
         plantItem,
         harvestItem,

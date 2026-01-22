@@ -3,7 +3,7 @@ import { View, Text, TextInput, Button } from 'react-native';
 
 const HuggingfaceExample = () => {
   const [input, setInput] = useState('');
-  const [result, setResult] = useState(null);
+  const [result, setResult] = useState<any>(null);
   const API_URL = 'https://api-inference.huggingface.co/models/google/flan-t5-large';
   const API_TOKEN = 'TOKEN'; // Replace with your token
 

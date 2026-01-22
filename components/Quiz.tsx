@@ -11,7 +11,7 @@ import {
   Dimensions,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { UserContext } from '../contexts/UserContext';
+import { UserContext } from '../app/contexts/UserContext';
 import * as Haptics from 'expo-haptics';
 
 // Define props interface
@@ -261,11 +261,11 @@ export default function Quiz({ quizQuestions }: QuizProps) {
           </View>
           <View style={styles.optionsContainer}>
             {currentQuestion.options.map((option, index) => {
-              let optionStyle = [styles.optionButton];
+              let optionStyle: any[] = [styles.optionButton];
               if (answerChecked) {
                 if (index === currentQuestion.correctAnswer) {
                   optionStyle.push(styles.optionCorrect);
-                } else if (index === selectedOption && !isCorrect) {
+                } else if (index === selectedOption && !isAnswerCorrect) {
                   optionStyle.push(styles.optionIncorrect);
                 }
               } else if (selectedOption === index) {

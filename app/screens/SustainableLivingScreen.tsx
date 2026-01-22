@@ -2,7 +2,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, Button } from 'react-native';
 
-export default function SustainableLivingScreen({ navigation }) {
+export default function SustainableLivingScreen({ navigation }: any) {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.header}>Sustainable Living</Text>
@@ -18,7 +18,7 @@ export default function SustainableLivingScreen({ navigation }) {
         Embracing sustainable living practices not only benefits the environment but also promotes a healthier lifestyle and a more resilient community.
       </Text>
       <View style={styles.buttonContainer}>
-        <Button 
+        <Button
           title="Learn More"
           onPress={() => navigation.navigate('SustainableLivingDetails')}
         />

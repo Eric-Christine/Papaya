@@ -12,8 +12,9 @@ const lessons = [
     title: 'Climate Basics',
     description: 'Understand the greenhouse effect and how climate change works.',
     icon: 'earth',
-  }, 
-  { id: '2',
+  },
+  {
+    id: '2',
     title: 'Fashion',
     description: 'Learn about the environmental impact of the fashion industry and how to shop sustainably.',
     icon: 'tshirt-crew',
@@ -63,27 +64,33 @@ const lessons = [
   {
     id: '10',
     title: 'Solar Power',
-    description: 'Learn about how solar power and debunk common myths', 
+    description: 'Learn about how solar power and debunk common myths',
     icon: 'solar-power',
   },
   {
     id: '11',
     title: 'Oceans',
-    description: 'How have our oceans changed and how to protect them', 
+    description: 'How have our oceans changed and how to protect them',
     icon: 'waves',
   },
   {
     id: '12',
     title: 'Recycling',
-    description: 'Recycling misconceptions and how to recycle properly', 
+    description: 'Recycling misconceptions and how to recycle properly',
     icon: 'recycle',
+  },
+  {
+    id: '13',
+    title: 'Renewable Energy',
+    description: 'Explore wind, solar, hydro, and other clean energy sources powering our future',
+    icon: 'wind-turbine',
   },
 ];
 
 const COMPLETED_LESSONS_KEY = 'completedLessons';
 
 export default function LessonsScreen() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
   const [completedLessons, setCompletedLessons] = useState<string[]>([]);
 
   // Load completed lessons from AsyncStorage on mount
@@ -125,7 +132,7 @@ export default function LessonsScreen() {
         navigation.navigate('LessonDetail', { title: item.title });
       }}
     >
-      <MaterialCommunityIcons name={item.icon} size={32} color="#2E7D32" style={styles.icon} />
+      <MaterialCommunityIcons name={item.icon as any} size={32} color="#2E7D32" style={styles.icon} />
       <View style={styles.lessonContent}>
         <Text style={styles.lessonTitle}>{item.title}</Text>
         <Text style={styles.lessonDescription}>{item.description}</Text>
@@ -147,12 +154,12 @@ export default function LessonsScreen() {
         keyExtractor={(item) => item.id}
         renderItem={renderLesson}
         contentContainerStyle={styles.listContent}
-        // Render the Hugging Face Component as a footer
-        // ListFooterComponent={
-        //   <View style={styles.huggingFaceContainer}>
-        //     <HuggingfaceExample />
-        //   </View>
-        // }
+      // Render the Hugging Face Component as a footer
+      // ListFooterComponent={
+      //   <View style={styles.huggingFaceContainer}>
+      //     <HuggingfaceExample />
+      //   </View>
+      // }
       />
     </View>
   );

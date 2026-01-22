@@ -1,6 +1,6 @@
-# EcoLearn - Sustainability Education App
+# Papaya - Sustainability Education App
 
-**EcoLearn** is an interactive mobile application built with Expo that provides engaging lessons on sustainability and climate change. Learn about climate basics, greenhouse gases, human impact, consequences, and solutions, and test your knowledge with integrated quizzes. The app leverages file-based routing with Expo Router and features a gamified learning experience to encourage users to explore and improve their environmental knowledge.
+**Papaya** is an interactive mobile application built with Expo that provides engaging lessons on sustainability and climate change. Learn about climate basics, greenhouse gases, human impact, consequences, and solutions, and test your knowledge with integrated quizzes. The app leverages file-based routing with Expo Router and features a gamified learning experience to encourage users to explore and improve their environmental knowledge.
 
 ## Features
 

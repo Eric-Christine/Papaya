@@ -4,7 +4,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import 'react-native-get-random-values';
-import { TouchableOpacity, GestureResponderEvent, StyleSheet } from 'react-native';
+import { TouchableOpacity, GestureResponderEvent, StyleSheet, AccessibilityState } from 'react-native';
 import * as Haptics from 'expo-haptics';
 
 // Screens
@@ -28,14 +28,16 @@ const HapticTab = ({
   accessibilityState,
   children,
 }: {
-  onPress: (event: GestureResponderEvent) => void;
-  accessibilityState?: { selected: boolean };
+  onPress?: (event: GestureResponderEvent) => void;
+  accessibilityState?: AccessibilityState;
   children: React.ReactNode;
 }) => {
   const handlePress = (event: GestureResponderEvent) => {
     // Trigger a light haptic impact on press
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    onPress(event);
+    if (onPress) {
+      onPress(event);
+    }
   };
 
   return (
@@ -60,12 +62,12 @@ const LessonsStackNavigator = () => {
       <Stack.Screen
         name="Lessons"
         component={LessonsScreen}
-        options={{ title: 'Lessons' }}
+        options={{ title: 'Lessons', headerShown: false }}
       />
       <Stack.Screen
         name="LessonDetail"
         component={LessonDetailScreen}
-        options={{ title: 'Lesson Detail' }}
+        options={{ title: '' }}
       />
       <Stack.Screen
         name="Quiz"
