@@ -510,3 +510,97 @@ export const renewableEnergyQuizQuestions: Question[] = [
         explanation: "Renewable energy reduces reliance on imported fossil fuels, enhancing energy independence and national security while also creating jobs and improving air quality.",
     },
 ];
+
+export const policyLawsQuizQuestions: Question[] = [
+    {
+        question: "What is the Paris Agreement?",
+        options: [
+            "A trade deal between European countries",
+            "An international treaty on climate change mitigation",
+            "A renewable energy company",
+            "A United Nations building",
+        ],
+        correctAnswer: 1,
+        explanation: "The Paris Agreement is an international treaty signed in 2015 aimed at limiting global warming to 1.5°C above pre-industrial levels.",
+    },
+    {
+        question: "What does the Clean Air Act regulate in the United States?",
+        options: [
+            "Water pollution",
+            "Air emissions from stationary and mobile sources",
+            "Noise pollution",
+            "Food safety standards",
+        ],
+        correctAnswer: 1,
+        explanation: "The Clean Air Act regulates air emissions from various sources to protect public health and the environment.",
+    },
+    {
+        question: "What is the purpose of a carbon tax?",
+        options: [
+            "To encourage more fossil fuel use",
+            "To put a price on carbon emissions to incentivize reductions",
+            "To reduce energy prices",
+            "To fund military operations",
+        ],
+        correctAnswer: 1,
+        explanation: "A carbon tax puts a price on greenhouse gas emissions, incentivizing businesses and individuals to reduce their carbon footprint.",
+    },
+    {
+        question: "Which law established the Environmental Protection Agency (EPA) in the US?",
+        options: [
+            "The Clean Water Act",
+            "The National Environmental Policy Act (NEPA)",
+            "The Endangered Species Act",
+            "The Toxic Substances Control Act",
+        ],
+        correctAnswer: 1,
+        explanation: "The National Environmental Policy Act (NEPA) of 1970 led to the creation of the EPA to enforce environmental laws.",
+    },
+];
+
+export const publicTransportQuizQuestions: Question[] = [
+    {
+        question: "How much can public transit reduce an individual's carbon footprint compared to driving?",
+        options: [
+            "10%",
+            "25%",
+            "50% or more",
+            "Public transit is worse for the environment",
+        ],
+        correctAnswer: 2,
+        explanation: "Public transit can reduce an individual's carbon footprint by 50% or more compared to driving a personal vehicle.",
+    },
+    {
+        question: "What is a '15-minute city'?",
+        options: [
+            "A city with only 15 minutes of traffic per day",
+            "An urban design where daily needs are within 15 minutes by foot or bike",
+            "A city with 15 neighborhoods",
+            "A fast-paced lifestyle",
+        ],
+        correctAnswer: 1,
+        explanation: "A 15-minute city is an urban planning concept where daily necessities are accessible within 15 minutes of walking or cycling from home.",
+    },
+    {
+        question: "Which city has one of the world's largest and most efficient metro systems?",
+        options: [
+            "Los Angeles",
+            "Tokyo",
+            "Houston",
+            "Phoenix",
+        ],
+        correctAnswer: 1,
+        explanation: "Tokyo has one of the world's largest and most efficient metro systems, moving millions of passengers daily with remarkable punctuality.",
+    },
+    {
+        question: "What is urban sprawl?",
+        options: [
+            "Rapid growth of tall buildings in city centers",
+            "The spread of development into suburban areas requiring more cars",
+            "A type of public park",
+            "A sustainable urban design",
+        ],
+        correctAnswer: 1,
+        explanation: "Urban sprawl is the uncontrolled expansion of urban development into surrounding areas, often increasing car dependency and emissions.",
+    },
+];

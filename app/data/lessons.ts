@@ -79,4 +79,16 @@ export const lessons: Lesson[] = [
         description: 'Explore wind, solar, hydro, and other clean energy sources powering our future',
         icon: 'wind-turbine',
     },
+    {
+        id: '14',
+        title: 'Policy & Environmental Laws',
+        description: 'Learn about key environmental policies and laws shaping our world',
+        icon: 'scale-balance',
+    },
+    {
+        id: '15',
+        title: 'Public Transport & Urban Living',
+        description: 'Discover how sustainable cities and public transport reduce emissions',
+        icon: 'bus',
+    },
 ];

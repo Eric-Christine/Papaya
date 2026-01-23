@@ -181,7 +181,72 @@ Challenges and solutions in renewable energy deployment:
    - **Land Use:** Careful siting and multi-use approaches (like agrivoltaics) minimize environmental impact.
    - **Material Supply:** Recycling programs and alternative materials reduce reliance on rare earth elements.
 
-This lesson demonstrates how renewable energy is not just environmentally necessary but economically advantageous, creating a pathway toward a clean, sustainable, and prosperous energy future for all.`
+This lesson demonstrates how renewable energy is not just environmentally necessary but economically advantageous, creating a pathway toward a clean, sustainable, and prosperous energy future for all.`,
+
+  'Policy & Environmental Laws': `Policy & Environmental Laws explores how legislation shapes our environmental future. This comprehensive lesson covers:
+
+• **The Paris Agreement:** An international treaty uniting 196 countries to limit global warming to 1.5°C. Nations set their own "Nationally Determined Contributions" (NDCs) to reduce emissions.
+
+• **The Clean Air Act (USA):** Landmark legislation regulating air emissions since 1970. It has successfully reduced pollutants like sulfur dioxide and lead, preventing millions of premature deaths.
+
+• **The Clean Water Act (USA):** Protects national waters from pollution, requiring permits for industrial discharges and setting water quality standards.
+
+• **Carbon Pricing Mechanisms:**
+   - **Carbon Tax:** A direct price on each ton of CO₂ emitted, encouraging businesses to reduce emissions. Used in countries like Canada and Sweden.
+   - **Cap-and-Trade:** Sets a limit on total emissions and allows companies to buy/sell permits. The EU Emissions Trading System is the world's largest.
+
+• **The Environmental Protection Agency (EPA):** Created in 1970, the EPA enforces environmental laws, conducts research, and sets national standards for air and water quality.
+
+• **International Frameworks:**
+   - **Kyoto Protocol (1997):** First legally binding international agreement to reduce greenhouse gases.
+   - **Montreal Protocol:** Successfully phased out ozone-depleting substances, healing the ozone layer.
+   - **UNFCCC:** The backbone of global climate negotiations that led to the Paris Agreement.
+
+• **Emerging Policies:**
+   - **Plastic Bans:** Many countries now restrict single-use plastics.
+   - **Right to Repair:** New laws ensuring electronic products can be fixed, reducing e-waste.
+   - **Extended Producer Responsibility:** Manufacturers responsible for product end-of-life.
+
+Understanding environmental policy empowers you to participate in democracy and support legislation that protects our planet for future generations.`,
+
+  'Public Transport & Urban Living': `Public Transport & Urban Living explores how sustainable cities can dramatically reduce carbon emissions while improving quality of life. This lesson covers:
+
+• **The Urban Carbon Crisis:**
+   - Cities consume over 2/3 of global energy and produce 70% of CO₂ emissions.
+   - Transportation accounts for approximately 29% of U.S. greenhouse gas emissions.
+   - Personal vehicles are among the largest contributors to urban air pollution.
+
+• **Public Transit Benefits:**
+   - A single bus can replace 40 cars during rush hour.
+   - Rail transit produces 76% fewer emissions per passenger-mile than driving alone.
+   - Public transit reduces traffic congestion, saving time and fuel for all road users.
+
+• **The 15-Minute City:**
+   - An urban planning concept where daily needs are within 15 minutes by foot or bike.
+   - Paris is transforming streets, adding bike lanes and green spaces.
+   - Barcelona's "superblocks" reduce car traffic, creating pedestrian-friendly neighborhoods.
+
+• **Cycling Infrastructure:**
+   - Amsterdam: 63% of residents cycle daily, with 400+ km of bike paths.
+   - Copenhagen: Bikes outnumber cars, with heated bike lanes in winter.
+   - E-bikes are making cycling accessible to more people and longer distances.
+
+• **Electric Public Transport:**
+   - Shenzhen, China operates the world's largest electric bus fleet (16,000+ buses).
+   - Electric trams, light rail, and metros provide zero-emission urban mobility.
+   - Hydrogen fuel cell buses are emerging in cities like London and Tokyo.
+
+• **Mixed-Use Development:**
+   - Combining residential, commercial, and recreational spaces reduces travel needs.
+   - Walkable neighborhoods increase property values and local business activity.
+   - Green building standards (LEED, BREEAM) reduce energy consumption.
+
+• **Remote Work & Urban Planning:**
+   - Hybrid work reduces commuting, cutting emissions and improving air quality.
+   - Co-working spaces in neighborhoods reduce the need for downtown commutes.
+   - Smart city technology optimizes traffic flow and public transit schedules.
+
+By embracing sustainable transportation and thoughtful urban design, cities can become healthier, more livable, and dramatically reduce their environmental impact.`
 };
 
 export const lessonImages: { [key: string]: string } = {
@@ -206,4 +271,6 @@ export const lessonImages: { [key: string]: string } = {
   'Carbon Footprint': 'https://placehold.co/600x400/455A64/ffffff/png?text=Carbon+Footprint',
   'Achievements': 'https://placehold.co/600x400/FFD700/000000/png?text=Achievements',
   'Organizations': 'https://placehold.co/600x400/1976D2/ffffff/png?text=Organizations',
+  'Policy & Environmental Laws': 'https://placehold.co/600x400/5E35B1/ffffff/png?text=Environmental+Policy',
+  'Public Transport & Urban Living': 'https://placehold.co/600x400/00897B/ffffff/png?text=Urban+Transport',
 };

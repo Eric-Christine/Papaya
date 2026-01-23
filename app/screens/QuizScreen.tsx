@@ -49,8 +49,6 @@ export default function QuizScreen() {
       case lessonType.includes("sustainable living"):
         return quizData.sustainableLivingQuizQuestions;
       case lessonType.includes("energy storage"):
-        // Assuming energyQuizQuestions was duplicate of energyMix or separate content not exported?
-        // In extracted data I have energyMixQuestions.
         return quizData.energyMixQuestions;
       case lessonType.includes("carbon footprint"):
         return quizData.carbonFootprintQuestions;
@@ -72,8 +70,14 @@ export default function QuizScreen() {
         return quizData.fashionQuizQuestions;
       case lessonType.includes("renewable energy"):
         return quizData.renewableEnergyQuizQuestions;
+      case lessonType.includes("policy"):
+      case lessonType.includes("environmental laws"):
+        return quizData.policyLawsQuizQuestions;
+      case lessonType.includes("public transport"):
+      case lessonType.includes("urban living"):
+        return quizData.publicTransportQuizQuestions;
       default:
-        return quizData.climateQuizQuestions; // Default to climate quiz
+        return quizData.climateQuizQuestions;
     }
   };
 

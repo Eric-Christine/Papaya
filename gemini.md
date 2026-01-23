@@ -2,26 +2,53 @@
 
 This file is for tracking Gemini-related tasks, prompts, and documentation for the Papaya project. Use this file to pick up context between sessions.
 
-## Current State (Jan 21, 2026)
-- **App Status**: Functional. All lessons should be working.
-- **Recent Focus**: Fixing broken lessons and addressing type errors.
+## Current State (Jan 22, 2026)
+- **App Status**: Functional. All lessons and quizzes working.
+- **Recent Focus**: Project refactoring and Quiz UI redesign.
 
 ## Recent Changes
-1.  **Sustainable Living Lesson Fixes**:
-    *   Implemented missing content and navigation logic for "Sustainable Living", "Sustainable Living: Reduce Waste", and "Sustainable Living: Energy Efficiency" in `app/screens/LessonDetailScreen.tsx`.
-    *   Connected these lessons to the Quiz flow.
-2.  **Bug Fixes**:
-    *   Removed unused `getRecyclingContentAndButton` function in `LessonDetailScreen.tsx` that was causing reference errors.
-    *   Fixed `HapticTab` component in `app/(tabs)/index.tsx` to correctly handle `accessibilityState` and optional `onPress` props, resolving TypeScript errors.
+1.  **Quiz Screen Redesign**:
+    *   Restyled with modern, clean UI (white background, pill-style options, blue accent button).
+2.  **Project Refactoring**:
+    *   **Data Extraction**: Moved quiz questions to `app/data/quizQuestions.ts` and lessons to `app/data/lessons.ts`.
+    *   **Centralized Types**: Created `app/types/quiz.ts`, `app/types/lesson.ts`, and `app/types/garden.ts`.
+    *   **Componentization**: Broke `QuizScreen` into reusable components (`QuizCard`, `QuizOptions`, `SeedAnimations`) in `app/components/quiz/`.
+3.  **Build Fix**:
+    *   Resolved `react-native-worklets` version mismatch by rebuilding native iOS app.
+
+## Project Structure
+```
+app/
+├── components/
+│   └── quiz/           # Quiz-specific components
+│       ├── QuizCard.tsx
+│       ├── QuizOptions.tsx
+│       └── SeedAnimations.tsx
+├── contexts/
+│   └── UserContext.tsx  # User state (seeds, garden, inventory)
+├── data/
+│   ├── contentData.tsx  # Lesson content text
+│   ├── lessons.ts       # Lesson definitions
+│   └── quizQuestions.ts # All quiz questions
+├── screens/
+│   ├── GardenScreen.tsx
+│   ├── LessonDetailScreen.tsx
+│   ├── LessonsScreen.tsx
+│   ├── ProfileScreen.tsx
+│   ├── QuizScreen.tsx
+│   └── RewardsScreen.tsx
+└── types/
+    ├── garden.ts        # GardenItem, InventoryItem
+    ├── lesson.ts        # Lesson
+    └── quiz.ts          # Question, QuizData
+```
 
 ## Next Steps / Backlog
-- [ ] Verify all other lessons have correct content mappings (completed for Sustainable Living).
-- [ ] Add more interactive elements to lessons?
-- [ ] Review `LessonDetailScreen.tsx` for further refactoring (large conditional blocks could be improved).
+- [ ] Consider restyling other screens to match new Quiz design.
+- [ ] Add more quiz questions for new lessons.
+- [ ] Review `LessonDetailScreen.tsx` for further componentization.
 
 ## App Overview
-Here is the high-level architecture and navigation flow of the Papaya app:
-
 ```mermaid
 graph TD
     App[App Entry] --> UserContext[User Context Provider]
@@ -51,7 +78,8 @@ graph TD
         ProfileTab --> ProfileScreen[User Profile]
     end
     
-    Data[Content Data] -.-> LessonDetail
+    Data[app/data/] -.-> LessonDetail
+    Data -.-> Quiz
     UserContext -.-> RewardsScreen
     UserContext -.-> GardenScreen
     UserContext -.-> ProfileScreen

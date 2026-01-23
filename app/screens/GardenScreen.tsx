@@ -10,6 +10,11 @@ import BlueberryBush from '../../components/plants/BlueberryBush';
 import RoseBush from '../../components/plants/RoseBush';
 import Orchid from '../../components/plants/Orchid';
 import GardenGnome from '../../components/plants/GardenGnome';
+import CraftingArea from '../components/crafting/CraftingArea';
+
+// ... (existing imports)
+
+
 
 // -----------------------------------------------------------------------------
 // SwayingPlant Component
@@ -247,6 +252,7 @@ export default function GardenScreen() {
           ))
         )}
       </View>
+      <CraftingArea />
     </ScrollView>
   );
 }

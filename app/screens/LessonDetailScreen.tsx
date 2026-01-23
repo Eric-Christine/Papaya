@@ -8,7 +8,7 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import { lessonImages } from '../data/contentData';
+import { lessonImages, lessonContents } from '../data/contentData';
 import GoBackToLessonsButton from '../components/GoBackToLessonsButton';
 
 
@@ -183,6 +183,37 @@ This foundation will transform how you think about daily choices and their broad
 • **Behavioral Changes:** Small habits with big impact - vampire power costs U.S. households $100+ annually. Learn about energy-efficient routines and their cumulative effect.
 
 This lesson empowers you with knowledge to significantly reduce home energy consumption.`;
+
+  const policyContentPart1 = `**International Frameworks & Agreements**
+
+• **The Paris Agreement (2015):** A historic international treaty uniting 196 countries to limit global warming to 1.5°C. Nations set their own "Nationally Determined Contributions" (NDCs) to reduce emissions.
+
+• **Kyoto Protocol (1997):** The first legally binding international agreement to reduce greenhouse gas emissions.
+
+• **Montreal Protocol (1987):** Successfully phased out ozone-depleting substances, proving that global cooperation can heal the planet (restoring the ozone layer).
+
+• **UNFCCC:** The United Nations Framework Convention on Climate Change is the backbone of global climate negotiations that led to these agreements.`;
+
+  const policyContentPart2 = `**US Legislation & Agencies**
+
+• **The Environmental Protection Agency (EPA):** Created in 1970, the EPA enforces environmental laws, conducts research, and sets national standards for air and water quality.
+
+• **The Clean Air Act:** Landmark legislation that has successfully reduced common pollutants like sulfur dioxide and lead, preventing millions of premature deaths and illnesses.
+
+• **The Clean Water Act:** Protects national waters from pollution, requiring permits for industrial discharges and setting strict water quality standards.`;
+
+  const policyContentPart3 = `**Modern Mechanisms & Future Policies**
+
+• **Carbon Pricing:**
+   - **Carbon Tax:** A direct price on each ton of CO₂ emitted, incentivizing reduction (e.g., Canada, Sweden).
+   - **Cap-and-Trade:** Sets a limit on total emissions and lets companies trade permits (e.g., EU Emissions Trading System).
+
+• **Emerging Policies:**
+   - **Plastic Bans:** Legislating against single-use plastics to reduce ocean pollution.
+   - **Right to Repair:** Laws requiring manufacturers to make products fixable, reducing e-waste.
+   - **Extended Producer Responsibility (EPR):** Making manufacturers responsible for the entire lifecycle of their products.
+
+Understanding these policies empowers you to support legislation that protects our future.`;
 
   // Determine content and next button based on title and step
   let content = `This is the content for the ${title} lesson.`;
@@ -915,6 +946,56 @@ This lesson empowers you with knowledge to significantly reduce home energy cons
         <Button
           title="Quiz"
           onPress={() => navigation.navigate('Quiz', { lesson: 'Sustainable Living' })}
+          color="#fff"
+        />
+      </View>
+    );
+  } else if (title === 'Policy & Environmental Laws') {
+    if (step === 1) {
+      content = policyContentPart1;
+      nextButton = (
+        <View style={styles.buttonContainer}>
+          <Button
+            title="Next: US Legislation"
+            onPress={() =>
+              navigation.navigate('LessonDetail', { title: 'Policy & Environmental Laws', step: 2 })
+            }
+            color="#fff"
+          />
+        </View>
+      );
+    } else if (step === 2) {
+      content = policyContentPart2;
+      nextButton = (
+        <View style={styles.buttonContainer}>
+          <Button
+            title="Next: Future Policies"
+            onPress={() =>
+              navigation.navigate('LessonDetail', { title: 'Policy & Environmental Laws', step: 3 })
+            }
+            color="#fff"
+          />
+        </View>
+      );
+    } else if (step === 3) {
+      content = policyContentPart3;
+      nextButton = (
+        <View style={styles.buttonContainer}>
+          <Button
+            title="Quiz"
+            onPress={() => navigation.navigate('Quiz', { lesson: title })}
+            color="#fff"
+          />
+        </View>
+      );
+    }
+  } else if (title === 'Public Transport & Urban Living') {
+    content = lessonContents['Public Transport & Urban Living'];
+    nextButton = (
+      <View style={styles.buttonContainer}>
+        <Button
+          title="Quiz"
+          onPress={() => navigation.navigate('Quiz', { lesson: title })}
           color="#fff"
         />
       </View>
