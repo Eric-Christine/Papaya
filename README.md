@@ -4,8 +4,9 @@
 
 ## Features
 
-- **Interactive Lessons:** Dive into detailed lessons covering key sustainability topics.
+- **Interactive Lessons:** Dive into detailed lessons covering key sustainability topics, including new modules on Environmental Policy and Urban Living.
 - **Dynamic Quiz System:** Take quizzes after lessons to test your knowledge.
+- **Crafting Kitchen:** Harvest plants from your garden to craft special items and sell them for coins.
 - **Reward System:** Earn rewards for completing lessons and quizzes.
 - **User Profile:** Track your progress and view your achievements.
 - **File-Based Navigation:** Clean navigation structure powered by Expo Router.
@@ -67,6 +68,7 @@ Explore Lessons: Navigate to the Lessons tab to browse sustainability topics.
 Detailed Content: Tap on a lesson to read detailed content and follow the sequence (e.g., Climate Basics → Greenhouse Gases → Human Impact → Consequences → Solutions).
 Take Quizzes: After completing a lesson, navigate to a quiz to test your understanding.
 Earn Rewards: Check out the Rewards tab to view your progress and earn badges.
+Craft Items: Visit the Garden to harvest plants and use the Crafting Kitchen to create unique items.
 Manage Your Profile: View and update your profile details in the Profile tab.
 Contributing
 Contributions are welcome! If you have ideas, bug fixes, or new features to share, please open an issue or submit a pull request.
