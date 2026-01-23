@@ -2,7 +2,8 @@
 import React, { useContext, useEffect, useState, useRef } from 'react';
 import { View, Text, StyleSheet, ScrollView, Button, Alert, Animated, Easing, TouchableOpacity } from 'react-native';
 import * as Haptics from 'expo-haptics';
-import UserContext, { GardenItem } from '../contexts/UserContext';
+import UserContext from '../contexts/UserContext';
+import { GardenItem } from '../types/garden';
 import Zucchini from '../../components/plants/Zucchini';
 import Broccoli from '../../components/plants/Broccoli';
 import BlueberryBush from '../../components/plants/BlueberryBush';

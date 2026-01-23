@@ -7,712 +7,21 @@ import {
   TouchableOpacity,
   Button,
   ScrollView,
-  Animated,
   Dimensions
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { UserContext } from '../contexts/UserContext';
-import * as Haptics from 'expo-haptics'; // Import Expo Haptics
+import * as Haptics from 'expo-haptics';
 import ConfettiCannon from 'react-native-confetti-cannon';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// -----------------------------------------------------------------------------
-// Quiz Questions with explanations for each question
-// -----------------------------------------------------------------------------
-const sustainableLivingQuizQuestions = [
-  {
-    question: "What does your carbon footprint represent?",
-    options: [
-      "The total weight of the carbon you breathe daily",
-      "The amount of greenhouse gases produced by your activities",
-      "How much carbon is stored in your body",
-      "The cost of carbon-based products you buy",
-    ],
-    correctAnswer: 1,
-    explanation: "It represents the total amount of greenhouse gases produced by your daily activities.",
-  },
-  {
-    question: "Which statement best describes a circular economy?",
-    options: [
-      "An economy based on the 'take-make-waste' model",
-      "An economy that minimizes waste by emphasizing repair, reuse, and recycling",
-      "An economy that only focuses on increasing production",
-      "An economy that ignores environmental impact",
-    ],
-    correctAnswer: 1,
-    explanation: "A circular economy minimizes waste by keeping resources in use for as long as possible.",
-  },
-  {
-    question: "Approximately what percentage of global greenhouse gas emissions is linked to household consumption?",
-    options: ["50%", "72%", "30%", "90%"],
-    correctAnswer: 1,
-    explanation: "Household consumption is linked to roughly 72% of global greenhouse gas emissions.",
-  },
-  {
-    question: "How does community engagement contribute to sustainable living?",
-    options: [
-      "By isolating individual actions",
-      "By amplifying the impact of individual efforts through local initiatives",
-      "By increasing energy consumption",
-      "By focusing solely on personal benefits",
-    ],
-    correctAnswer: 1,
-    explanation: "Community engagement amplifies individual actions through collective local initiatives.",
-  },
-];
+import { Question } from '../types/quiz';
+import * as quizData from '../data/quizQuestions';
 
-const climateQuizQuestions = [
-  {
-    question: "What is the primary greenhouse gas responsible for global warming?",
-    options: ["Carbon Dioxide", "Oxygen", "Nitrogen", "Helium"],
-    correctAnswer: 0,
-    explanation: "Carbon Dioxide is the main greenhouse gas contributing to global warming.",
-  },
-  {
-    question: "Which human activity significantly contributes to climate change?",
-    options: ["Reading", "Burning fossil fuels", "Sleeping", "Walking"],
-    correctAnswer: 1,
-    explanation: "Burning fossil fuels releases large amounts of CO₂, a major greenhouse gas.",
-  },
-  {
-    question: "What is a common consequence of climate change?",
-    options: ["Rising sea levels", "Decreased temperatures", "More snowfall", "Less extreme weather"],
-    correctAnswer: 0,
-    explanation: "One consequence of climate change is rising sea levels due to melting ice caps.",
-  },
-  {
-    question: "Which solution is most effective in mitigating climate change?",
-    options: ["Using renewable energy", "Increasing fossil fuel use", "Deforestation", "Overfishing"],
-    correctAnswer: 0,
-    explanation: "Transitioning to renewable energy sources is key to mitigating climate change.",
-  },
-];
+import QuizCard from '../components/quiz/QuizCard';
+import QuizOptions from '../components/quiz/QuizOptions';
+import { SeedReward, FinishSeedAnimation } from '../components/quiz/SeedAnimations';
 
-const energyMixQuestions = [
-  {
-    question: "What does the term 'energy mix' refer to?",
-    options: [
-      "The exclusive use of fossil fuels for energy",
-      "A combination of various energy sources used to generate power",
-      "Only renewable energy sources such as solar and wind",
-      "Energy produced solely from nuclear power",
-    ],
-    correctAnswer: 1,
-    explanation: "The energy mix is the combination of different energy sources used to produce power.",
-  },
-  {
-    question: "Which factor most influences a country's energy mix?",
-    options: [
-      "Geographical location and the availability of natural resources",
-      "The country's internet infrastructure",
-      "Global fashion trends",
-      "The number of automobiles on the road",
-    ],
-    correctAnswer: 0,
-    explanation: "A country's geographical location and natural resource availability largely determine its energy mix.",
-  },
-  {
-    question: "What is one of the primary benefits of diversifying a nation's energy mix?",
-    options: [
-      "Reducing dependency on a single energy source",
-      "Increasing the risk of power outages",
-      "Raising overall energy costs significantly",
-      "Limiting the development of renewable energy technology",
-    ],
-    correctAnswer: 0,
-    explanation: "Diversification reduces dependency on any one energy source, leading to improved stability.",
-  },
-  {
-    question: "Which energy storage technology is most commonly used in both electric vehicles and grid-scale systems?",
-    options: [
-      "Pumped Hydro Storage",
-      "Thermal Storage",
-      "Battery Storage",
-      "Flywheel Storage",
-    ],
-    correctAnswer: 2,
-    explanation: "Battery storage is the most widely used technology for electric vehicles and grid-scale energy storage.",
-  }
-];
-
-const carbonFootprintQuestions = [
-  {
-    question: "What does your carbon footprint measure?",
-    options: [
-      "The distance you travel daily",
-      "The total greenhouse gases emitted by your activities",
-      "The amount of energy you store",
-      "The number of trees you plant",
-    ],
-    correctAnswer: 1,
-    explanation: "It measures the total greenhouse gases emitted by your personal activities.",
-  },
-  {
-    question: "Which activity is a major contributor to your carbon footprint?",
-    options: [
-      "Reading books",
-      "Using public transportation",
-      "Driving a gasoline-powered car",
-      "Drinking water",
-    ],
-    correctAnswer: 2,
-    explanation: "Driving a gasoline-powered car is one of the main contributors to a higher carbon footprint.",
-  },
-  {
-    question: "How can you reduce your carbon footprint?",
-    options: [
-      "Increase meat consumption",
-      "Switch to renewable energy sources",
-      "Use more single-use plastics",
-      "Drive more frequently",
-    ],
-    correctAnswer: 1,
-    explanation: "Switching to renewable energy sources can significantly reduce your carbon footprint.",
-  },
-  {
-    question: "Why does the carbon footprint vary globally?",
-    options: [
-      "Due to differences in lifestyle and energy sources",
-      "Because of the number of people in each country",
-      "Due to the size of the country",
-      "Because everyone measures it differently",
-    ],
-    correctAnswer: 0,
-    explanation: "Differences in lifestyle and the types of energy used contribute to global variations in carbon footprints.",
-  },
-];
-
-const solarPowerQuestions = [
-  {
-    question: "True or False: Solar energy is classified as an intermittent power source.",
-    options: [
-      "True",
-      "False"
-    ],
-    correctAnswer: 0,
-    explanation: "Solar panels only generate electricity when sunlight is available, making them intermittent. Unlike baseload sources (nuclear, gas) that produce power continuously, solar output varies with daylight and weather. Battery storage systems can help manage this intermittency by storing excess energy for later use.",
-  },
-  {
-    question: "True or False: Solar panels are the most expensive form of electricity generation",
-    options: [
-      "True",
-      "False"
-    ],
-    correctAnswer: 1,
-    explanation: "While the initial installation cost may be high, solar panels are among the most cost-effective over time.",
-  },
-  {
-    question: "True or false: Solar panels can generate electricity on cloudy days.",
-    options: [
-      "True",
-      "False"
-    ],
-    correctAnswer: 0,
-    explanation: "Solar panels can still generate electricity on cloudy days, though at reduced efficiency.",
-  },
-];
-
-const organizationsQuizQuestions = [
-  {
-    question: "What is the primary role of the Intergovernmental Panel on Climate Change (IPCC)?",
-    options: [
-      "To fund climate mitigation projects",
-      "To assess scientific research on climate change and its impacts",
-      "To enforce climate-related laws",
-      "To negotiate international climate treaties",
-    ],
-    correctAnswer: 1,
-    explanation: "The IPCC assesses scientific research on climate change and its impacts, producing comprehensive reports that inform global climate policy.",
-  },
-  {
-    question: "Which of the following best describes the United Nations Framework Convention on Climate Change (UNFCCC)?",
-    options: [
-      "A financial institution that supports renewable energy projects",
-      "A treaty that serves as the backbone of global climate negotiations",
-      "An organization responsible for implementing local environmental policies",
-      "A research center for climate science",
-    ],
-    correctAnswer: 1,
-    explanation: "The UNFCCC is a treaty that forms the backbone of global climate negotiations and has enabled landmark agreements like the Kyoto Protocol and the Paris Agreement.",
-  },
-  {
-    question: "What is the key function of the Green Climate Fund (GCF)?",
-    options: [
-      "To produce scientific reports on climate change",
-      "To facilitate international climate negotiations",
-      "To provide financial support to developing countries for climate projects",
-      "To enforce global environmental regulations",
-    ],
-    correctAnswer: 2,
-    explanation: "The Green Climate Fund provides financial support to developing countries for projects aimed at reducing greenhouse gas emissions and enhancing resilience to climate change.",
-  },
-];
-
-const energyQuizQuestions = [
-  {
-    question: "What does the term 'energy mix' refer to?",
-    options: [
-      "The exclusive use of fossil fuels for energy",
-      "A combination of various energy sources used to generate power",
-      "Only renewable energy sources such as solar and wind",
-      "Energy produced solely from nuclear power",
-    ],
-    correctAnswer: 1,
-    explanation: "The energy mix is the combination of different energy sources used to produce power.",
-  },
-  {
-    question: "Which factor most influences a country's energy mix?",
-    options: [
-      "Geographical location and the availability of natural resources",
-      "The country's internet infrastructure",
-      "Global fashion trends",
-      "The number of automobiles on the road",
-    ],
-    correctAnswer: 0,
-    explanation: "A country's geographical location and natural resource availability largely determine its energy mix.",
-  },
-  {
-    question: "What is one of the primary benefits of diversifying a nation's energy mix?",
-    options: [
-      "Reducing dependency on a single energy source",
-      "Increasing the risk of power outages",
-      "Raising overall energy costs significantly",
-      "Limiting the development of renewable energy technology",
-    ],
-    correctAnswer: 0,
-    explanation: "Diversification reduces dependency on any one energy source, leading to improved stability.",
-  },
-  {
-    question: "Which energy storage technology is most commonly used in both electric vehicles and grid-scale systems?",
-    options: [
-      "Pumped Hydro Storage",
-      "Thermal Storage",
-      "Battery Storage",
-      "Flywheel Storage",
-    ],
-    correctAnswer: 2,
-    explanation: "Battery storage is the most widely used technology for electric vehicles and grid-scale energy storage.",
-  },
-];
-const recyclingQuizQuestions = [
-  {
-    question: "What is the primary goal of recycling?",
-    options: [
-      "To reduce waste sent to landfills",
-      "To increase energy consumption",
-      "To produce more plastic products",
-      "To reduce the cost of goods",
-    ],
-    correctAnswer: 0,
-    explanation: "Recycling aims to reduce waste sent to landfills by reusing materials to create new products.",
-  },
-  {
-    question: "Which of the following materials can be recycled?",
-    options: [
-      "Plastic bottles",
-      "Glass jars",
-      "Aluminum cans",
-      "All of the above",
-    ],
-    correctAnswer: 3,
-    explanation: "Plastic bottles, glass jars, and aluminum cans are all recyclable materials.",
-  },
-  {
-    question: "What is the first step in the recycling process?",
-    options: [
-      "Sorting materials",
-      "Melting materials",
-      "Creating new products",
-      "Collecting materials",
-    ],
-    correctAnswer: 3,
-    explanation: "The first step in recycling is collecting materials to be processed and reused.",
-  },
-  {
-    question: "How does recycling help the environment?",
-    options: [
-      "By increasing pollution",
-      "By conserving natural resources",
-      "By reducing energy efficiency",
-      "By creating more waste",
-    ],
-    correctAnswer: 1,
-    explanation: "Recycling helps the environment by conserving natural resources and reducing waste sent to landfills.",
-  },
-];
-
-const oceanQuizQuestions = [
-  {
-    question: "What percentage of the Earth's surface is covered by oceans?",
-    options: [
-      "50%",
-      "70%",
-      "90%",
-      "30%",
-    ],
-    correctAnswer: 1,
-    explanation: "Oceans cover approximately 70% of the Earth's surface.",
-  },
-  {
-    question: "Which of the following is a major threat to ocean health?",
-    options: [
-      "Plastic pollution",
-      "Increased biodiversity",
-      "Reduced carbon emissions",
-      "Sustainable fishing practices",
-    ],
-    correctAnswer: 0,
-    explanation: "Plastic pollution poses a significant threat to ocean health, harming marine life and ecosystems.",
-  },
-  {
-    question: "What is the primary cause of coral bleaching?",
-    options: [
-      "Increased water temperature",
-      "Decreased water salinity",
-      "Overfishing",
-      "Oil spills",
-    ],
-    correctAnswer: 0,
-    explanation: "Coral bleaching is primarily caused by increased water temperatures, which stress coral reefs and lead to their decline.",
-  },
-  {
-    question: "How do oceans help regulate the Earth's climate?",
-    options: [
-      "By trapping heat in the atmosphere",
-      "By absorbing excess carbon dioxide",
-      "By increasing global temperatures",
-      "By reducing sea levels",
-    ],
-    correctAnswer: 1,
-    explanation: "Oceans help regulate the Earth's climate by absorbing excess carbon dioxide from the atmosphere, which helps mitigate global warming.",
-  },
-];
-
-const agricultureQuizQuestions = [
-  {
-    question: "What is the environmental impact of industrial agriculture?",
-    options: [
-      "Increased biodiversity",
-      "Reduced water pollution",
-      "Deforestation and habitat loss",
-      "Enhanced soil health",
-    ],
-    correctAnswer: 2,
-    explanation: "Industrial agriculture contributes to deforestation and habitat loss, impacting ecosystems and biodiversity.",
-  },
-  {
-    question: "How does food production contribute to climate change?",
-    options: [
-      "By reducing greenhouse gas emissions",
-      "By increasing carbon sequestration",
-      "By deforestation for agriculture",
-      "By promoting sustainable farming practices",
-    ],
-    correctAnswer: 2,
-    explanation: "Food production contributes to climate change through deforestation for agriculture, which releases stored carbon into the atmosphere.",
-  },
-  {
-    question: "What is one way to reduce the environmental impact of food production?",
-    options: [
-      "Increase food waste",
-      "Adopt sustainable farming practices",
-      "Use more pesticides",
-      "Expand monoculture farming",
-    ],
-    correctAnswer: 1,
-    explanation: "Adopting sustainable farming practices can help reduce the environmental impact of food production, promoting biodiversity and soil health.",
-  },
-  {
-    question: "How does the food system impact water resources?",
-    options: [
-      "By reducing water pollution",
-      "By increasing water scarcity",
-      "By promoting water conservation",
-      "By improving water quality",
-    ],
-    correctAnswer: 1,
-    explanation: "The food system contributes to water scarcity through intensive irrigation and water-intensive crop production.",
-  },
-];
-const electricVehiclesQuizQuestions = [
-  {
-    question: "What is a primary benefit of electric vehicles (EVs) compared to gasoline-powered cars?",
-    options: [
-      "Lower fuel efficiency",
-      "Higher greenhouse gas emissions",
-      "Reduced air pollution",
-      "Increased noise pollution",
-    ],
-    correctAnswer: 2,
-    explanation: "Electric vehicles produce fewer emissions and reduce air pollution compared to gasoline-powered cars.",
-  },
-  {
-    question: "How do electric vehicles help reduce greenhouse gas emissions?",
-    options: [
-      "By burning fossil fuels",
-      "By increasing energy consumption",
-      "By using renewable energy sources",
-      "By promoting deforestation",
-    ],
-    correctAnswer: 2,
-    explanation: "Electric vehicles help reduce greenhouse gas emissions by using electricity from renewable energy sources.",
-  },
-  {
-    question: "What is a common environmental concern about electric vehicle batteries?",
-    options: [
-      "They are too heavy",
-      "They are too expensive",
-      "They are not recyclable",
-      "They require intensive lithium and cobalt mining"
-    ],
-    correctAnswer: 3,
-    explanation: "EV batteries depend on lithium and cobalt mining, which can cause water depletion, habitat damage, and other environmental harms ."
-  },
-  {
-    question: "What is one way to increase the adoption of electric vehicles?",
-    options: [
-      "Reduce charging infrastructure",
-      "Increase gasoline prices",
-      "Offer incentives and rebates",
-      "Promote fossil fuel use",
-    ],
-    correctAnswer: 2,
-    explanation: "Offering incentives and rebates can help increase the adoption of electric vehicles by making them more affordable for consumers.",
-  },
-];
-const fashionQuizQuestions = [
-  {
-    question: "What is fast fashion?",
-    options: [
-      "High-quality, long-lasting clothing",
-      "Clothing designed for durability and sustainability",
-      "A trend of rapidly changing fashion styles",
-      "A movement to reduce waste in the fashion industry",
-    ],
-    correctAnswer: 2,
-    explanation: "Fast fashion refers to the trend of rapidly changing fashion styles, leading to increased consumption and waste.",
-  },
-  {
-    question: "What is one environmental impact of the fashion industry?",
-    options: [
-      "Reduced water usage",
-      "Increased textile recycling",
-      "Water pollution from dyeing processes",
-      "Promotion of sustainable materials",
-    ],
-    correctAnswer: 2,
-    explanation: "The fashion industry contributes to water pollution through dyeing processes and chemical discharge.",
-  },
-  {
-    question: "How does the fashion industry contribute to waste?",
-    options: [
-      "By promoting durable, long-lasting clothing",
-      "By encouraging clothing repair and reuse",
-      "By producing large quantities of low-quality garments",
-      "By supporting sustainable fashion brands",
-    ],
-    correctAnswer: 2,
-    explanation: "The fashion industry produces large quantities of low-quality garments, leading to increased waste and environmental impact.",
-  },
-  {
-    question: "What is one way to reduce the environmental impact of fashion?",
-    options: [
-      "Increase clothing production",
-      "Promote fast fashion trends",
-      "Support sustainable and ethical brands",
-      "Encourage disposable fashion",
-    ],
-    correctAnswer: 2,
-    explanation: "Supporting sustainable and ethical fashion brands can help reduce the environmental impact of the fashion industry."
-  },
-];
-
-const renewableEnergyQuizQuestions = [
-  {
-    question: "Which renewable energy source provides approximately 16% of global electricity and is the largest renewable energy source?",
-    options: [
-      "Wind energy",
-      "Solar power",
-      "Hydroelectric power",
-      "Geothermal energy",
-    ],
-    correctAnswer: 2,
-    explanation: "Hydroelectric power provides approximately 16% of global electricity and remains the largest renewable energy source worldwide.",
-  },
-  {
-    question: "What makes geothermal energy particularly valuable compared to solar and wind?",
-    options: [
-      "It's cheaper to install",
-      "It operates 24/7 providing reliable baseload power",
-      "It requires no infrastructure",
-      "It generates more power per installation",
-    ],
-    correctAnswer: 1,
-    explanation: "Geothermal plants operate continuously 24/7 with minimal environmental impact, providing reliable baseload power unlike intermittent solar and wind sources.",
-  },
-  {
-    question: "Which country generates nearly 100% of its electricity from renewable sources, with geothermal playing a major role?",
-    options: [
-      "Germany",
-      "Denmark",
-      "Iceland",
-      "China",
-    ],
-    correctAnswer: 2,
-    explanation: "Iceland generates nearly 100% of its electricity from renewable sources, with geothermal energy playing a major role alongside hydropower.",
-  },
-  {
-    question: "What is one major benefit of renewable energy beyond climate change mitigation?",
-    options: [
-      "Increases dependence on imported fuels",
-      "Reduces job opportunities",
-      "Enhances energy independence and national security",
-      "Increases air pollution",
-    ],
-    correctAnswer: 2,
-    explanation: "Renewable energy reduces reliance on imported fossil fuels, enhancing energy independence and national security while also creating jobs and improving air quality.",
-  },
-];
-
-
-// -----------------------------------------------------------------------------
-// SeedReward Animation Component (for individual answer feedback)
-// -----------------------------------------------------------------------------
-interface SeedRewardProps {
-  amount: number;
-  startPosition: { top: number; left: number };
-  onAnimationComplete: () => void;
-}
-
-const SeedReward: React.FC<SeedRewardProps> = ({ amount, startPosition, onAnimationComplete }) => {
-  const translateY = useRef(new Animated.Value(0)).current;
-  const opacity = useRef(new Animated.Value(1)).current;
-  const scale = useRef(new Animated.Value(1)).current;
-
-  useEffect(() => {
-    Animated.parallel([
-      Animated.timing(translateY, {
-        toValue: -200, // Moves the reward upward by 200 units
-        duration: 1000,
-        useNativeDriver: true,
-      }),
-      Animated.sequence([
-        Animated.timing(scale, {
-          toValue: 1.2,
-          duration: 200,
-          useNativeDriver: true,
-        }),
-        Animated.timing(scale, {
-          toValue: 1,
-          duration: 200,
-          useNativeDriver: true,
-        }),
-      ]),
-      Animated.sequence([
-        Animated.timing(opacity, {
-          toValue: 1,
-          duration: 500,
-          useNativeDriver: true,
-        }),
-        Animated.timing(opacity, {
-          toValue: 0,
-          duration: 500,
-          useNativeDriver: true,
-        }),
-      ]),
-    ]).start(() => {
-      onAnimationComplete();
-    });
-  }, []);
-
-  return (
-    <Animated.View
-      style={[
-        styles.seedReward,
-        {
-          transform: [{ translateY }, { scale }],
-          opacity,
-          ...startPosition,
-        },
-      ]}
-    >
-      <Text style={styles.seedRewardText}>+{amount} 🌱</Text>
-    </Animated.View>
-  );
-};
-
-// -----------------------------------------------------------------------------
-// FinishSeedAnimation Component (for finishing the quiz)
-// This component animates the total seed count from its current position
-// to the bottom right corner (profile tab area).
-// -----------------------------------------------------------------------------
-interface FinishSeedAnimationProps {
-  count: number;
-  startPosition: { top: number; left: number };
-  onAnimationComplete: () => void;
-}
-
-const FinishSeedAnimation: React.FC<FinishSeedAnimationProps> = ({ count, startPosition, onAnimationComplete }) => {
-  const translateX = useRef(new Animated.Value(0)).current;
-  const translateY = useRef(new Animated.Value(0)).current;
-  const opacity = useRef(new Animated.Value(1)).current;
-
-  useEffect(() => {
-    const windowWidth = Dimensions.get('window').width;
-    const windowHeight = Dimensions.get('window').height;
-    // Define the end position (adjust these offsets to match your profile tab)
-    const endX = windowWidth - 60;
-    const endY = windowHeight - 60;
-    // Calculate differences from the starting point
-    const dx = endX - startPosition.left;
-    const dy = endY - startPosition.top;
-    Animated.parallel([
-      Animated.timing(translateX, {
-        toValue: dx,
-        duration: 1000,
-        useNativeDriver: true,
-      }),
-      Animated.timing(translateY, {
-        toValue: dy,
-        duration: 1000,
-        useNativeDriver: true,
-      }),
-      Animated.timing(opacity, {
-        toValue: 0,
-        duration: 1000,
-        useNativeDriver: true,
-      }),
-    ]).start(() => {
-      onAnimationComplete();
-    });
-  }, []);
-
-  return (
-    <Animated.View
-      style={[
-        {
-          position: 'absolute',
-          top: startPosition.top,
-          left: startPosition.left,
-          transform: [{ translateX }, { translateY }],
-          opacity,
-          backgroundColor: 'rgba(255, 255, 255, 0.9)',
-          padding: 8,
-          borderRadius: 12,
-          zIndex: 300,
-        },
-      ]}
-    >
-      <Text style={{ fontSize: 20, fontWeight: '700', color: '#FFA000' }}>
-        {count} 🌱
-      </Text>
-    </Animated.View>
-  );
-};
-
-// -----------------------------------------------------------------------------
-// QuizScreen Component
-// -----------------------------------------------------------------------------
 interface SeedAnimation {
   id: number;
   amount: number;
@@ -735,34 +44,36 @@ export default function QuizScreen() {
   // Choose quiz questions based on lesson type
   const lessonLower = lesson?.toLowerCase() || "";
 
-  const getQuizQuestions = (lessonType: string) => {
+  const getQuizQuestions = (lessonType: string): Question[] => {
     switch (true) {
       case lessonType.includes("sustainable living"):
-        return sustainableLivingQuizQuestions;
+        return quizData.sustainableLivingQuizQuestions;
       case lessonType.includes("energy storage"):
-        return energyQuizQuestions;
+        // Assuming energyQuizQuestions was duplicate of energyMix or separate content not exported?
+        // In extracted data I have energyMixQuestions.
+        return quizData.energyMixQuestions;
       case lessonType.includes("carbon footprint"):
-        return carbonFootprintQuestions;
+        return quizData.carbonFootprintQuestions;
       case lessonType.includes("solar power"):
-        return solarPowerQuestions;
+        return quizData.solarPowerQuestions;
       case lessonType.includes("organizations"):
-        return organizationsQuizQuestions;
+        return quizData.organizationsQuizQuestions;
       case lessonType.includes("energy mix"):
-        return energyMixQuestions;
+        return quizData.energyMixQuestions;
       case lessonType.includes("recycling"):
-        return recyclingQuizQuestions;
+        return quizData.recyclingQuizQuestions;
       case lessonType.includes("ocean"):
-        return oceanQuizQuestions;
+        return quizData.oceanQuizQuestions;
       case lessonType.includes("agriculture"):
-        return agricultureQuizQuestions;
+        return quizData.agricultureQuizQuestions;
       case lessonType.includes("electric vehicles"):
-        return electricVehiclesQuizQuestions;
+        return quizData.electricVehiclesQuizQuestions;
       case lessonType.includes("fashion"):
-        return fashionQuizQuestions;
+        return quizData.fashionQuizQuestions;
       case lessonType.includes("renewable energy"):
-        return renewableEnergyQuizQuestions;
+        return quizData.renewableEnergyQuizQuestions;
       default:
-        return climateQuizQuestions; // Default to climate quiz
+        return quizData.climateQuizQuestions; // Default to climate quiz
     }
   };
 
@@ -851,12 +162,6 @@ export default function QuizScreen() {
   };
 
   const handleButtonPress = async () => {
-    // --------------------------------------------------------------------------
-    // Trigger Haptic Feedback on button press
-    // --------------------------------------------------------------------------
-
-    // --------------------------------------------------------------------------
-
     if (!answerChecked) {
       // Check the answer
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -995,32 +300,17 @@ export default function QuizScreen() {
               onAnimationComplete={() => removeSeedAnimation(animation.id)}
             />
           ))}
-          <View style={styles.card}>
-            <Text style={styles.questionText}>{currentQuestion.question}</Text>
-          </View>
-          <View style={styles.optionsContainer}>
-            {currentQuestion.options.map((option, index) => {
-              let optionStyle: any[] = [styles.optionButton];
-              if (answerChecked) {
-                if (index === currentQuestion.correctAnswer) {
-                  optionStyle.push(styles.optionCorrect);
-                } else if (index === selectedOption && selectedOption !== currentQuestion.correctAnswer) {
-                  optionStyle.push(styles.optionIncorrect);
-                }
-              } else if (selectedOption === index) {
-                optionStyle.push(styles.selectedOption);
-              }
-              return (
-                <TouchableOpacity
-                  key={index}
-                  style={optionStyle}
-                  onPress={() => handleOptionPress(index)}
-                >
-                  <Text style={styles.optionText}>{option}</Text>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
+
+          <QuizCard question={currentQuestion.question} />
+
+          <QuizOptions
+            options={currentQuestion.options}
+            selectedOption={selectedOption}
+            correctAnswer={currentQuestion.correctAnswer}
+            answerChecked={answerChecked}
+            onOptionPress={handleOptionPress}
+          />
+
           {answerChecked && feedbackText !== '' && (
             <Text style={isAnswerCorrect ? styles.feedbackCorrect : styles.feedbackIncorrect}>
               {feedbackText}
@@ -1048,246 +338,152 @@ export default function QuizScreen() {
   );
 }
 
-// -----------------------------------------------------------------------------
-// Styles
-// -----------------------------------------------------------------------------
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    padding: 20,
-    backgroundColor: '#F1F8E9',
+    padding: 24,
+    backgroundColor: '#FAFAFA',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
   },
   quizContainer: {
     width: '100%',
     alignItems: 'center',
+    paddingTop: 16,
   },
   xpText: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#FFA000',
-    marginBottom: 20,
-    textShadowColor: 'rgba(0, 0, 0, 0.1)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2,
-  },
-  card: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 24,
-    width: '100%',
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#666',
     marginBottom: 24,
-    shadowColor: '#2E7D32',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 6,
-    borderWidth: 1,
-    borderColor: 'rgba(46, 125, 50, 0.1)',
-  },
-  questionText: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#1B5E20',
-    textAlign: 'center',
-    lineHeight: 24,
-  },
-  optionsContainer: {
-    width: '100%',
-    marginBottom: 20,
-  },
-  optionButton: {
-    backgroundColor: '#FFFFFF',
-    padding: 14,
-    borderRadius: 12,
-    marginBottom: 8,
-    borderWidth: 2,
-    borderColor: '#E0E0E0',
-    transform: [{ scale: 1 }],
-  },
-  selectedOption: {
-    backgroundColor: '#E8F5E9',
-    borderColor: '#2E7D32',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  optionCorrect: {
-    backgroundColor: '#81C784',
-    borderColor: '#2E7D32',
-  },
-  optionIncorrect: {
-    backgroundColor: '#EF9A9A',
-    borderColor: '#C62828',
-  },
-  optionText: {
-    fontSize: 16,
-    color: '#424242',
-    lineHeight: 20,
-    fontWeight: '500',
   },
   feedbackCorrect: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#2E7D32',
-    marginVertical: 16,
-    textShadowColor: 'rgba(46, 125, 50, 0.3)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2,
-  },
-  feedbackIncorrect: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#C62828',
-    marginVertical: 4,
-    opacity: 0.9,
-  },
-  explanationText: {
-    fontSize: 16,
-    color: '#424242',
-    marginVertical: 8,
+    color: '#4CAF50',
+    marginBottom: 8,
     textAlign: 'center',
   },
-  bonusFeedback: {
+  feedbackIncorrect: {
     fontSize: 18,
-    color: '#2E7D32',
     fontWeight: '700',
+    color: '#EF5350',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  explanationText: {
+    fontSize: 15,
+    color: '#555',
+    marginBottom: 16,
+    textAlign: 'center',
+    lineHeight: 22,
+    paddingHorizontal: 8,
+  },
+  bonusFeedback: {
+    fontSize: 17,
+    color: '#4CAF50',
+    fontWeight: '600',
     marginVertical: 12,
     textAlign: 'center',
   },
   nextButtonContainer: {
     width: '100%',
-    marginVertical: 12,
-    alignItems: 'center',
+    marginTop: 8,
   },
   actionButton: {
-    backgroundColor: '#2E7D32',
-    paddingVertical: 16,
-    paddingHorizontal: 32,
-    borderRadius: 12,
+    backgroundColor: '#4A90D9',
+    paddingVertical: 18,
+    borderRadius: 16,
     width: '100%',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#1B5E20',
-    shadowColor: '#000',
+    shadowColor: '#4A90D9',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
     elevation: 4,
   },
   actionButtonText: {
     color: '#FFFFFF',
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: '700',
-    letterSpacing: 0.5,
+    letterSpacing: 0.3,
   },
   cancelButtonContainer: {
     width: '100%',
-    marginTop: 12,
-    alignItems: 'center',
+    marginTop: 16,
   },
   cancelButton: {
-    backgroundColor: 'transparent',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 8,
+    paddingVertical: 14,
+    borderRadius: 12,
     width: '100%',
     alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#B0BEC5',
   },
   cancelButtonText: {
-    color: '#546E7A',
-    fontSize: 16,
-    fontWeight: '600',
+    color: '#888',
+    fontSize: 15,
+    fontWeight: '500',
   },
   scoreContainer: {
     alignItems: 'center',
     width: '100%',
     backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    padding: 32,
-    shadowColor: '#2E7D32',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.25,
+    borderRadius: 24,
+    padding: 36,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
     shadowRadius: 12,
-    elevation: 8,
+    elevation: 5,
   },
   scoreTitle: {
-    fontSize: 32,
-    fontWeight: '800',
-    color: '#2E7D32',
+    fontSize: 28,
+    fontWeight: '700',
+    color: '#1a1a1a',
     marginBottom: 20,
     textAlign: 'center',
-    textShadowColor: 'rgba(46, 125, 50, 0.2)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 3,
   },
   scoreText: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#1B5E20',
-    marginBottom: 12,
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#444',
+    marginBottom: 10,
     textAlign: 'center',
-    opacity: 0.9,
   },
   finishButton: {
-    backgroundColor: '#43A047',
-    paddingVertical: 16,
-    paddingHorizontal: 32,
-    borderRadius: 12,
+    backgroundColor: '#4CAF50',
+    paddingVertical: 18,
+    borderRadius: 16,
     width: '100%',
-    marginTop: 24,
+    marginTop: 28,
     alignItems: 'center',
-    shadowColor: '#2E7D32',
+    shadowColor: '#4CAF50',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 6,
-    elevation: 5,
-  },
-  seedReward: {
-    position: 'absolute',
-    zIndex: 100,
-    padding: 8,
-    borderRadius: 12,
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  seedRewardText: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#FFA000',
-    textShadowColor: 'rgba(0, 0, 0, 0.1)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 2,
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 4,
   },
   lockedContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 20,
-    backgroundColor: '#F1F8E9',
+    padding: 24,
+    backgroundColor: '#FAFAFA',
   },
   lockedText: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#C62828',
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#EF5350',
     textAlign: 'center',
-    marginBottom: 20,
+    marginBottom: 24,
+    lineHeight: 26,
   },
   livesContainer: {
     width: '100%',
-    alignItems: 'flex-end',
-    marginBottom: 8,
+    alignItems: 'center',
+    marginBottom: 4,
   },
   heartsIndicatorText: {
-    fontSize: 20,
+    fontSize: 18,
+    letterSpacing: 2,
   },
 });
