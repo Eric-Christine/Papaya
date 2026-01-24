@@ -1,6 +1,6 @@
 // app/data/contentData.tsx
 export const lessonContents = {
-  'Climate Basics': `Climate Basics covers the fundamentals of climate science, including:
+   'Climate Basics': `Climate Basics covers the fundamentals of climate science, including:
   
 • The Greenhouse Effect: How gases like carbon dioxide, methane, and water vapor trap heat in the atmosphere.
 • Human Impact: How burning fossil fuels, deforestation, and industrial processes contribute to climate change.
@@ -9,7 +9,7 @@ export const lessonContents = {
 
 This lesson introduces you to the key concepts of our changing climate.`,
 
-  'Greenhouse Gases': `Greenhouse Gases are the primary contributors to global warming. In this lesson, you'll learn:
+   'Greenhouse Gases': `Greenhouse Gases are the primary contributors to global warming. In this lesson, you'll learn:
   
 • Key Gases: Such as carbon dioxide (CO₂), methane (CH₄), and nitrous oxide (N₂O).
 • Sources: How both natural processes and human activities release these gases.
@@ -18,7 +18,7 @@ This lesson introduces you to the key concepts of our changing climate.`,
 
 Understanding greenhouse gases is essential for grasping the scale of climate change.`,
 
-  'Human Impact': `Human Impact examines how human activities affect our planet. In this lesson, you'll discover:
+   'Human Impact': `Human Impact examines how human activities affect our planet. In this lesson, you'll discover:
   
 • Environmental Degradation: The effects of pollution, deforestation, and resource depletion.
 • Social & Economic Factors: How environmental changes influence communities and economies.
@@ -27,7 +27,7 @@ Understanding greenhouse gases is essential for grasping the scale of climate ch
 
 This lesson shows why understanding human impact is crucial to building a sustainable future.`,
 
-  'Consequences': `Consequences of Climate Change focus on the real-world impacts, including:
+   'Consequences': `Consequences of Climate Change focus on the real-world impacts, including:
   
 • Rising Sea Levels: Threatening coastal communities and ecosystems.
 • Extreme Weather Events: Increasing frequency and intensity of hurricanes, floods, droughts, and wildfires.
@@ -36,7 +36,7 @@ This lesson shows why understanding human impact is crucial to building a sustai
 
 This lesson explains the wide-ranging effects that climate change has on our world.`,
 
-  'Solutions': `Solutions to Climate Change explore practical ways to address environmental challenges, including:
+   'Solutions': `Solutions to Climate Change explore practical ways to address environmental challenges, including:
   
 • Renewable Energy: Transitioning to wind, solar, and other clean energy sources.
 • Energy Efficiency: Implementing technologies and practices that reduce energy consumption.
@@ -45,7 +45,7 @@ This lesson explains the wide-ranging effects that climate change has on our wor
 
 This lesson provides insights into how we can work together to build a more sustainable future.`,
 
-  'Sustainable Living': `Sustainable Living Fundamentals explores how individual choices create collective impact. This comprehensive introduction covers:
+   'Sustainable Living': `Sustainable Living Fundamentals explores how individual choices create collective impact. This comprehensive introduction covers:
   
 • Carbon Footprint Awareness: The average person's carbon footprint varies significantly by region - from 0.1 tons CO2e in Madagascar to 14.7 tons in the United States annually. Understanding your personal impact is the first step to reduction.
 • Circular Economy Participation: Moving beyond the "take-make-waste" model to embrace repair, sharing, and reuse. The global circular economy could reduce annual greenhouse gas emissions by 39% and raw material use by 28% by 2032.
@@ -54,14 +54,14 @@ This lesson provides insights into how we can work together to build a more sust
 
 This foundation will transform how you think about daily choices and their broader environmental impact.`,
 
-  'Sustainable Living: Reduce Waste': `Waste Reduction Strategies addresses our global waste crisis through practical solutions:
+   'Sustainable Living: Reduce Waste': `Waste Reduction Strategies addresses our global waste crisis through practical solutions:
   
 • Zero-Waste Living: Beyond basic recycling to precycling - preventing waste before it occurs. With global waste expected to increase 73% by 2050, prevention is crucial.
 • Food Waste Solutions: Using AI-powered apps for meal planning, understanding date labels, and composting. Food waste contributes 8-10% of global greenhouse gas emissions.
 • Plastic-Free Living: Practical alternatives to single-use plastics, including new materials like mycelium packaging and seaweed-based alternatives. Only 9% of plastic ever produced has been recycled.
 • Digital Decluttering: The hidden environmental cost of data storage - the internet's carbon footprint equals that of global air travel. Learn digital minimalism practices.`,
 
-  'Sustainable Living: Energy Efficiency': `Energy Efficiency for the Modern Home combines traditional wisdom with cutting-edge technology:
+   'Sustainable Living: Energy Efficiency': `Energy Efficiency for the Modern Home combines traditional wisdom with cutting-edge technology:
   
 • Smart Home Integration: Beyond basic LED bulbs - using AI-powered systems to optimize energy use. Smart home technology can reduce energy consumption by 20-30%.
 • Passive Design Principles: Working with natural light and ventilation to reduce energy needs. Proper implementation can cut heating and cooling costs by 40%.
@@ -70,7 +70,7 @@ This foundation will transform how you think about daily choices and their broad
 
 This lesson empowers you with knowledge to significantly reduce home energy consumption.`,
 
-  'Energy Mix': `Energy Mix explores the diverse sources of energy we use, including:
+   'Energy Mix': `Energy Mix explores the diverse sources of energy we use, including:
 
 • Fossil Fuels: Coal, oil, and natural gas still play a major role, though their environmental impacts are driving a gradual shift.
 • Nuclear Power: Offers a reliable, low-carbon source of energy that complements renewables.
@@ -80,17 +80,25 @@ This lesson empowers you with knowledge to significantly reduce home energy cons
 
 This lesson explores how we use different energy sources to power our homes and businesses.`,
 
-  'Nuclear Power': `Although nuclear power may spark debate, it remains a key pillar in our renewable energy transition. Embracing its potential, nuclear energy offers a low-carbon, reliable, and highly efficient source of electricity. In the United States, 93 reactors generate around 20% of our power, playing a vital role in stabilizing our energy supply while significantly reducing greenhouse gas emissions.
+   'Nuclear Energy': `Nuclear energy is one of the most debated topics in the climate transition. It provides a massive amount of reliable, low-carbon electricity, but also carries significant risks and historical baggage.
 
-Key facts about nuclear energy worldwide:
-• France relies on nuclear power for about 70% of its electricity, showcasing the success of a long-term commitment to nuclear technology.
-• The United Kingdom and Canada are investing in next-generation reactors and small modular reactors (SMRs) to modernize their energy infrastructure.
-• South Korea and Japan are advancing new nuclear projects that promise enhanced safety and efficiency.
-• Cutting-edge nuclear technologies are emerging globally, with projects in Europe and Asia aiming to further reduce carbon emissions and provide sustainable energy solutions.
+• **The Benefits:**
+   - **Zero Emissions:** Nuclear power plants emit no greenhouse gases during operation.
+   - **Baseload Power:** Unlike solar or wind, nuclear provides a constant, steady supply of energy 24/7.
+   - **Energy Density:** A single uranium pellet, about the size of a gummy bear, contains as much energy as a ton of coal.
 
-With the rigorous oversight of the US Nuclear Regulatory Commission (NRC) and continuous innovation in reactor design, nuclear energy inspires hope for a cleaner, more sustainable future.`,
+• **The Controversies:**
+   - **Nuclear Waste:** Spent fuel remains radioactive for thousands of years, requiring secure geological storage.
+   - **Safety & Disasters:** High-profile accidents like Chernobyl (1986) and Fukushima (2011) have shaped public fear and policy.
+   - **Cost and Time:** Modern nuclear plants are incredibly expensive and can take over a decade to build.
 
-  'Solar Power': `Solar power is transforming our energy future by tapping into the vast, renewable energy of the sun. Rapid technological advances and declining installation costs have made solar energy a cornerstone of the transition to cleaner power sources. Across the globe, solar installations are not only reducing greenhouse gas emissions but also promoting energy independence and local economic growth.
+• **The Future:**
+   - **SMRs:** Small Modular Reactors are easier to build and have enhanced safety features.
+   - **Fusion:** The "holy grail" of energy—mimicking the sun to create virtually limitless clean power without long-lived waste.
+
+Understanding both the immense potential and the serious challenges of nuclear energy is key to deciding its role in our sustainable future.`,
+
+   'Solar Power': `Solar power is transforming our energy future by tapping into the vast, renewable energy of the sun. Rapid technological advances and declining installation costs have made solar energy a cornerstone of the transition to cleaner power sources. Across the globe, solar installations are not only reducing greenhouse gas emissions but also promoting energy independence and local economic growth.
 
 Key facts about solar energy worldwide:
 • Germany, China, and the United States are leading the way, with large-scale solar farms and residential rooftop systems contributing to a significant share of each country's renewable capacity.
@@ -100,7 +108,7 @@ Key facts about solar energy worldwide:
 
 Supported by robust government incentives, increasing private investment, and a global commitment to reducing carbon footprints, solar energy stands as a beacon of hope for a sustainable, resilient future.`,
 
-  'Energy Storage': `Energy Storage is a critical component of our clean energy future. In this lesson, you'll learn about the key technologies transforming our power systems and witness how innovative deployments across the globe are paving the way for a more sustainable energy landscape.
+   'Energy Storage': `Energy Storage is a critical component of our clean energy future. In this lesson, you'll learn about the key technologies transforming our power systems and witness how innovative deployments across the globe are paving the way for a more sustainable energy landscape.
 
 • Battery Storage: 
    - The most common form of energy storage, vital for both electric vehicles and grid-scale applications.
@@ -125,7 +133,7 @@ Worldwide, energy storage deployments are accelerating as nations strive to deca
 
 This lesson explores how each of these technologies and deployments is revolutionizing the way we store energy to power our homes, businesses, and entire cities—ensuring a resilient and sustainable energy future for all.`,
 
-  'Renewable Energy': `Renewable Energy represents the cornerstone of our transition to a sustainable future. Unlike fossil fuels that deplete over time and contribute to climate change, renewable energy sources harness the Earth's natural processes to generate clean, abundant power. This comprehensive lesson explores the diverse landscape of renewable energy technologies and their transformative impact on our global energy systems.
+   'Renewable Energy': `Renewable Energy represents the cornerstone of our transition to a sustainable future. Unlike fossil fuels that deplete over time and contribute to climate change, renewable energy sources harness the Earth's natural processes to generate clean, abundant power. This comprehensive lesson explores the diverse landscape of renewable energy technologies and their transformative impact on our global energy systems.
 
 • Wind Energy:
    - Wind turbines convert kinetic energy from moving air into electricity through rotating blades.
@@ -183,7 +191,7 @@ Challenges and solutions in renewable energy deployment:
 
 This lesson demonstrates how renewable energy is not just environmentally necessary but economically advantageous, creating a pathway toward a clean, sustainable, and prosperous energy future for all.`,
 
-  'Policy & Environmental Laws': `Policy & Environmental Laws explores how legislation shapes our environmental future. This comprehensive lesson covers:
+   'Policy & Environmental Laws': `Policy & Environmental Laws explores how legislation shapes our environmental future. This comprehensive lesson covers:
 
 • **The Paris Agreement:** An international treaty uniting 196 countries to limit global warming to 1.5°C. Nations set their own "Nationally Determined Contributions" (NDCs) to reduce emissions.
 
@@ -209,7 +217,7 @@ This lesson demonstrates how renewable energy is not just environmentally necess
 
 Understanding environmental policy empowers you to participate in democracy and support legislation that protects our planet for future generations.`,
 
-  'Public Transport & Urban Living': `Public Transport & Urban Living explores how sustainable cities can dramatically reduce carbon emissions while improving quality of life. This lesson covers:
+   'Public Transport & Urban Living': `Public Transport & Urban Living explores how sustainable cities can dramatically reduce carbon emissions while improving quality of life. This lesson covers:
 
 • **The Urban Carbon Crisis:**
    - Cities consume over 2/3 of global energy and produce 70% of CO₂ emissions.
@@ -246,31 +254,157 @@ Understanding environmental policy empowers you to participate in democracy and 
    - Co-working spaces in neighborhoods reduce the need for downtown commutes.
    - Smart city technology optimizes traffic flow and public transit schedules.
 
-By embracing sustainable transportation and thoughtful urban design, cities can become healthier, more livable, and dramatically reduce their environmental impact.`
+By embracing sustainable transportation and thoughtful urban design, cities can become healthier, more livable, and dramatically reduce their environmental impact.`,
+
+   'Rainforests': `Rainforests are among Earth's most vital ecosystems, covering only 6% of the planet's surface yet hosting more than half of all plant and animal species. This lesson explores their importance and the urgent need for conservation.
+
+• **The Lungs of the Earth:**
+   - Rainforests produce about 20% of the world's oxygen through photosynthesis.
+   - The Amazon alone absorbs 2 billion tons of CO₂ annually, making it a critical carbon sink.
+   - Tropical forests store more carbon than the entire atmosphere contains.
+
+• **Biodiversity Hotspots:**
+   - A single hectare of rainforest can contain over 750 tree species and 1,500 plant species.
+   - 80% of documented species live in tropical rainforests.
+   - New species are still being discovered—scientists find an average of 2-3 new species per week in the Amazon.
+
+• **Major Rainforests Around the World:**
+   - **Amazon Rainforest (South America):** The largest, spanning 9 countries and covering 5.5 million km².
+   - **Congo Basin (Africa):** The second largest, home to forest elephants and gorillas.
+   - **Southeast Asian Rainforests:** Including Borneo and Sumatra, home to orangutans and tigers.
+   - **Daintree Rainforest (Australia):** One of the oldest rainforests, dating back 180 million years.
+
+• **Why Rainforests Are Disappearing:**
+   - **Deforestation:** An area the size of a football field is cleared every second.
+   - **Agriculture:** Cattle ranching and palm oil plantations are leading drivers.
+   - **Logging:** Legal and illegal timber extraction devastates forest ecosystems.
+   - **Mining:** Gold, oil, and mineral extraction cause irreversible damage.
+
+• **Conservation Success Stories:**
+   - Costa Rica reversed deforestation, growing forest cover from 21% to over 52% since 1987.
+   - Indigenous-managed lands show 80% less deforestation than other areas.
+   - Brazil reduced Amazon deforestation by 84% between 2004-2012 through enforcement.
+
+• **How You Can Help:**
+   - Support organizations protecting rainforests like Rainforest Alliance and WWF.
+   - Choose products with sustainable certifications (FSC wood, RSPO palm oil).
+   - Reduce consumption of beef from deforested regions.
+   - Spread awareness about rainforest conservation.
+
+Rainforests are irreplaceable treasures that regulate our climate, protect biodiversity, and provide resources for millions. Their conservation is essential for a sustainable future.`,
+
+   'Urban Living': `Urban Living examines how cities shape our environmental footprint. As the world rapidly urbanizes, understanding the efficiencies and challenges of city life is crucial for sustainability.
+
+• **The Global Urbanization Trend:**
+   - In 1950, only 30% of the world lived in cities. Today, it's 56%—and by 2050, it will reach 68%.
+   - Every week, 1.5 million people move to cities worldwide.
+   - Africa and Asia are urbanizing fastest, adding 2.5 billion urban residents by 2050.
+   - China alone built over 700 million square meters of new floor space annually in recent years.
+
+• **Urban Efficiency Advantages:**
+   - **Per Capita Emissions:** New Yorkers emit 7.1 tons CO₂/year vs. the US average of 16 tons—less than half.
+   - **Land Use:** A city of 1 million can occupy 100 km², while the same suburban population needs 1,000+ km².
+   - **Infrastructure Sharing:** One water main serves thousands; shared heating systems reduce energy by 30%.
+   - **Transportation:** Dense cities enable walking, cycling, and transit—cutting car dependency by 60-80%.
+
+• **The Consumption Reality:**
+   - Cities consume 75% of the world's energy and produce 70% of global CO₂ emissions.
+   - Urban residents consume 60% more resources per capita in wealthy nations.
+   - The urban Heat Island Effect raises city temperatures 1-3°C higher than surroundings.
+   - Concrete and steel production for buildings accounts for 11% of global emissions.
+
+• **Case Studies - Dense vs. Sprawling Cities:**
+   - **Hong Kong:** 7 million people in 1,100 km². Per capita emissions: 5.7 tons CO₂/year.
+   - **Houston:** 2.3 million in 1,700 km². Per capita emissions: 14.2 tons CO₂/year.
+   - **Tokyo:** 14 million use rail daily; 88% of commutes are by public transit.
+   - **Los Angeles:** 73% of commuters drive alone; average commute: 31 minutes.
+
+• **Environmental Pressures of Urbanization:**
+   - Urban expansion destroys 60,000 km² of land annually—mostly farmland and forests.
+   - Cities alter local water cycles, increasing flood risks by 2-5 times.
+   - Light pollution from cities affects 80% of the world's population.
+   - E-waste from urban electronics: 54 million tons globally in 2024.
+
+• **Sustainable Urban Design Solutions:**
+   - **Singapore:** Vertical gardens cover buildings; green cover increased 30% despite density.
+   - **Copenhagen:** 62% of residents cycle to work; carbon-neutral target by 2025.
+   - **Freiburg, Germany:** Solar rooftops, car-free zones, and Passivhaus standards.
+   - **Curitiba, Brazil:** Pioneered Bus Rapid Transit (BRT), now adopted in 200+ cities.
+
+• **Your Urban Footprint:**
+   - Housing type matters: apartments use 50% less heating than detached homes.
+   - Locally-produced food in urban markets reduces transport emissions.
+   - Shared mobility (car-sharing, bike-sharing) can replace 15 private vehicles.
+   - Green spaces in cities reduce cooling needs and improve mental health.
+
+The future of sustainability is largely urban. How we design, build, and live in cities will determine our collective environmental impact for generations to come.`,
+
+   'Amazing Animals': `🦋 Did you know? Animals around the world are showing incredible adaptations to climate change! From color-changing butterflies to migrating polar bears, nature is full of surprises.
+
+• **🐻‍❄️ Polar Bears Going Inland:**
+   - Some polar bears in Hudson Bay have started eating goose eggs and berries as sea ice shrinks!
+   - They're learning to hunt on land—something scientists thought wouldn't happen.
+   - One bear was filmed sliding down a snowy hill just for fun. Even in tough times, play matters!
+
+• **🦎 Lizards Getting Longer Legs:**
+   - In the Bahamas, anole lizards evolved longer legs in just 15 years to grip branches better during stronger hurricanes.
+   - That's evolution happening in real-time—faster than scientists ever expected!
+
+• **🦋 Butterflies Changing Colors:**
+   - Some butterflies are evolving lighter-colored wings to reflect more heat and stay cool.
+   - The common brown butterfly in Australia has gotten 15% lighter in just 20 years!
+
+• **🐧 Penguins Moving South:**
+   - Gentoo penguins are expanding their territory further south in Antarctica as temperatures warm.
+   - They're the "pioneers" of the penguin world, setting up new colonies where it was once too cold!
+
+• **🦅 Birds Shrinking:**
+   - Over 40 years, North American birds have gotten 2-3% smaller on average—but their wings got longer!
+   - Smaller bodies cool down faster. Nature's own air conditioning upgrade!
+
+• **🐟 Fish Swimming Deeper:**
+   - Many fish species are diving to cooler, deeper waters—some by 10-30 meters per decade.
+   - Fishermen are noticing their catches are coming from different depths than their grandparents used.
+
+• **🦩 Flamingos Appearing in New Places:**
+   - African flamingos have been spotted in Europe more frequently as migration patterns shift.
+   - In 2024, flamingos were seen in places like Germany and the UK—thousands of miles from their usual range!
+
+• **🦝 Raccoons Going North:**
+   - Raccoons have expanded into Canada further than ever before, following warmer winters.
+   - They're so adaptable, scientists call them "climate change winners"—for now!
+
+The animal kingdom is constantly surprising us with its resilience. But while some species adapt, many cannot keep up with the pace of change. Conservation helps give wildlife a fighting chance!`,
+
+   'Deserts & Geo-engineering': `Deserts cover about 1/3 of Earth's land, and they are expanding due to climate change and human activity. This lesson explores the threat of desertification and the massive engineering projects designed to turn the tide.`,
 };
 
 export const lessonImages: { [key: string]: string } = {
-  'Climate Basics': 'https://placehold.co/600x400/2E7D32/ffffff/png?text=Climate+Basics',
-  'Greenhouse Gases': 'https://placehold.co/600x400/4CAF50/ffffff/png?text=Greenhouse+Gases',
-  'Human Impact': 'https://placehold.co/600x400/EF5350/ffffff/png?text=Human+Impact',
-  'Consequences': 'https://placehold.co/600x400/FFA726/ffffff/png?text=Consequences',
-  'Solutions': 'https://placehold.co/600x400/29B6F6/ffffff/png?text=Solutions',
-  'Sustainable Living': 'https://placehold.co/600x400/66BB6A/ffffff/png?text=Sustainable+Living',
-  'Sustainable Living: Reduce Waste': 'https://placehold.co/600x400/8D6E63/ffffff/png?text=Reduce+Waste',
-  'Sustainable Living: Energy Efficiency': 'https://placehold.co/600x400/FFEB3B/000000/png?text=Energy+Efficiency',
-  'Energy Mix': 'https://placehold.co/600x400/AB47BC/ffffff/png?text=Energy+Mix',
-  'Nuclear Power': 'https://placehold.co/600x400/9C27B0/ffffff/png?text=Nuclear+Power',
-  'Solar Power': 'https://placehold.co/600x400/FFC107/000000/png?text=Solar+Power',
-  'Energy Storage': 'https://placehold.co/600x400/7E57C2/ffffff/png?text=Energy+Storage',
-  'Renewable Energy': 'https://placehold.co/600x400/009688/ffffff/png?text=Renewable+Energy',
-  'Electric Vehicles': 'https://placehold.co/600x400/0288D1/ffffff/png?text=Electric+Vehicles',
-  'Agriculture': 'https://placehold.co/600x400/558B2F/ffffff/png?text=Agriculture',
-  'Fashion': 'https://placehold.co/600x400/E91E63/ffffff/png?text=Fashion',
-  'Oceans': 'https://placehold.co/600x400/0277BD/ffffff/png?text=Oceans',
-  'Recycling': 'https://placehold.co/600x400/388E3C/ffffff/png?text=Recycling',
-  'Carbon Footprint': 'https://placehold.co/600x400/455A64/ffffff/png?text=Carbon+Footprint',
-  'Achievements': 'https://placehold.co/600x400/FFD700/000000/png?text=Achievements',
-  'Organizations': 'https://placehold.co/600x400/1976D2/ffffff/png?text=Organizations',
-  'Policy & Environmental Laws': 'https://placehold.co/600x400/5E35B1/ffffff/png?text=Environmental+Policy',
-  'Public Transport & Urban Living': 'https://placehold.co/600x400/00897B/ffffff/png?text=Urban+Transport',
+   'Climate Basics': 'https://www.soest.hawaii.edu/uhsgpi/sealearning/wp-content/uploads/2019/06/3ESS_T1_Climate.png',
+   'Greenhouse Gases': 'https://dummyimage.com/600x400/ffe4b5/000000&text=Nano+Banana',
+   'Human Impact': 'https://dummyimage.com/600x400/ffe4b5/000000&text=Nano+Banana',
+   'Consequences': 'https://dummyimage.com/600x400/ffe4b5/000000&text=Nano+Banana',
+   'Solutions': 'https://dummyimage.com/600x400/ffe4b5/000000&text=Nano+Banana',
+   'Sustainable Living': 'https://placehold.co/600x400/66BB6A/ffffff/png?text=Sustainable+Living',
+   'Sustainable Living: Reduce Waste': 'https://placehold.co/600x400/8D6E63/ffffff/png?text=Reduce+Waste',
+   'Sustainable Living: Energy Efficiency': 'https://placehold.co/600x400/FFEB3B/000000/png?text=Energy+Efficiency',
+   'Energy Mix': 'https://placehold.co/600x400/AB47BC/ffffff/png?text=Energy+Mix',
+   'Nuclear Energy': 'https://placehold.co/600x400/9C27B0/ffffff/png?text=Nuclear+Power',
+   'Solar Power': 'https://placehold.co/600x400/FFC107/000000/png?text=Solar+Power',
+   'Energy Storage': 'https://placehold.co/600x400/7E57C2/ffffff/png?text=Energy+Storage',
+   'Renewable Energy': 'https://placehold.co/600x400/009688/ffffff/png?text=Renewable+Energy',
+   'Electric Vehicles': 'https://placehold.co/600x400/0288D1/ffffff/png?text=Electric+Vehicles',
+   'Agriculture': 'https://placehold.co/600x400/558B2F/ffffff/png?text=Agriculture',
+   'Fashion': 'https://placehold.co/600x400/E91E63/ffffff/png?text=Fashion',
+   'Oceans': 'https://placehold.co/600x400/0277BD/ffffff/png?text=Oceans',
+   'Recycling': 'https://placehold.co/600x400/388E3C/ffffff/png?text=Recycling',
+   'Carbon Footprint': 'https://placehold.co/600x400/455A64/ffffff/png?text=Carbon+Footprint',
+   'Achievements': 'https://placehold.co/600x400/FFD700/000000/png?text=Achievements',
+   'Organizations': 'https://placehold.co/600x400/1976D2/ffffff/png?text=Organizations',
+   'Policy & Environmental Laws': 'https://placehold.co/600x400/5E35B1/ffffff/png?text=Environmental+Policy',
+   'Public Transport & Urban Living': 'https://placehold.co/600x400/00897B/ffffff/png?text=Urban+Transport',
+   'Rainforests': 'https://placehold.co/600x400/2E7D32/ffffff/png?text=Rainforests',
+   'Urban Living': 'https://placehold.co/600x400/607D8B/ffffff/png?text=Urban+Living',
+   'Amazing Animals': 'https://placehold.co/600x400/FF6F00/ffffff/png?text=Amazing+Animals',
+   'Deserts & Geo-engineering': 'https://placehold.co/600x400/FFCC80/000000/png?text=Deserts',
 };
