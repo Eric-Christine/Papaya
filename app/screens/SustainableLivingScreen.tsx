@@ -7,7 +7,7 @@ export default function SustainableLivingScreen({ navigation }: any) {
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.header}>Sustainable Living</Text>
       <Text style={styles.description}>
-        Sustainable Living is about making daily choices that reduce your environmental impact and contribute to a healthier planet. In this lesson, you'll discover practical tips to live more sustainably and improve your quality of life.
+        Sustainable Living is about making daily choices that reduce your environmental impact and contribute to a healthier planet. In this lesson, you&apos;ll discover practical tips to live more sustainably and improve your quality of life.
       </Text>
       <Text style={styles.listItem}>• Reduce waste by recycling and reusing materials</Text>
       <Text style={styles.listItem}>• Conserve energy by using efficient appliances and renewable energy sources</Text>

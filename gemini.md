@@ -2,27 +2,28 @@
 
 This file is for tracking Gemini-related tasks, prompts, and documentation for the Papaya project. Use this file to pick up context between sessions.
 
-## Current State (Jan 23, 2026)
-- **App Status**: Functional. New lessons added, Crafting Kitchen implemented.
-- **Recent Focus**: Adding content (Policy, Urban Living) and gamification (Crafting).
+## Current State (Jan 24, 2026)
+- **App Status**: Functional. 19 lessons across 7 categories, Crafting Kitchen implemented, Garden system active.
+- **Recent Focus**: Adding new lessons (Nuclear Energy, Deserts & Geo-engineering, Amazing Animals), Supabase auth integration for user progress sync.
 
 ## Recent Changes
 1.  **New Lesson Content**:
-    *   **Policy & Environmental Laws**: Added multi-step lesson covering International Frameworks, US Legislation, and Future Policies.
-    *   **Public Transport & Urban Living**: Added lesson on urban emissions and sustainable transport.
-    *   **Quiz Updates**: Added dedicated quiz questions for both new topics.
+    *   **Nuclear Energy**: Covers controversies, historical disasters, benefits as clean energy, and future technologies (SMRs, Fusion).
+    *   **Deserts & Geo-engineering**: Explores desertification and global greening efforts.
+    *   **Amazing Animals**: Fun facts about animal adaptations to climate change.
+    *   **Urban Living**: Environmental impact of cities and urbanization trends.
+    *   **Public Transport & Urban Living**: Sustainable cities and transport emissions.
+    *   **Policy & Environmental Laws**: Multi-step lesson on international frameworks and US legislation.
 2.  **Crafting Kitchen**:
-    *   **New Feature**: Users can now craft items (Green Salad, Floral Bouquet, Mythical Garden Set).
-    *   **Inventory Integration**: Ingredients are pulled from the user's inventory (harvested from the garden).
-    *   **Economy**: Crafted items can be sold for coins.
+    *   Users craft items (Green Salad, Floral Bouquet, Mythical Garden Set).
+    *   Ingredients pulled from user inventory (harvested from garden).
+    *   Crafted items sold for coins.
 3.  **Quiz Screen Redesign**:
-    *   Restyled with modern, clean UI (white background, pill-style options, blue accent button).
-4.  **Project Refactoring**:
-    *   **Data Extraction**: Moved quiz questions to `app/data/quizQuestions.ts` and lessons to `app/data/lessons.ts`.
-    *   **Centralized Types**: Created `app/types/quiz.ts`, `app/types/lesson.ts`, and `app/types/garden.ts`.
-    *   **Componentization**: Broke `QuizScreen` into reusable components (`QuizCard`, `QuizOptions`, `SeedAnimations`) in `app/components/quiz/`.
-5.  **Build Fix**:
-    *   Resolved `react-native-worklets` version mismatch by rebuilding native iOS app.
+    *   Modern, clean UI (white background, pill-style options, blue accent button).
+4.  **Landing Page Polish**:
+    *   Refined layout, clear value proposition, removed emojis for professional look.
+5.  **User Progress Sync** (In Progress):
+    *   Supabase integration for cross-device progress synchronization.
 
 ## Project Structure
 ```
@@ -37,17 +38,19 @@ app/
 ├── contexts/
 │   └── UserContext.tsx  # User state (seeds, garden, inventory)
 ├── data/
-│   ├── contentData.tsx  # Lesson content text
+│   ├── contentData.tsx  # Lesson content text (19 lessons)
 │   ├── craftingRecipes.ts # Crafting recipes
-│   ├── lessons.ts       # Lesson definitions
+│   ├── lessons.ts       # Lesson definitions (19 total)
 │   └── quizQuestions.ts # All quiz questions
 ├── screens/
 │   ├── GardenScreen.tsx
+│   ├── GlobalEnergyMixScreen.tsx
 │   ├── LessonDetailScreen.tsx
 │   ├── LessonsScreen.tsx
 │   ├── ProfileScreen.tsx
 │   ├── QuizScreen.tsx
-│   └── RewardsScreen.tsx
+│   ├── RewardsScreen.tsx
+│   └── SustainableLivingScreen.tsx
 └── types/
     ├── crafting.ts      # Crafting recipes & items
     ├── garden.ts        # GardenItem, InventoryItem
@@ -55,10 +58,20 @@ app/
     └── quiz.ts          # Question, QuizData
 ```
 
+## Lesson Categories
+- **Climate Fundamentals** (2): Climate Basics, Carbon Footprint
+- **Energy** (4): Energy Mix, Solar Power, Renewable Energy, Nuclear Energy
+- **Transportation** (2): Electric Vehicles, Public Transport & Urban Living
+- **Sustainable Living** (5): Sustainable Living, Fashion, Agriculture, Recycling, Urban Living
+- **Environment** (3): Oceans, Rainforests, Deserts & Geo-engineering
+- **Policy & Progress** (3): Policy & Environmental Laws, Organizations, Achievements
+- **Fun Facts** (1): Amazing Animals
+
 ## Next Steps / Backlog
-- [ ] Consider restyling other screens to match new Quiz design.
-- [ ] Add more quiz questions for new lessons.
-- [ ] Review `LessonDetailScreen.tsx` for further componentization.
+- [ ] Complete Supabase user progress sync implementation
+- [ ] Add more quiz questions for newer lessons
+- [ ] Consider restyling other screens to match Quiz design
+- [ ] Review `LessonDetailScreen.tsx` for further componentization
 
 ## App Overview
 ```mermaid

@@ -1,84 +1,110 @@
 # Papaya - Sustainability Education App
 
-**Papaya** is an interactive mobile application built with Expo that provides engaging lessons on sustainability and climate change. Learn about climate basics, greenhouse gases, human impact, consequences, and solutions, and test your knowledge with integrated quizzes. The app leverages file-based routing with Expo Router and features a gamified learning experience to encourage users to explore and improve their environmental knowledge.
+**Papaya** is an interactive mobile application built with Expo that provides engaging lessons on sustainability and climate change. Learn about climate fundamentals, renewable energy, sustainable living, environmental conservation, and policy through gamified lessons and quizzes.
 
 ## Features
 
-- **Interactive Lessons:** Dive into detailed lessons covering key sustainability topics, including new modules on Environmental Policy and Urban Living.
-- **Dynamic Quiz System:** Take quizzes after lessons to test your knowledge.
-- **Crafting Kitchen:** Harvest plants from your garden to craft special items and sell them for coins.
-- **Reward System:** Earn rewards for completing lessons and quizzes.
-- **User Profile:** Track your progress and view your achievements.
-- **File-Based Navigation:** Clean navigation structure powered by Expo Router.
+- **19 Interactive Lessons**: Comprehensive coverage across 7 categories including Climate Fundamentals, Energy, Transportation, Sustainable Living, Environment, Policy & Progress, and Fun Facts.
+- **Dynamic Quiz System**: Test your knowledge after each lesson with modern, engaging quizzes.
+- **Virtual Garden**: Plant and harvest various items in your own sustainability garden.
+- **Crafting Kitchen**: Combine harvested ingredients to craft unique items like Green Salad, Floral Bouquet, and Mythical Garden Set.
+- **Rewards Shop**: Spend your earned coins on items and upgrades.
+- **User Profile**: Track your progress, XP, and achievements.
+- **File-Based Navigation**: Clean navigation structure powered by Expo Router.
+
+## Lesson Categories
+
+| Category | Topics |
+|----------|--------|
+| Climate Fundamentals | Climate Basics, Carbon Footprint |
+| Energy | Energy Mix, Solar Power, Renewable Energy, Nuclear Energy |
+| Transportation | Electric Vehicles, Public Transport & Urban Living |
+| Sustainable Living | Sustainable Living, Fashion, Agriculture, Recycling, Urban Living |
+| Environment | Oceans, Rainforests, Deserts & Geo-engineering |
+| Policy & Progress | Policy & Environmental Laws, Organizations, Achievements |
+| Fun Facts | Amazing Animals |
 
 ## Getting Started
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) installed
-- [Expo CLI](https://docs.expo.dev/workflow/expo-cli/) (optional, but recommended) installed globally:
-  ```bash
-  npm install -g expo-cli
-Git
-Installation
-Clone the Repository
+- [Node.js](https://nodejs.org/) (v18+)
+- [Expo CLI](https://docs.expo.dev/workflow/expo-cli/) (optional, but recommended)
+- Git
 
-bash
-Copy
-git clone <your-repo-url>
-cd <your-repo-folder>
-Install Dependencies
+### Installation
 
-bash
-Copy
-npm install
-Running the App
+1. **Clone the Repository**
+   ```bash
+   git clone <your-repo-url>
+   cd Papaya
+   ```
+
+2. **Install Dependencies**
+   ```bash
+   npm install
+   ```
+
+### Running the App
+
 Start the Expo development server:
 
-bash
-Copy
+```bash
 npx expo start
+```
+
 You can then:
+- Open the app in **Expo Go** on your physical device
+- Run on **iOS simulator**: Press `i`
+- Run on **Android emulator**: Press `a`
+- Run in your **web browser**: Press `w`
 
-Open the app in Expo Go on your physical device,
-Use an Android emulator,
-Use an iOS simulator, or
-Run the app in your web browser.
-Project Structure
-The project is organized as follows:
+## Project Structure
 
-bash
-Copy
-/app
-├── (tabs)/
-│   ├── _layout.tsx           # Custom tab layout with navigation
-│   ├── explore.tsx           # Explore tab screen
-│   └── index.tsx             # Home tab screen
+```
+app/
+├── (tabs)/                    # Tab-based navigation
+│   ├── _layout.tsx            # Tab layout configuration
+│   └── index.tsx              # Home tab
+├── components/
+│   ├── crafting/              # Crafting system components
+│   └── quiz/                  # Quiz UI components
+├── contexts/
+│   └── UserContext.tsx        # Global user state management
+├── data/
+│   ├── contentData.tsx        # Lesson content
+│   ├── craftingRecipes.ts     # Crafting recipes
+│   ├── lessons.ts             # Lesson definitions
+│   └── quizQuestions.ts       # Quiz questions
 ├── screens/
-│   ├── LessonsScreen.tsx     # List of sustainability lessons
-│   ├── LessonDetailScreen.tsx# Detailed lesson content with quiz navigation
-│   ├── QuizScreen.tsx        # Quiz screen for lesson subtopics
-│   ├── RewardsScreen.tsx     # Rewards screen for user achievements
-│   └── ProfileScreen.tsx     # User profile screen
-├── _layout.tsx               # Global layout configuration (includes NavigationContainer)
-├── +not-found.tsx            # 404 Not Found screen
-└── Rewards.tsx               # (Optional) Legacy rewards screen re-exporting RewardsScreen
-Usage
-Explore Lessons: Navigate to the Lessons tab to browse sustainability topics.
-Detailed Content: Tap on a lesson to read detailed content and follow the sequence (e.g., Climate Basics → Greenhouse Gases → Human Impact → Consequences → Solutions).
-Take Quizzes: After completing a lesson, navigate to a quiz to test your understanding.
-Earn Rewards: Check out the Rewards tab to view your progress and earn badges.
-Craft Items: Visit the Garden to harvest plants and use the Crafting Kitchen to create unique items.
-Manage Your Profile: View and update your profile details in the Profile tab.
-Contributing
+│   ├── GardenScreen.tsx       # Virtual garden
+│   ├── LessonDetailScreen.tsx # Lesson content display
+│   ├── LessonsScreen.tsx      # Lesson list
+│   ├── ProfileScreen.tsx      # User profile
+│   ├── QuizScreen.tsx         # Quiz interface
+│   └── RewardsScreen.tsx      # Shop & rewards
+└── types/                     # TypeScript definitions
+```
+
+## Usage
+
+1. **Explore Lessons**: Browse sustainability topics organized by category.
+2. **Learn**: Read detailed content with facts, statistics, and actionable insights.
+3. **Take Quizzes**: Test your understanding after each lesson.
+4. **Earn Rewards**: Gain XP and coins for completing lessons and quizzes.
+5. **Grow Your Garden**: Plant and harvest items in your virtual garden.
+6. **Craft Items**: Use harvested ingredients in the Crafting Kitchen.
+
+## Contributing
+
 Contributions are welcome! If you have ideas, bug fixes, or new features to share, please open an issue or submit a pull request.
 
-License
+## License
+
 This project is licensed under the MIT License.
 
-Resources
-Expo Documentation
-React Navigation Documentation
-Expo Router Documentation
-Community
-Join our community of developers and environmental enthusiasts:
+## Resources
+
+- [Expo Documentation](https://docs.expo.dev/)
+- [React Navigation Documentation](https://reactnavigation.org/)
+- [Expo Router Documentation](https://docs.expo.dev/router/introduction/)

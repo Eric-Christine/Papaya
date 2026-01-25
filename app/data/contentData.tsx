@@ -379,16 +379,16 @@ The animal kingdom is constantly surprising us with its resilience. But while so
    'Deserts & Geo-engineering': `Deserts cover about 1/3 of Earth's land, and they are expanding due to climate change and human activity. This lesson explores the threat of desertification and the massive engineering projects designed to turn the tide.`,
 };
 
-export const lessonImages: { [key: string]: string } = {
+export const lessonImages: { [key: string]: any } = {
    'Climate Basics': 'https://www.soest.hawaii.edu/uhsgpi/sealearning/wp-content/uploads/2019/06/3ESS_T1_Climate.png',
-   'Greenhouse Gases': 'https://dummyimage.com/600x400/ffe4b5/000000&text=Nano+Banana',
+   'Greenhouse Gases': require('../../assets/images/greenhousegaseffect.jpg'),
    'Human Impact': 'https://dummyimage.com/600x400/ffe4b5/000000&text=Nano+Banana',
    'Consequences': 'https://dummyimage.com/600x400/ffe4b5/000000&text=Nano+Banana',
    'Solutions': 'https://dummyimage.com/600x400/ffe4b5/000000&text=Nano+Banana',
    'Sustainable Living': 'https://placehold.co/600x400/66BB6A/ffffff/png?text=Sustainable+Living',
    'Sustainable Living: Reduce Waste': 'https://placehold.co/600x400/8D6E63/ffffff/png?text=Reduce+Waste',
    'Sustainable Living: Energy Efficiency': 'https://placehold.co/600x400/FFEB3B/000000/png?text=Energy+Efficiency',
-   'Energy Mix': 'https://placehold.co/600x400/AB47BC/ffffff/png?text=Energy+Mix',
+   'Energy Mix': '/Users/ericchristine/.gemini/antigravity/brain/72290e95-8328-4e58-945d-c7a4cd91d43f/energy_mix_overview_nano_banana_1769288229429.png',
    'Nuclear Energy': 'https://placehold.co/600x400/9C27B0/ffffff/png?text=Nuclear+Power',
    'Solar Power': 'https://placehold.co/600x400/FFC107/000000/png?text=Solar+Power',
    'Energy Storage': 'https://placehold.co/600x400/7E57C2/ffffff/png?text=Energy+Storage',

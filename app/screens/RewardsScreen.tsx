@@ -89,6 +89,30 @@ const itemsData = [
     cost: 50,
     harvestDuration: 0,
   },
+  {
+    id: '9',
+    title: 'Golden Watering Can',
+    description: 'A magical watering can that doubles harvest value!',
+    cost: 750,
+    harvestDuration: 0,
+    requiredBadge: 'Green Thumb Badge',
+  },
+  {
+    id: '10',
+    title: 'Rainbow Flower',
+    description: 'A rare flower that changes colors. Very valuable!',
+    cost: 600,
+    harvestDuration: 14400000, // 4 hours
+    requiresCraft: true,
+  },
+  {
+    id: '11',
+    title: 'Bee Hive',
+    description: 'Attracts bees to boost all plant growth by 10%!',
+    cost: 500,
+    harvestDuration: 0,
+    requiredLessons: 15,
+  },
 ];
 
 const badgesData = [
@@ -219,6 +243,32 @@ export default function RewardsScreen() {
       return;
     }
 
+    // Check badge requirement
+    const itemAny = item as any;
+    if (itemAny.requiredBadge) {
+      const hasGreenThumb = user.inventory.length > 0; // Green Thumb = first harvest
+      if (itemAny.requiredBadge === 'Green Thumb Badge' && !hasGreenThumb) {
+        Alert.alert(
+          'Badge Required',
+          `You need the ${itemAny.requiredBadge} to purchase this item. Harvest your first plant to unlock it!`
+        );
+        return;
+      }
+    }
+
+    // Check craft requirement
+    if (itemAny.requiresCraft) {
+      // Check if user has ever crafted (we can use inventory as a proxy for now)
+      const hasCrafted = user.inventory.some((inv: any) => inv.crafted === true);
+      if (!hasCrafted) {
+        Alert.alert(
+          'Crafting Required',
+          'You need to craft your first item to unlock this. Visit the Crafting area!'
+        );
+        return;
+      }
+    }
+
     // Check if user has enough seeds
     if (user.seeds >= item.cost) {
       // Deduct seeds
@@ -303,12 +353,42 @@ export default function RewardsScreen() {
                     <Heart width={40} height={40} />
                   </View>
                 )}
+                {item.title === 'Fertilizer' && (
+                  <View style={styles.iconContainer}>
+                    <Fertilizer width={40} height={40} />
+                  </View>
+                )}
+                {item.title === 'Golden Watering Can' && (
+                  <View style={styles.iconContainer}>
+                    <Text style={{ fontSize: 28 }}>🪣</Text>
+                  </View>
+                )}
+                {item.title === 'Rainbow Flower' && (
+                  <View style={styles.iconContainer}>
+                    <Text style={{ fontSize: 28 }}>🌸</Text>
+                  </View>
+                )}
+                {item.title === 'Bee Hive' && (
+                  <View style={styles.iconContainer}>
+                    <Text style={{ fontSize: 28 }}>🐝</Text>
+                  </View>
+                )}
                 <Text style={styles.itemTitle}>{item.title}</Text>
               </View>
               <Text style={styles.itemDescription}>{item.description}</Text>
               {item.requiredLessons && (
                 <Text style={styles.requiredText}>
-                  Requires {item.requiredLessons} lessons
+                  🔒 Requires {item.requiredLessons} lessons
+                </Text>
+              )}
+              {(item as any).requiredBadge && (
+                <Text style={styles.requiredText}>
+                  🔒 Requires: {(item as any).requiredBadge}
+                </Text>
+              )}
+              {(item as any).requiresCraft && (
+                <Text style={styles.requiredText}>
+                  🔒 Requires: Craft your first item
                 </Text>
               )}
             </View>
@@ -371,7 +451,17 @@ export default function RewardsScreen() {
                 <Text style={styles.modalCost}>Cost: {selectedItem.cost} seeds</Text>
                 {selectedItem.requiredLessons && (
                   <Text style={styles.requiredTextModal}>
-                    Requires {selectedItem.requiredLessons} lessons completed
+                    🔒 Requires {selectedItem.requiredLessons} lessons completed
+                  </Text>
+                )}
+                {selectedItem.requiredBadge && (
+                  <Text style={styles.requiredTextModal}>
+                    🔒 Requires: {selectedItem.requiredBadge}
+                  </Text>
+                )}
+                {selectedItem.requiresCraft && (
+                  <Text style={styles.requiredTextModal}>
+                    🔒 Requires: Craft your first item
                   </Text>
                 )}
                 <View style={styles.modalButtons}>
@@ -385,11 +475,7 @@ export default function RewardsScreen() {
                   <Button
                     title="Buy"
                     onPress={() => handlePurchase(selectedItem)}
-                    disabled={
-                      user.seeds < selectedItem.cost ||
-                      (selectedItem.requiredLessons &&
-                        user.lessonsCompleted < selectedItem.requiredLessons)
-                    }
+                    disabled={user.seeds < selectedItem.cost}
                   />
                 </View>
               </>

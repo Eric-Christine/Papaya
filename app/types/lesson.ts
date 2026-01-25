@@ -3,4 +3,5 @@ export interface Lesson {
     title: string;
     description: string;
     icon: string;
+    category: string;
 }

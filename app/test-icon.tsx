@@ -27,7 +27,7 @@ export default function TestIconScreen() {
       {Platform.OS === 'web' && (
         <View style={styles.instructions}>
           <Text style={styles.instructionText}>
-            📱 To export: Right-click the icon above and select "Save image as..."
+            📱 To export: Right-click the icon above and select &quot;Save image as...&quot;
           </Text>
           <Text style={styles.instructionText}>
             💾 Save it as: icon.png (1024x1024px)
@@ -36,7 +36,7 @@ export default function TestIconScreen() {
             📂 Place it in: assets/images/icon.png
           </Text>
           <Text style={styles.instructionText}>
-            ⚙️ Update app.json: "icon": "./assets/images/icon.png"
+            ⚙️ Update app.json: &quot;icon&quot;: &quot;./assets/images/icon.png&quot;
           </Text>
           <Text style={styles.instructionText}>
             🔄 Rebuild: npx expo prebuild --clean

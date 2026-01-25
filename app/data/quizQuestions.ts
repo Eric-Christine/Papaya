@@ -604,3 +604,293 @@ export const publicTransportQuizQuestions: Question[] = [
         explanation: "Urban sprawl is the uncontrolled expansion of urban development into surrounding areas, often increasing car dependency and emissions.",
     },
 ];
+
+export const rainforestQuizQuestions: Question[] = [
+    {
+        question: "What percentage of all plant and animal species live in rainforests?",
+        options: [
+            "About 20%",
+            "About 35%",
+            "More than 50%",
+            "About 10%",
+        ],
+        correctAnswer: 2,
+        explanation: "Though covering only 6% of Earth's surface, rainforests host more than half of all plant and animal species.",
+    },
+    {
+        question: "Which rainforest is the largest in the world?",
+        options: [
+            "Congo Basin",
+            "Daintree Rainforest",
+            "Amazon Rainforest",
+            "Borneo Rainforest",
+        ],
+        correctAnswer: 2,
+        explanation: "The Amazon Rainforest is the largest, spanning 9 countries and covering 5.5 million km².",
+    },
+    {
+        question: "What is the primary driver of deforestation in tropical rainforests?",
+        options: [
+            "Tourism",
+            "Agriculture (cattle ranching and palm oil)",
+            "Urban development",
+            "Natural disasters",
+        ],
+        correctAnswer: 1,
+        explanation: "Agriculture, particularly cattle ranching and palm oil plantations, is the leading driver of rainforest deforestation.",
+    },
+    {
+        question: "Why are rainforests called 'the lungs of the Earth'?",
+        options: [
+            "They are shaped like lungs",
+            "They produce about 20% of the world's oxygen",
+            "They filter air pollution",
+            "They are located near major cities",
+        ],
+        correctAnswer: 1,
+        explanation: "Rainforests produce about 20% of the world's oxygen through photosynthesis and absorb vast amounts of CO₂.",
+    },
+    {
+        question: "Which country successfully reversed deforestation, growing forest cover from 21% to over 52%?",
+        options: [
+            "Brazil",
+            "Indonesia",
+            "Costa Rica",
+            "Malaysia",
+        ],
+        correctAnswer: 2,
+        explanation: "Costa Rica reversed deforestation through conservation policies and incentives, growing forest cover from 21% to over 52% since 1987.",
+    },
+];
+
+export const urbanLivingQuizQuestions: Question[] = [
+    {
+        question: "What percentage of the world's population is expected to live in cities by 2050?",
+        options: [
+            "50%",
+            "68%",
+            "80%",
+            "45%",
+        ],
+        correctAnswer: 1,
+        explanation: "By 2050, 68% of the world's population is expected to live in urban areas, up from 56% today.",
+    },
+    {
+        question: "How do New York City residents' CO₂ emissions compare to the US average?",
+        options: [
+            "About the same",
+            "Twice as high",
+            "Less than half the US average",
+            "Slightly higher",
+        ],
+        correctAnswer: 2,
+        explanation: "New Yorkers emit 7.1 tons CO₂/year compared to the US average of 16 tons—less than half, due to density and public transit.",
+    },
+    {
+        question: "What percentage of global CO₂ emissions do cities produce?",
+        options: [
+            "40%",
+            "55%",
+            "70%",
+            "85%",
+        ],
+        correctAnswer: 2,
+        explanation: "Cities consume 75% of the world's energy and produce approximately 70% of global CO₂ emissions.",
+    },
+    {
+        question: "Which city pioneered Bus Rapid Transit (BRT), now adopted in over 200 cities worldwide?",
+        options: [
+            "Singapore",
+            "Copenhagen",
+            "Curitiba, Brazil",
+            "Tokyo",
+        ],
+        correctAnswer: 2,
+        explanation: "Curitiba, Brazil pioneered Bus Rapid Transit (BRT) in the 1970s, which has since been adopted in over 200 cities worldwide.",
+    },
+    {
+        question: "How much less heating energy do apartments typically use compared to detached homes?",
+        options: [
+            "10% less",
+            "25% less",
+            "50% less",
+            "75% less",
+        ],
+        correctAnswer: 2,
+        explanation: "Apartments use approximately 50% less heating energy than detached homes due to shared walls and smaller spaces.",
+    },
+];
+
+export const amazingAnimalsQuizQuestions: Question[] = [
+    {
+        question: "What surprising food have some polar bears started eating as sea ice shrinks?",
+        options: [
+            "Seaweed",
+            "Goose eggs and berries",
+            "Fish from rivers",
+            "Seals on land",
+        ],
+        correctAnswer: 1,
+        explanation: "Some polar bears in Hudson Bay have adapted by eating goose eggs and berries when sea ice isn't available for seal hunting!",
+    },
+    {
+        question: "How fast did Bahamian anole lizards evolve longer legs?",
+        options: [
+            "100 years",
+            "50 years",
+            "15 years",
+            "5 years",
+        ],
+        correctAnswer: 2,
+        explanation: "Anole lizards evolved longer legs in just 15 years to grip branches better during stronger hurricanes—amazingly fast evolution!",
+    },
+    {
+        question: "Why are some butterflies evolving lighter-colored wings?",
+        options: [
+            "To hide from predators",
+            "To attract mates",
+            "To reflect more heat and stay cool",
+            "To fly faster",
+        ],
+        correctAnswer: 2,
+        explanation: "Lighter-colored wings reflect more heat, helping butterflies stay cool as temperatures rise. The Australian common brown butterfly got 15% lighter in 20 years!",
+    },
+    {
+        question: "Which penguin species is called the 'pioneer' of the penguin world for setting up new colonies?",
+        options: [
+            "Emperor penguins",
+            "King penguins",
+            "Gentoo penguins",
+            "Adelie penguins",
+        ],
+        correctAnswer: 2,
+        explanation: "Gentoo penguins are expanding their territory further south in Antarctica as temperatures warm, setting up new colonies in previously too-cold areas!",
+    },
+    {
+        question: "What two body changes have North American birds shown over 40 years?",
+        options: [
+            "Larger bodies and shorter wings",
+            "Smaller bodies and longer wings",
+            "Same size but different colors",
+            "Larger beaks and smaller feet",
+        ],
+        correctAnswer: 1,
+        explanation: "Birds have gotten 2-3% smaller (to cool down faster) but developed longer wings—nature's own adaptation to a warming world!",
+    },
+];
+
+export const nuclearEnergyQuizQuestions: Question[] = [
+    {
+        question: "What is a major benefit of nuclear power for the climate?",
+        options: [
+            "It's completely free",
+            "It produces zero emissions during operation",
+            "It uses safe renewable fuel",
+            "It cools the Earth directly",
+        ],
+        correctAnswer: 1,
+        explanation: "Nuclear power plants generate electricity without burning fossil fuels, meaning they don't emit CO2 while running!",
+    },
+    {
+        question: "Which term describes the steady, 24/7 power supply provided by nuclear plants?",
+        options: [
+            "Variable power",
+            "Intermittent power",
+            "Baseload power",
+            "Peak power",
+        ],
+        correctAnswer: 2,
+        explanation: "Because nuclear plants run constantly, they provide a reliable \"baseload\" that solar and wind (which depend on the weather) cannot yet match alone.",
+    },
+    {
+        question: "What is a primary concern regarding nuclear waste?",
+        options: [
+            "It smells bad",
+            "It remains radioactive for thousands of years",
+            "It's too heavy to move",
+            "It turns into coal over time",
+        ],
+        correctAnswer: 1,
+        explanation: "Spent nuclear fuel is highly radioactive and must be stored in secure geological repositories to keep it away from the environment for millennia.",
+    },
+    {
+        question: "What happened at the Fukushima Daiichi plant in 2011?",
+        options: [
+            "A nuclear fusion breakthrough",
+            "A major accident caused by a tsunami",
+            "The world's first clean reactor launch",
+            "A fire caused by solar panels",
+        ],
+        correctAnswer: 1,
+        explanation: "A massive earthquake and tsunami led to a cooling failure and multiple meltdowns at the Fukushima plant, highlighting the risks of nuclear safety.",
+    },
+    {
+        question: "What is \"Fusion power\" often called in the energy world?",
+        options: [
+            "The energy of the moon",
+            "The holy grail of energy",
+            "The expensive giant",
+            "The old-fashioned atom",
+        ],
+        correctAnswer: 1,
+        explanation: "Fusion mimics the sun to create virtually endless, clean power without long-lived waste—though it's still extremely difficult to achieve on Earth!",
+    },
+];
+
+export const desertGeoengineeringQuizQuestions: Question[] = [
+    {
+        question: "What is desertification?",
+        options: [
+            "The process of making more ice",
+            "The spread of desert-like conditions into fertile land",
+            "The study of desert animals",
+            "A type of desert plant",
+        ],
+        correctAnswer: 1,
+        explanation: "Desertification is the degradation of land in dry areas, making it increasingly arid and unusable for farming or living.",
+    },
+    {
+        question: "What is the 'Great Green Wall' in Africa?",
+        options: [
+            "A wall made of green stones",
+            "A massive reforestation project across the Sahel region",
+            "A type of renewable energy plant",
+            "A natural mountain range",
+        ],
+        correctAnswer: 1,
+        explanation: "The Great Green Wall is an ambitious project to plant a 5,000-mile long 'wall' of trees across Africa to combat desertification.",
+    },
+    {
+        question: "Which geo-engineering technique involves injecting particles into clouds to encourage rain?",
+        options: [
+            "Ocean fertilization",
+            "Cloud seeding",
+            "Solar dimming",
+            "Carbon capture",
+        ],
+        correctAnswer: 1,
+        explanation: "Cloud seeding is a weather modification technique that aims to increase precipitation by dispersing substances into the air.",
+    },
+    {
+        question: "Why are deserts actually good locations for solar power?",
+        options: [
+            "Because sand is made of silicon",
+            "Frequent clouds help cool panels",
+            "Vast open space and intense, consistent sunlight",
+            "Solar panels prefer hot weather",
+        ],
+        correctAnswer: 2,
+        explanation: "Deserts offer massive amounts of space and some of the most reliable sunlight on the planet, making them ideal for large-scale solar farms.",
+    },
+    {
+        question: "What is one way 'geo-engineering' can help forests in dry areas?",
+        options: [
+            "By painting trees green",
+            "By creating artificial irrigation and weather patterns",
+            "By removing all the sand",
+            "By importing ice from the poles",
+        ],
+        correctAnswer: 1,
+        explanation: "Geo-engineering projects often involve large-scale irrigation, water management, or climate intervention to help new forests survive in arid regions.",
+    },
+];

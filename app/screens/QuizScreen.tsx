@@ -7,8 +7,10 @@ import {
   TouchableOpacity,
   Button,
   ScrollView,
-  Dimensions
+  Dimensions,
+  Modal
 } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { UserContext } from '../contexts/UserContext';
 import * as Haptics from 'expo-haptics';
@@ -74,8 +76,17 @@ export default function QuizScreen() {
       case lessonType.includes("environmental laws"):
         return quizData.policyLawsQuizQuestions;
       case lessonType.includes("public transport"):
-      case lessonType.includes("urban living"):
         return quizData.publicTransportQuizQuestions;
+      case lessonType.includes("rainforest"):
+        return quizData.rainforestQuizQuestions;
+      case lessonType.includes("urban living"):
+        return quizData.urbanLivingQuizQuestions;
+      case lessonType.includes("amazing animals"):
+        return quizData.amazingAnimalsQuizQuestions;
+      case lessonType.includes("nuclear energy"):
+        return quizData.nuclearEnergyQuizQuestions;
+      case lessonType.includes("deserts"):
+        return quizData.desertGeoengineeringQuizQuestions;
       default:
         return quizData.climateQuizQuestions;
     }
@@ -83,7 +94,7 @@ export default function QuizScreen() {
 
   const quizQuestions = getQuizQuestions(lessonLower);
 
-  const { addSeeds, incrementLessons } = useContext(UserContext);
+  const { addSeeds, incrementLessons, updateStreak, user } = useContext(UserContext);
 
   // Quiz state
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -91,6 +102,7 @@ export default function QuizScreen() {
   const [score, setScore] = useState(0); // Total Seeds for this quiz session
   const [correctCount, setCorrectCount] = useState(0);
   const [quizCompleted, setQuizCompleted] = useState(false);
+  const [streakResult, setStreakResult] = useState<{ started: boolean; incremented: boolean; reset: boolean } | null>(null);
   const [answerChecked, setAnswerChecked] = useState(false);
   const [feedbackText, setFeedbackText] = useState('');
   const [isAnswerCorrect, setIsAnswerCorrect] = useState<boolean | null>(null);
@@ -224,6 +236,8 @@ export default function QuizScreen() {
           }
         }
         incrementLessons();
+        const result = updateStreak();
+        setStreakResult(result);
         setQuizCompleted(true);
       }
     }
@@ -277,6 +291,17 @@ export default function QuizScreen() {
               Amazing! All correct answers - your seeds have been doubled!
             </Text>
           )}
+
+          {streakResult && (streakResult.started || streakResult.incremented) && (
+            <View style={styles.streakAddedContainer}>
+              <MaterialCommunityIcons name="fire" size={32} color="#FF6F00" />
+              <Text style={styles.streakAddedText}>
+                {streakResult.started ? "Streak Started!" : "Streak Continued!"}
+              </Text>
+              <Text style={styles.streakCountText}>{user.streak} Days</Text>
+            </View>
+          )}
+
           {!isFinishAnimating && (
             <View style={styles.finishButton}>
               <Button title="Finish" onPress={handleFinishPress} color="#fff" />
@@ -489,5 +514,27 @@ const styles = StyleSheet.create({
   heartsIndicatorText: {
     fontSize: 18,
     letterSpacing: 2,
+  },
+  streakAddedContainer: {
+    backgroundColor: '#FFF3E0',
+    padding: 20,
+    borderRadius: 20,
+    alignItems: 'center',
+    marginTop: 20,
+    borderWidth: 2,
+    borderColor: '#FFE0B2',
+    width: '100%',
+  },
+  streakAddedText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#E65100',
+    marginTop: 8,
+  },
+  streakCountText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#FF6F00',
+    marginTop: 4,
   },
 });

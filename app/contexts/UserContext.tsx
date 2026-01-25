@@ -1,4 +1,6 @@
 import React, { createContext, useState, ReactNode } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Haptics from 'expo-haptics';
 import { GardenItem, InventoryItem } from '../types/garden';
 import { ActiveCraft } from '../types/crafting';
 import { craftingRecipes } from '../data/craftingRecipes';
@@ -14,7 +16,9 @@ type User = {
   fertilizer: number;
   garden: GardenItem[];
   inventory: InventoryItem[];
-  activeCrafts: ActiveCraft[]; // Added activeCrafts
+  activeCrafts: ActiveCraft[];
+  streak: number;
+  lastStreakUpdate: number;
 };
 
 type UserContextType = {
@@ -27,8 +31,9 @@ type UserContextType = {
   plantItem: (item: GardenItem) => boolean;
   harvestItem: (id: string) => void;
   sellItem: (id: string) => void;
-  startCraft: (recipeId: string) => boolean; // Added startCraft
-  claimCraft: (craftId: string) => void; // Added claimCraft
+  startCraft: (recipeId: string) => boolean;
+  claimCraft: (craftId: string) => void;
+  updateStreak: () => { started: boolean; incremented: boolean; reset: boolean };
 };
 
 export const UserContext = createContext<UserContextType>({
@@ -43,6 +48,8 @@ export const UserContext = createContext<UserContextType>({
     garden: [],
     inventory: [],
     activeCrafts: [],
+    streak: 0,
+    lastStreakUpdate: 0,
   },
   addSeeds: () => { },
   addXp: () => { },
@@ -54,6 +61,7 @@ export const UserContext = createContext<UserContextType>({
   sellItem: () => { },
   startCraft: () => false,
   claimCraft: () => { },
+  updateStreak: () => ({ started: false, incremented: false, reset: false }),
 });
 
 const MAX_PLOTS = 4;
@@ -71,7 +79,42 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     garden: [],
     inventory: [],
     activeCrafts: [],
+    streak: 0,
+    lastStreakUpdate: 0,
   });
+
+  const [isLoading, setIsLoading] = React.useState(true);
+
+  // Load user data on mount
+  React.useEffect(() => {
+    const loadUserData = async () => {
+      try {
+        const storedUser = await AsyncStorage.getItem('user_profile');
+        if (storedUser) {
+          setUser(JSON.parse(storedUser));
+        }
+      } catch (error) {
+        console.error('Failed to load user data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadUserData();
+  }, []);
+
+  // Save user data whenever it changes
+  React.useEffect(() => {
+    if (!isLoading) {
+      const saveUserData = async () => {
+        try {
+          await AsyncStorage.setItem('user_profile', JSON.stringify(user));
+        } catch (error) {
+          console.error('Failed to save user data:', error);
+        }
+      };
+      saveUserData();
+    }
+  }, [user, isLoading]);
 
   const addSeeds = (amount: number) => {
     setUser(prev => ({ ...prev, seeds: prev.seeds + amount }));
@@ -226,6 +269,45 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     });
   };
 
+  const updateStreak = () => {
+    const now = Date.now();
+    const oneDayInMs = 24 * 60 * 60 * 1000;
+    const twoDaysInMs = 48 * 60 * 60 * 1000;
+    let result = { started: false, incremented: false, reset: false };
+
+    setUser(prev => {
+      const lastUpdate = prev.lastStreakUpdate;
+      const timeDiff = now - lastUpdate;
+
+      if (lastUpdate === 0) {
+        // First streak
+        result.started = true;
+        return { ...prev, streak: 1, lastStreakUpdate: now };
+      }
+
+      if (timeDiff >= oneDayInMs && timeDiff < twoDaysInMs) {
+        // Within the 24-48h window, increment streak
+        result.incremented = true;
+        return { ...prev, streak: prev.streak + 1, lastStreakUpdate: now };
+      } else if (timeDiff >= twoDaysInMs) {
+        // More than 48h passed, reset streak
+        result.reset = true;
+        return { ...prev, streak: 1, lastStreakUpdate: now };
+      }
+
+      // If less than 24h, do nothing
+      return prev;
+    });
+
+    if (result.started || result.incremented) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    } else if (result.reset) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+    }
+
+    return result;
+  };
+
   return (
     <UserContext.Provider
       value={{
@@ -240,6 +322,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         sellItem,
         startCraft,
         claimCraft,
+        updateStreak,
       }}
     >
       {children}

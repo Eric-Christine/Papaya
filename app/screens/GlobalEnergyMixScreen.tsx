@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
 import Svg, { Path, G, Rect, Text as SvgText, Circle } from 'react-native-svg';
+import { useNavigation } from '@react-navigation/native';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
@@ -103,6 +104,7 @@ const BarChart = ({ data }: any) => {
 
 export default function GlobalEnergyMixScreen() {
     const [viewType, setViewType] = useState('pie');
+    const navigation = useNavigation<any>();
 
     return (
         <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
@@ -211,6 +213,14 @@ export default function GlobalEnergyMixScreen() {
             <Text style={styles.footerText}>
                 Data reflects global electricity generation in 2024 • Updated annually
             </Text>
+
+            {/* Back Button */}
+            <TouchableOpacity
+                style={styles.backButton}
+                onPress={() => navigation.goBack()}
+            >
+                <Text style={styles.backButtonText}>Go Back to Lesson</Text>
+            </TouchableOpacity>
         </ScrollView>
     );
 }
@@ -431,5 +441,17 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         color: '#475569',
         fontSize: 12,
+    },
+    backButton: {
+        backgroundColor: '#00695c',
+        paddingVertical: 15,
+        borderRadius: 8,
+        alignItems: 'center',
+        marginTop: 20,
+    },
+    backButtonText: {
+        color: '#FFFFFF',
+        fontSize: 18,
+        fontWeight: '600',
     },
 });

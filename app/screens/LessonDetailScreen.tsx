@@ -19,6 +19,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function LessonDetailScreen({ route, navigation }: any) {
   const { title = 'Climate Basics', step = 1 } = route.params || {};
   const [isLessonCompleted, setIsLessonCompleted] = useState(false);
+  let customImage: any = null; // For lessons with step-specific images
 
   useFocusEffect(
     useCallback(() => {
@@ -697,6 +698,14 @@ Understanding these policies empowers you to support legislation that protects o
       );
     }
   } else if (title === 'Energy Mix') {
+    const energyMixImages = {
+      1: '/Users/ericchristine/.gemini/antigravity/brain/72290e95-8328-4e58-945d-c7a4cd91d43f/energy_mix_overview_nano_banana_1769288229429.png',
+      2: '/Users/ericchristine/.gemini/antigravity/brain/72290e95-8328-4e58-945d-c7a4cd91d43f/clean_energy_nuclear_nano_banana_1769288242213.png',
+      3: '/Users/ericchristine/.gemini/antigravity/brain/72290e95-8328-4e58-945d-c7a4cd91d43f/future_energy_trends_nano_banana_1769288254296.png',
+    };
+
+    customImage = energyMixImages[step as keyof typeof energyMixImages] || energyMixImages[1];
+
     if (step === 1) {
       content = energyMixContent1;
       nextButton = (
@@ -990,16 +999,461 @@ Understanding these policies empowers you to support legislation that protects o
       );
     }
   } else if (title === 'Public Transport & Urban Living') {
-    content = lessonContents['Public Transport & Urban Living'];
-    nextButton = (
-      <View style={styles.buttonContainer}>
-        <Button
-          title="Quiz"
-          onPress={() => navigation.navigate('Quiz', { lesson: title })}
-          color="#fff"
-        />
-      </View>
-    );
+    const urbanContent1 = `**The Urban Carbon Crisis:**
+   - Cities consume over 2/3 of global energy and produce 70% of CO₂ emissions.
+   - Transportation accounts for approximately 29% of U.S. greenhouse gas emissions.
+   - Personal vehicles are among the largest contributors to urban air pollution.
+
+**Public Transit Benefits:**
+   - A single bus can replace 40 cars during rush hour.
+   - Rail transit produces 76% fewer emissions per passenger-mile than driving alone.
+   - Public transit reduces traffic congestion, saving time and fuel for all road users.`;
+
+    const urbanContent2 = `**The 15-Minute City:**
+   - An urban planning concept where daily needs are within 15 minutes by foot or bike.
+   - Paris is transforming streets, adding bike lanes and green spaces.
+   - Barcelona's "superblocks" reduce car traffic, creating pedestrian-friendly neighborhoods.
+
+**Cycling Infrastructure:**
+   - Amsterdam: 63% of residents cycle daily, with 400+ km of bike paths.
+   - Copenhagen: Bikes outnumber cars, with heated bike lanes in winter.
+   - E-bikes are making cycling accessible to more people and longer distances.
+
+**Electric Public Transport:**
+   - Shenzhen, China operates the world's largest electric bus fleet (16,000+ buses).
+   - Electric trams, light rail, and metros provide zero-emission urban mobility.
+   - Hydrogen fuel cell buses are emerging in cities like London and Tokyo.`;
+
+    const urbanContent3 = `**Mixed-Use Development:**
+   - Combining residential, commercial, and recreational spaces reduces travel needs.
+   - Walkable neighborhoods increase property values and local business activity.
+   - Green building standards (LEED, BREEAM) reduce energy consumption.
+
+**Remote Work & Urban Planning:**
+   - Hybrid work reduces commuting, cutting emissions and improving air quality.
+   - Co-working spaces in neighborhoods reduce the need for downtown commutes.
+   - Smart city technology optimizes traffic flow and public transit schedules.
+
+By embracing sustainable transportation and thoughtful urban design, cities can become healthier, more livable, and dramatically reduce their environmental impact.`;
+
+    if (step === 1) {
+      content = urbanContent1;
+      nextButton = (
+        <View style={styles.buttonContainer}>
+          <Button
+            title="Next"
+            onPress={() =>
+              navigation.navigate('LessonDetail', { title: 'Public Transport & Urban Living', step: 2 })
+            }
+            color="#fff"
+          />
+        </View>
+      );
+    } else if (step === 2) {
+      content = urbanContent2;
+      nextButton = (
+        <View style={styles.buttonContainer}>
+          <Button
+            title="Next"
+            onPress={() =>
+              navigation.navigate('LessonDetail', { title: 'Public Transport & Urban Living', step: 3 })
+            }
+            color="#fff"
+          />
+        </View>
+      );
+    } else if (step === 3) {
+      content = urbanContent3;
+      nextButton = (
+        <View style={styles.buttonContainer}>
+          <Button
+            title="Quiz"
+            onPress={() => navigation.navigate('Quiz', { lesson: title })}
+            color="#fff"
+          />
+        </View>
+      );
+    }
+  } else if (title === 'Rainforests') {
+    const rainforestContent1 = `**The Lungs of the Earth:**
+   - Rainforests produce about 20% of the world's oxygen through photosynthesis.
+   - The Amazon alone absorbs 2 billion tons of CO₂ annually, making it a critical carbon sink.
+   - Tropical forests store more carbon than the entire atmosphere contains.
+
+**Biodiversity Hotspots:**
+   - A single hectare of rainforest can contain over 750 tree species and 1,500 plant species.
+   - 80% of documented species live in tropical rainforests.
+   - New species are still being discovered—scientists find an average of 2-3 new species per week in the Amazon.`;
+
+    const rainforestContent2 = `**Major Rainforests Around the World:**
+   - **Amazon Rainforest (South America):** The largest, spanning 9 countries and covering 5.5 million km².
+   - **Congo Basin (Africa):** The second largest, home to forest elephants and gorillas.
+   - **Southeast Asian Rainforests:** Including Borneo and Sumatra, home to orangutans and tigers.
+   - **Daintree Rainforest (Australia):** One of the oldest rainforests, dating back 180 million years.
+
+**Why Rainforests Are Disappearing:**
+   - **Deforestation:** An area the size of a football field is cleared every second.
+   - **Agriculture:** Cattle ranching and palm oil plantations are leading drivers.
+   - **Logging:** Legal and illegal timber extraction devastates forest ecosystems.
+   - **Mining:** Gold, oil, and mineral extraction cause irreversible damage.`;
+
+    const rainforestContent3 = `**Conservation Success Stories:**
+   - Costa Rica reversed deforestation, growing forest cover from 21% to over 52% since 1987.
+   - Indigenous-managed lands show 80% less deforestation than other areas.
+   - Brazil reduced Amazon deforestation by 84% between 2004-2012 through enforcement.
+
+**How You Can Help:**
+   - Support organizations protecting rainforests like Rainforest Alliance and WWF.
+   - Choose products with sustainable certifications (FSC wood, RSPO palm oil).
+   - Reduce consumption of beef from deforested regions.
+   - Spread awareness about rainforest conservation.
+
+Rainforests are irreplaceable treasures that regulate our climate, protect biodiversity, and provide resources for millions. Their conservation is essential for a sustainable future.`;
+
+    if (step === 1) {
+      content = rainforestContent1;
+      nextButton = (
+        <View style={styles.buttonContainer}>
+          <Button
+            title="Next"
+            onPress={() =>
+              navigation.navigate('LessonDetail', { title: 'Rainforests', step: 2 })
+            }
+            color="#fff"
+          />
+        </View>
+      );
+    } else if (step === 2) {
+      content = rainforestContent2;
+      nextButton = (
+        <View style={styles.buttonContainer}>
+          <Button
+            title="Next"
+            onPress={() =>
+              navigation.navigate('LessonDetail', { title: 'Rainforests', step: 3 })
+            }
+            color="#fff"
+          />
+        </View>
+      );
+    } else if (step === 3) {
+      content = rainforestContent3;
+      nextButton = (
+        <View style={styles.buttonContainer}>
+          <Button
+            title="Quiz"
+            onPress={() => navigation.navigate('Quiz', { lesson: title })}
+            color="#fff"
+          />
+        </View>
+      );
+    }
+  } else if (title === 'Urban Living') {
+    const urbanContent1 = `**The Global Urbanization Trend:**
+   - In 1950, only 30% of the world lived in cities. Today, it's 56%—and by 2050, it will reach 68%.
+   - Every week, 1.5 million people move to cities worldwide.
+   - Africa and Asia are urbanizing fastest, adding 2.5 billion urban residents by 2050.
+   - China alone built over 700 million square meters of new floor space annually in recent years.
+
+**Urban Efficiency Advantages:**
+   - **Per Capita Emissions:** New Yorkers emit 7.1 tons CO₂/year vs. the US average of 16 tons—less than half.
+   - **Land Use:** A city of 1 million can occupy 100 km², while the same suburban population needs 1,000+ km².
+   - **Infrastructure Sharing:** One water main serves thousands; shared heating systems reduce energy by 30%.
+   - **Transportation:** Dense cities enable walking, cycling, and transit—cutting car dependency by 60-80%.`;
+
+    const urbanContent2 = `**The Consumption Reality:**
+   - Cities consume 75% of the world's energy and produce 70% of global CO₂ emissions.
+   - Urban residents consume 60% more resources per capita in wealthy nations.
+   - The urban Heat Island Effect raises city temperatures 1-3°C higher than surroundings.
+   - Concrete and steel production for buildings accounts for 11% of global emissions.
+
+**Case Studies - Dense vs. Sprawling Cities:**
+   - **Hong Kong:** 7 million people in 1,100 km². Per capita emissions: 5.7 tons CO₂/year.
+   - **Houston:** 2.3 million in 1,700 km². Per capita emissions: 14.2 tons CO₂/year.
+   - **Tokyo:** 14 million use rail daily; 88% of commutes are by public transit.
+   - **Los Angeles:** 73% of commuters drive alone; average commute: 31 minutes.
+
+**Environmental Pressures of Urbanization:**
+   - Urban expansion destroys 60,000 km² of land annually—mostly farmland and forests.
+   - Cities alter local water cycles, increasing flood risks by 2-5 times.
+   - Light pollution from cities affects 80% of the world's population.
+   - E-waste from urban electronics: 54 million tons globally in 2024.`;
+
+    const urbanContent3 = `**Sustainable Urban Design Solutions:**
+   - **Singapore:** Vertical gardens cover buildings; green cover increased 30% despite density.
+   - **Copenhagen:** 62% of residents cycle to work; carbon-neutral target by 2025.
+   - **Freiburg, Germany:** Solar rooftops, car-free zones, and Passivhaus standards.
+   - **Curitiba, Brazil:** Pioneered Bus Rapid Transit (BRT), now adopted in 200+ cities.
+
+**Your Urban Footprint:**
+   - Housing type matters: apartments use 50% less heating than detached homes.
+   - Locally-produced food in urban markets reduces transport emissions.
+   - Shared mobility (car-sharing, bike-sharing) can replace 15 private vehicles.
+   - Green spaces in cities reduce cooling needs and improve mental health.
+
+The future of sustainability is largely urban. How we design, build, and live in cities will determine our collective environmental impact for generations to come.`;
+
+    if (step === 1) {
+      content = urbanContent1;
+      nextButton = (
+        <View style={styles.buttonContainer}>
+          <Button
+            title="Next"
+            onPress={() =>
+              navigation.navigate('LessonDetail', { title: 'Urban Living', step: 2 })
+            }
+            color="#fff"
+          />
+        </View>
+      );
+    } else if (step === 2) {
+      content = urbanContent2;
+      nextButton = (
+        <View style={styles.buttonContainer}>
+          <Button
+            title="Next"
+            onPress={() =>
+              navigation.navigate('LessonDetail', { title: 'Urban Living', step: 3 })
+            }
+            color="#fff"
+          />
+        </View>
+      );
+    } else if (step === 3) {
+      content = urbanContent3;
+      nextButton = (
+        <View style={styles.buttonContainer}>
+          <Button
+            title="Quiz"
+            onPress={() => navigation.navigate('Quiz', { lesson: title })}
+            color="#fff"
+          />
+        </View>
+      );
+    }
+  } else if (title === 'Amazing Animals') {
+    // Real wildlife photos for each screen
+    const animalImages = {
+      1: 'https://images.unsplash.com/photo-1589656966895-2f33e7653819?w=600&h=400&fit=crop', // Polar bear
+      2: 'https://images.unsplash.com/photo-1551986782-d0169b3f8fa7?w=600&h=400&fit=crop', // Penguins
+      3: 'https://images.unsplash.com/photo-1497206365907-f5e630693df0?w=600&h=400&fit=crop', // Flamingos
+    };
+
+    const animalsContent1 = `🦋 Did you know? Animals around the world are showing incredible adaptations to climate change!
+
+🐻‍❄️ **Polar Bears Going Inland:**
+   - Some polar bears in Hudson Bay have started eating goose eggs and berries as sea ice shrinks!
+   - They're learning to hunt on land—something scientists thought wouldn't happen.
+   - One bear was filmed sliding down a snowy hill just for fun. Even in tough times, play matters!
+
+🦎 **Lizards Getting Longer Legs:**
+   - In the Bahamas, anole lizards evolved longer legs in just 15 years to grip branches better during stronger hurricanes.
+   - That's evolution happening in real-time—faster than scientists ever expected!
+
+🦋 **Butterflies Changing Colors:**
+   - Some butterflies are evolving lighter-colored wings to reflect more heat and stay cool.
+   - The common brown butterfly in Australia has gotten 15% lighter in just 20 years!`;
+
+    const animalsContent2 = `🐧 **Penguins Moving South:**
+   - Gentoo penguins are expanding their territory further south in Antarctica as temperatures warm.
+   - They're the "pioneers" of the penguin world, setting up new colonies where it was once too cold!
+
+🦅 **Birds Shrinking:**
+   - Over 40 years, North American birds have gotten 2-3% smaller on average—but their wings got longer!
+   - Smaller bodies cool down faster. Nature's own air conditioning upgrade!
+
+🐟 **Fish Swimming Deeper:**
+   - Many fish species are diving to cooler, deeper waters—some by 10-30 meters per decade.
+   - Fishermen are noticing their catches are coming from different depths than their grandparents used.`;
+
+    const animalsContent3 = `🦩 **Flamingos Appearing in New Places:**
+   - African flamingos have been spotted in Europe more frequently as migration patterns shift.
+   - In 2024, flamingos were seen in places like Germany and the UK—thousands of miles from their usual range!
+
+🦝 **Raccoons Going North:**
+   - Raccoons have expanded into Canada further than ever before, following warmer winters.
+   - They're so adaptable, scientists call them "climate change winners"—for now!
+
+🌍 **The Big Picture:**
+The animal kingdom is constantly surprising us with its resilience. But while some species adapt, many cannot keep up with the pace of change. Conservation helps give wildlife a fighting chance!`;
+
+    // Set the custom image based on current step
+    customImage = animalImages[step as keyof typeof animalImages] || animalImages[1];
+
+    if (step === 1) {
+      content = animalsContent1;
+      nextButton = (
+        <View style={styles.buttonContainer}>
+          <Button
+            title="Next"
+            onPress={() =>
+              navigation.navigate('LessonDetail', { title: 'Amazing Animals', step: 2 })
+            }
+            color="#fff"
+          />
+        </View>
+      );
+    } else if (step === 2) {
+      content = animalsContent2;
+      nextButton = (
+        <View style={styles.buttonContainer}>
+          <Button
+            title="Next"
+            onPress={() =>
+              navigation.navigate('LessonDetail', { title: 'Amazing Animals', step: 3 })
+            }
+            color="#fff"
+          />
+        </View>
+      );
+    } else if (step === 3) {
+      content = animalsContent3;
+      nextButton = (
+        <View style={styles.buttonContainer}>
+          <Button
+            title="Quiz"
+            onPress={() => navigation.navigate('Quiz', { lesson: title })}
+            color="#fff"
+          />
+        </View>
+      );
+    }
+  } else if (title === 'Nuclear Energy') {
+    const nuclearEnergyContent1 = `**The Power of the Atom:**
+Nuclear energy provides a massive amount of reliable, low-carbon electricity.
+
+• **Zero Emissions:** Nuclear power plants emit no greenhouse gases during operation. Unlike fossil fuels, they don't contribute to the greenhouse effect.
+• **Baseload Power:** Solar and wind are variable, but nuclear provides a steady supply of energy 24/7, year-round. This makes it a vital "baseload" source for the grid.
+• **Incredible Density:** A single uranium fuel pellet, the size of a gummy bear, contains as much energy as a ton of coal or 150 gallons of oil!`;
+
+    const nuclearEnergyContent2 = `**Safety and Waste:**
+Nuclear energy is efficient, but it comes with serious challenges that fuel public debate.
+
+• **Historical Disasters:** Accidents like Chernobyl (1986) and Fukushima (2011) have shown the catastrophic potential of reactor failures. These events led to massive evacuations and long-term exclusion zones.
+• **Radioactive Waste:** Spent fuel remains dangerous for thousands of years. High-level waste must be stored in secure, deep geological repositories to prevent environmental leaks.
+• **High Costs:** Modern nuclear plants are among the most expensive infrastructure projects on Earth and can take 10-15 years to build.`;
+
+    const nuclearEnergyContent3 = `**The Modern Nuclear Era:**
+Scientists are working on new technologies to make nuclear energy safer, cheaper, and cleaner.
+
+• **SMRs (Small Modular Reactors):** These smaller, prefabricated reactors are easier to build and include "passive" safety features that don't require human intervention to shut down safely.
+• **Fusion Power:** Often called the "holy grail" of energy, fusion mimics the sun by fusing atoms together. It could provide limitless clean power with almost no long-lived radioactive waste.
+• **Closing the Fuel Cycle:** Next-gen reactors are being designed to run on the "waste" of older plants, potentially solving the waste problem while generating even more power!`;
+
+    const nuclearImages = {
+      1: '/Users/ericchristine/.gemini/antigravity/brain/dbddb713-e42b-4c7b-b0d9-15034a45eaf1/modern_nuclear_plant_1769208341353.png',
+      2: '/Users/ericchristine/.gemini/antigravity/brain/dbddb713-e42b-4c7b-b0d9-15034a45eaf1/realistic_nuclear_waste_repository_1769208430994.png',
+      3: '/Users/ericchristine/.gemini/antigravity/brain/dbddb713-e42b-4c7b-b0d9-15034a45eaf1/realistic_fusion_reactor_iter_style_1769208481860.png',
+    };
+
+    customImage = nuclearImages[step as keyof typeof nuclearImages] || nuclearImages[1];
+
+    if (step === 1) {
+      content = nuclearEnergyContent1;
+      nextButton = (
+        <View style={styles.buttonContainer}>
+          <Button
+            title="Next"
+            onPress={() =>
+              navigation.navigate('LessonDetail', { title: 'Nuclear Energy', step: 2 })
+            }
+            color="#fff"
+          />
+        </View>
+      );
+    } else if (step === 2) {
+      content = nuclearEnergyContent2;
+      nextButton = (
+        <View style={styles.buttonContainer}>
+          <Button
+            title="Next"
+            onPress={() =>
+              navigation.navigate('LessonDetail', { title: 'Nuclear Energy', step: 3 })
+            }
+            color="#fff"
+          />
+        </View>
+      );
+    } else if (step === 3) {
+      content = nuclearEnergyContent3;
+      nextButton = (
+        <View style={styles.buttonContainer}>
+          <Button
+            title="Quiz"
+            onPress={() => navigation.navigate('Quiz', { lesson: title })}
+            color="#fff"
+          />
+        </View>
+      );
+    }
+  } else if (title === 'Deserts & Geo-engineering') {
+    const desertContent1 = `**The Spread of Sands:**
+Desertification is the process where fertile land becomes desert, typically as a result of drought, deforestation, or inappropriate agriculture.
+
+• **A Global Threat:** Over 75% of Earth's land area is already degraded, and this could reach 90% by 2050.
+• **Climate Feedback:** As forests and grasslands turn to sand, they lose the ability to absorb CO2, further accelerating global warming.
+• **Human Impact:** Hundreds of millions of people face food insecurity as the soil they rely on turns to dust.`;
+
+    const desertContent2 = `**Geo-engineering the Green:**
+Countries are launching massive engineering projects to stop the sand and even "re-green" the desert.
+
+• **The Great Green Wall (Africa):** A 5,000-mile long "wall" of trees being planted across 11 countries to block the Sahara's expansion.
+• **Three-North Shelter Forest (China):** Known as the "Green Great Wall," this project has already increased forest cover in northern China by millions of hectares.
+• **Cloud Seeding:** Using specialized planes to "seed" clouds with salt or silver iodide to encourage rain in dry regions like the UAE and western USA.`;
+
+    const desertContent3 = `**Desert Opportunities:**
+With the right technology, deserts can become centers for clean energy and life.
+
+• **Solar Superpower:** Deserts receive the most intense and consistent sunlight on Earth. A small fraction of the Sahara could theoretically power the entire world!
+• **Desalination:** Using solar energy to turn seawater into fresh water, which can then be used to irrigate and re-forest coastal desert areas.
+• **Halophytes:** Scientists are farming "salt-loving" plants that can grow in desert soil using salty water, providing food and fuel.`;
+
+    const desertImages = {
+      1: '/Users/ericchristine/.gemini/antigravity/brain/dbddb713-e42b-4c7b-b0d9-15034a45eaf1/desert_sunset_dunes_1769210720336.png',
+      2: '/Users/ericchristine/.gemini/antigravity/brain/dbddb713-e42b-4c7b-b0d9-15034a45eaf1/great_green_wall_sahel_1769210733047.png',
+      3: '/Users/ericchristine/.gemini/antigravity/brain/dbddb713-e42b-4c7b-b0d9-15034a45eaf1/desert_solar_farm_future_1769210745487.png',
+    };
+
+    customImage = desertImages[step as keyof typeof desertImages] || desertImages[1];
+
+    if (step === 1) {
+      content = desertContent1;
+      nextButton = (
+        <View style={styles.buttonContainer}>
+          <Button
+            title="Next"
+            onPress={() =>
+              navigation.navigate('LessonDetail', { title: 'Deserts & Geo-engineering', step: 2 })
+            }
+            color="#fff"
+          />
+        </View>
+      );
+    } else if (step === 2) {
+      content = desertContent2;
+      nextButton = (
+        <View style={styles.buttonContainer}>
+          <Button
+            title="Next"
+            onPress={() =>
+              navigation.navigate('LessonDetail', { title: 'Deserts & Geo-engineering', step: 3 })
+            }
+            color="#fff"
+          />
+        </View>
+      );
+    } else if (step === 3) {
+      content = desertContent3;
+      nextButton = (
+        <View style={styles.buttonContainer}>
+          <Button
+            title="Quiz"
+            onPress={() => navigation.navigate('Quiz', { lesson: title })}
+            color="#fff"
+          />
+        </View>
+      );
+    }
   }
 
 
@@ -1008,9 +1462,13 @@ Understanding these policies empowers you to support legislation that protects o
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>{title}</Text>
       <View style={styles.card}>
-        {lessonImages[title] && (
+        {(customImage || lessonImages[title]) && (
           <Image
-            source={{ uri: lessonImages[title] }}
+            source={
+              typeof (customImage || lessonImages[title]) === 'string'
+                ? { uri: customImage || lessonImages[title] }
+                : (customImage || lessonImages[title])
+            }
             style={styles.lessonImage}
             resizeMode="cover"
           />
