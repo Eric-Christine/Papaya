@@ -32,6 +32,13 @@ export const lessons: Lesson[] = [
         category: 'Energy',
     },
     {
+        id: '25',
+        title: 'Solar Power II',
+        description: 'Deep dive into solar potential, trade politics, and market growth.',
+        icon: 'weather-sunny-alert',
+        category: 'Energy',
+    },
+    {
         id: '13',
         title: 'Renewable Energy',
         description: 'Explore wind, solar, hydro, and other clean energy sources powering our future',
@@ -43,6 +50,13 @@ export const lessons: Lesson[] = [
         title: 'Nuclear Energy',
         description: 'Debate the controversies and benefits of nuclear power as a clean energy source',
         icon: 'atom',
+        category: 'Energy',
+    },
+    {
+        id: '24',
+        title: 'AI & Energy',
+        description: 'The energy demands of AI and how the industry is responding',
+        icon: 'robot',
         category: 'Energy',
     },
     // Transportation
@@ -58,6 +72,13 @@ export const lessons: Lesson[] = [
         title: 'Public Transport & Urban Living',
         description: 'Discover how sustainable cities and public transport reduce emissions',
         icon: 'bus',
+        category: 'Transportation',
+    },
+    {
+        id: '21',
+        title: 'Electric Vehicles II',
+        description: 'China\'s rise, global competition, BYD vs Tesla, and trade wars',
+        icon: 'lightning-bolt',
         category: 'Transportation',
     },
     // Sustainable Living
@@ -90,6 +111,13 @@ export const lessons: Lesson[] = [
         category: 'Sustainable Living',
     },
     {
+        id: '23',
+        title: 'Food',
+        description: 'Food waste, composting, food banks, and smarter consumption',
+        icon: 'food',
+        category: 'Sustainable Living',
+    },
+    {
         id: '17',
         title: 'Urban Living',
         description: 'Explore the environmental impact of cities and global urbanization trends',
@@ -116,6 +144,13 @@ export const lessons: Lesson[] = [
         title: 'Deserts & Geo-engineering',
         description: 'Learn about desertification and the global efforts to green the world\'s drylands',
         icon: 'weather-sunny',
+        category: 'Environment',
+    },
+    {
+        id: '22',
+        title: 'Arctic Ice',
+        description: 'Explore the albedo effect, the warming cycle, and the vital importance of polar ice',
+        icon: 'snowflake',
         category: 'Environment',
     },
     // Policy & Progress

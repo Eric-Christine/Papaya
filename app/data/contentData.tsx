@@ -377,6 +377,44 @@ The future of sustainability is largely urban. How we design, build, and live in
 The animal kingdom is constantly surprising us with its resilience. But while some species adapt, many cannot keep up with the pace of change. Conservation helps give wildlife a fighting chance!`,
 
    'Deserts & Geo-engineering': `Deserts cover about 1/3 of Earth's land, and they are expanding due to climate change and human activity. This lesson explores the threat of desertification and the massive engineering projects designed to turn the tide.`,
+   'Electric Vehicles II': `Electric Vehicles II explores the dynamic and rapidly evolving global EV landscape. In this lesson, you'll learn:
+
+• China's Global Lead: How China became the world's largest EV market through massive subsidies and vertical integration.
+• Competitiveness and Cost: Why Chinese EVs are often more affordable than Western models and the secret behind their low price points.
+• BYD vs. Tesla: A detailed comparison of the two leading EV giants and their differing strategies for world dominance.
+• Trade Policies and Tariffs: Understanding the recent wave of tariffs in the US and EU designed to protect domestic industries.
+• Future Outlook: How global competition is accelerating innovation in battery technology and manufacturing.
+
+This lesson explores the geopolitical and economic forces shaping the future of global transportation.`,
+
+   'Arctic Ice': `**The Arctic's Role as Earth's Mirror:**
+Inside the Arctic Circle, ice and snow act as a giant shield, reflecting up to 85% of solar radiation back into space. This is called the **Albedo Effect**.
+
+However, as the Arctic warms, this mirror is shattering. When white ice melts into dark ocean water, it reflects only 6% of sunlight, absorbing the rest as heat. This creates a dangerous "feedback loop" where warming causes melting, which causes even more warming.
+
+In this lesson, you'll discover why the poles are warming 4 times faster than the rest of the planet and how that impact reaches your front door.`,
+
+   'Food': `**The Hidden Cost of Food Waste:**
+Globally, we waste about **1.3 billion tons** of food every year—nearly one-third of all food produced. If food waste were a country, it would be the 3rd largest emitter of greenhouse gases.
+
+Food decomposing in landfills releases methane, a gas 80x more potent than CO₂. Reducing waste at home is one of the easiest wins for climate action.`,
+
+   'AI & Energy': `**The Growing Energy Footprint of AI**
+Artificial Intelligence is transforming the world—but it comes with a significant energy cost. Training large AI models like GPT-4 or Gemini requires massive computational resources.
+
+• Training a single large language model can emit as much CO₂ as **5 cars over their entire lifetimes**.
+• Global data center energy consumption is projected to **double by 2030**, driven in part by AI workloads.
+
+This lesson explores the environmental reality of AI and how the industry is responding.`,
+
+   'Solar Power II': `Solar Power II dives deeper into the economics and politics of global solar energy. In this lesson, you'll learn:
+
+• The 10,000x Potential: How the sun provides enough energy every hour to power the entire world for a year.
+• The Chinese Dominance: Why China produces 80% of the world's solar panels and the impact of Western tariffs.
+• Exponential Growth: Why solar is the fastest-growing energy source in history despite being a small portion of today's grid.
+• Future Challenges: How we solve intermittency with storage and smarter grids.
+
+This lesson explores the forces making solar the inevitable backbone of our energy future.`,
 };
 
 export const lessonImages: { [key: string]: any } = {
@@ -407,4 +445,9 @@ export const lessonImages: { [key: string]: any } = {
    'Urban Living': 'https://placehold.co/600x400/607D8B/ffffff/png?text=Urban+Living',
    'Amazing Animals': 'https://placehold.co/600x400/FF6F00/ffffff/png?text=Amazing+Animals',
    'Deserts & Geo-engineering': 'https://placehold.co/600x400/FFCC80/000000/png?text=Deserts',
+   'Electric Vehicles II': 'https://placehold.co/600x400/0288D1/ffffff/png?text=Electric+Vehicles+II',
+   'Arctic Ice': 'https://placehold.co/600x400/B3E5FC/01579B/png?text=Arctic+Ice',
+   'Food': 'https://placehold.co/600x400/FF8A65/ffffff/png?text=Food+Waste',
+   'AI & Energy': 'https://placehold.co/600x400/7C4DFF/ffffff/png?text=AI+Energy',
+   'Solar Power II': 'https://placehold.co/600x400/FFD54F/000000/png?text=Solar+Power+II',
 };

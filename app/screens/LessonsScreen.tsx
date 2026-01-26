@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useMemo, useContext } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet, SectionList } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, SectionList, TextInput, Keyboard, KeyboardAvoidingView, Platform } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { lessons } from '../data/lessons';
+import { lessonContents } from '../data/contentData';
 import { Lesson } from '../types/lesson';
 import { UserContext } from '../contexts/UserContext';
 
@@ -30,6 +31,8 @@ export default function LessonsScreen() {
   const navigation = useNavigation<any>();
   const [completedLessons, setCompletedLessons] = useState<string[]>([]);
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set(Object.keys(categoryConfigs)));
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
 
   // Load completed lessons from AsyncStorage on mount
   useEffect(() => {
@@ -46,22 +49,38 @@ export default function LessonsScreen() {
     loadCompletedLessons();
   }, []);
 
+  // Filter lessons based on search query (matches title or content)
+  const filteredLessons = useMemo(() => {
+    if (!searchQuery.trim()) {
+      return lessons;
+    }
+    const lowerQuery = searchQuery.toLowerCase();
+    return lessons.filter((lesson) => {
+      const titleMatch = lesson.title.toLowerCase().includes(lowerQuery);
+      const descMatch = lesson.description.toLowerCase().includes(lowerQuery);
+      const contentMatch = (lessonContents as Record<string, string>)[lesson.title]?.toLowerCase().includes(lowerQuery);
+      return titleMatch || descMatch || contentMatch;
+    });
+  }, [searchQuery]);
+
   // Group lessons by category
   const sections = useMemo(() => {
     const grouped: Record<string, Lesson[]> = {};
-    lessons.forEach((lesson) => {
+    filteredLessons.forEach((lesson) => {
       if (!grouped[lesson.category]) {
         grouped[lesson.category] = [];
       }
       grouped[lesson.category].push(lesson);
     });
 
-    return Object.keys(categoryConfigs).map((category) => ({
-      title: category,
-      data: expandedCategories.has(category) ? (grouped[category] || []) : [],
-      lessonCount: (grouped[category] || []).length,
-    }));
-  }, [expandedCategories]);
+    return Object.keys(categoryConfigs)
+      .filter((category) => grouped[category] && grouped[category].length > 0)
+      .map((category) => ({
+        title: category,
+        data: expandedCategories.has(category) ? (grouped[category] || []) : [],
+        lessonCount: (grouped[category] || []).length,
+      }));
+  }, [expandedCategories, filteredLessons]);
 
   // Mark a lesson as complete and persist the change
   const markLessonComplete = async (lessonId: string) => {
@@ -118,6 +137,7 @@ export default function LessonsScreen() {
     <TouchableOpacity
       style={styles.lessonItem}
       onPress={() => {
+        Keyboard.dismiss();
         if (!completedLessons.includes(item.id)) {
           markLessonComplete(item.id);
         }
@@ -138,7 +158,11 @@ export default function LessonsScreen() {
   );
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      keyboardVerticalOffset={90}
+    >
       <View style={styles.headerContainer}>
         <Text style={styles.header}>Lessons</Text>
         <View style={styles.streakContainer}>
@@ -153,8 +177,35 @@ export default function LessonsScreen() {
         renderSectionHeader={renderSectionHeader}
         contentContainerStyle={styles.listContent}
         stickySectionHeadersEnabled={false}
+        keyboardShouldPersistTaps="handled"
+        ListEmptyComponent={
+          searchQuery ? (
+            <View style={styles.emptyContainer}>
+              <MaterialCommunityIcons name="magnify-close" size={48} color="#ccc" />
+              <Text style={styles.emptyText}>No lessons found for "{searchQuery}"</Text>
+            </View>
+          ) : null
+        }
       />
-    </View>
+      <View style={styles.searchBarContainer}>
+        <MaterialCommunityIcons name="magnify" size={22} color="#888" style={styles.searchIcon} />
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search lessons..."
+          placeholderTextColor="#888"
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          onFocus={() => setIsSearchFocused(true)}
+          onBlur={() => setIsSearchFocused(false)}
+          returnKeyType="search"
+        />
+        {searchQuery.length > 0 && (
+          <TouchableOpacity onPress={() => setSearchQuery('')} style={styles.clearButton}>
+            <MaterialCommunityIcons name="close-circle" size={20} color="#888" />
+          </TouchableOpacity>
+        )}
+      </View>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -193,7 +244,7 @@ const styles = StyleSheet.create({
     marginLeft: 4,
   },
   listContent: {
-    paddingBottom: 20,
+    paddingBottom: 80,
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -278,5 +329,45 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 11,
     fontWeight: 'bold',
+  },
+  searchBarContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderTopWidth: 1,
+    borderTopColor: '#ddd',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  searchIcon: {
+    marginRight: 10,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 16,
+    color: '#333',
+    paddingVertical: 8,
+  },
+  clearButton: {
+    paddingLeft: 10,
+  },
+  emptyContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: 60,
+  },
+  emptyText: {
+    marginTop: 12,
+    fontSize: 16,
+    color: '#888',
   },
 });
