@@ -26,6 +26,8 @@ const categoryConfigs: Record<string, CategoryConfig> = {
   'Fun Facts': { name: 'Fun Facts', icon: 'lightbulb-on', color: '#FF6F00' },
 };
 
+import { SafeAreaView } from 'react-native-safe-area-context';
+
 export default function LessonsScreen() {
   const { user } = useContext(UserContext);
   const navigation = useNavigation<any>();
@@ -158,54 +160,56 @@ export default function LessonsScreen() {
   );
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      keyboardVerticalOffset={90}
-    >
-      <View style={styles.headerContainer}>
-        <Text style={styles.header}>Lessons</Text>
-        <View style={styles.streakContainer}>
-          <MaterialCommunityIcons name="fire" size={24} color="#FF6F00" />
-          <Text style={styles.streakText}>{user.streak}</Text>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#F0F4F7' }} edges={['top']}>
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        keyboardVerticalOffset={90}
+      >
+        <View style={styles.headerContainer}>
+          <Text style={styles.header}>Lessons</Text>
+          <View style={styles.streakContainer}>
+            <MaterialCommunityIcons name="fire" size={24} color="#FF6F00" />
+            <Text style={styles.streakText}>{user.streak}</Text>
+          </View>
         </View>
-      </View>
-      <SectionList
-        sections={sections}
-        keyExtractor={(item) => item.id}
-        renderItem={renderLesson}
-        renderSectionHeader={renderSectionHeader}
-        contentContainerStyle={styles.listContent}
-        stickySectionHeadersEnabled={false}
-        keyboardShouldPersistTaps="handled"
-        ListEmptyComponent={
-          searchQuery ? (
-            <View style={styles.emptyContainer}>
-              <MaterialCommunityIcons name="magnify-close" size={48} color="#ccc" />
-              <Text style={styles.emptyText}>No lessons found for "{searchQuery}"</Text>
-            </View>
-          ) : null
-        }
-      />
-      <View style={styles.searchBarContainer}>
-        <MaterialCommunityIcons name="magnify" size={22} color="#888" style={styles.searchIcon} />
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search lessons..."
-          placeholderTextColor="#888"
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-          onFocus={() => setIsSearchFocused(true)}
-          onBlur={() => setIsSearchFocused(false)}
-          returnKeyType="search"
+        <SectionList
+          sections={sections}
+          keyExtractor={(item) => item.id}
+          renderItem={renderLesson}
+          renderSectionHeader={renderSectionHeader}
+          contentContainerStyle={styles.listContent}
+          stickySectionHeadersEnabled={false}
+          keyboardShouldPersistTaps="handled"
+          ListEmptyComponent={
+            searchQuery ? (
+              <View style={styles.emptyContainer}>
+                <MaterialCommunityIcons name="magnify-close" size={48} color="#ccc" />
+                <Text style={styles.emptyText}>No lessons found for "{searchQuery}"</Text>
+              </View>
+            ) : null
+          }
         />
-        {searchQuery.length > 0 && (
-          <TouchableOpacity onPress={() => setSearchQuery('')} style={styles.clearButton}>
-            <MaterialCommunityIcons name="close-circle" size={20} color="#888" />
-          </TouchableOpacity>
-        )}
-      </View>
-    </KeyboardAvoidingView>
+        <View style={styles.searchBarContainer}>
+          <MaterialCommunityIcons name="magnify" size={22} color="#888" style={styles.searchIcon} />
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search lessons..."
+            placeholderTextColor="#888"
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            onFocus={() => setIsSearchFocused(true)}
+            onBlur={() => setIsSearchFocused(false)}
+            returnKeyType="search"
+          />
+          {searchQuery.length > 0 && (
+            <TouchableOpacity onPress={() => setSearchQuery('')} style={styles.clearButton}>
+              <MaterialCommunityIcons name="close-circle" size={20} color="#888" />
+            </TouchableOpacity>
+          )}
+        </View>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 

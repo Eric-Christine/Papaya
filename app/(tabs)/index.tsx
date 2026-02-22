@@ -82,6 +82,7 @@ export default function AppTabs() {
   return (
     <Tab.Navigator
       screenOptions={{
+        headerShown: false,
         tabBarActiveTintColor: '#2E7D32',
         tabBarInactiveTintColor: 'gray',
         // Use our custom HapticTab for every tab button.

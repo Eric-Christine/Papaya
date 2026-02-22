@@ -2,6 +2,7 @@
 import React, { useContext, useEffect, useState, useRef } from 'react';
 import { View, Text, StyleSheet, ScrollView, Button, Alert, Animated, Easing, TouchableOpacity } from 'react-native';
 import * as Haptics from 'expo-haptics';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import UserContext from '../contexts/UserContext';
 import { GardenItem } from '../types/garden';
 import Zucchini from '../../components/plants/Zucchini';
@@ -101,159 +102,161 @@ export default function GardenScreen() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.header}>Your Garden</Text>
-      <View style={styles.gamificationHeader}>
-        <View style={styles.levelRow}>
-          <Text style={styles.gamificationText}>Garden Level {level}</Text>
-          <Text style={styles.xpText}>{xpProgress}/100 XP</Text>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#E8F5E9' }} edges={['top']}>
+      <ScrollView contentContainerStyle={styles.container}>
+        <Text style={styles.header}>Your Garden</Text>
+        <View style={styles.gamificationHeader}>
+          <View style={styles.levelRow}>
+            <Text style={styles.gamificationText}>Garden Level {level}</Text>
+            <Text style={styles.xpText}>{xpProgress}/100 XP</Text>
+          </View>
+          <Text style={styles.fertilizerText}>⚡️ Fertilizer: {fertilizer}</Text>
+          <View style={styles.xpBarContainer}>
+            <View style={[styles.xpBarFill, { width: `${progressPercent * 100}%` }]} />
+          </View>
         </View>
-        <Text style={styles.fertilizerText}>⚡️ Fertilizer: {fertilizer}</Text>
-        <View style={styles.xpBarContainer}>
-          <View style={[styles.xpBarFill, { width: `${progressPercent * 100}%` }]} />
-        </View>
-      </View>
 
-      {garden.length === 0 ? (
-        <Text style={styles.emptyText}>
-          No crops planted yet. Please visit the Rewards Shop to plant new crops.
-        </Text>
-      ) : (
-        garden.map(item => {
-          const elapsed = Date.now() - item.plantedAt;
-          const ready = elapsed >= item.harvestDuration;
-          const progress = getProgress(item);
-          return (
-            <View key={item.id} style={styles.plantedItem}>
-              <View style={styles.itemHeader}>
-                {item.title === 'Zucchini' && (
-                  <View style={styles.iconContainer}>
-                    <SwayingPlant progress={progress}>
-                      <Zucchini width={60} height={60} />
-                    </SwayingPlant>
-                  </View>
-                )}
-                {item.title === 'Broccoli' && (
-                  <View style={styles.iconContainer}>
-                    <SwayingPlant progress={progress}>
-                      <Broccoli width={60} height={60} />
-                    </SwayingPlant>
-                  </View>
-                )}
-                {item.title === 'Blueberry Bush' && (
-                  <View style={styles.iconContainer}>
-                    <SwayingPlant progress={progress}>
-                      <BlueberryBush width={60} height={60} />
-                    </SwayingPlant>
-                  </View>
-                )}
-                {item.title === 'Rose Bush' && (
-                  <View style={styles.iconContainer}>
-                    <SwayingPlant progress={progress}>
-                      <RoseBush width={60} height={60} />
-                    </SwayingPlant>
-                  </View>
-                )}
-                {item.title === 'Orchid' && (
-                  <View style={styles.iconContainer}>
-                    <SwayingPlant progress={progress}>
-                      <Orchid width={60} height={60} />
-                    </SwayingPlant>
-                  </View>
-                )}
-                {item.title === 'Garden Gnome' && (
-                  <View style={styles.iconContainer}>
-                    <SwayingPlant progress={progress}>
-                      <GardenGnome width={60} height={60} />
-                    </SwayingPlant>
-                  </View>
-                )}
-                <View style={styles.textContainer}>
-                  <Text style={styles.itemTitle}>{item.title}</Text>
-                  <Text style={styles.itemDescription}>{item.description}</Text>
-                </View>
-              </View>
-              {ready ? (
-                <>
-                  <Text style={styles.readyText}>Ready to Harvest!</Text>
-                  <Button title="Harvest" onPress={() => handleHarvest(item)} />
-                </>
-              ) : (
-                <>
-                  <View style={styles.progressBarBackground}>
-                    <View style={[styles.progressBarFill, { width: `${progress * 100}%` }]} />
-                  </View>
-                  <Text style={styles.growthText}>
-                    Growing... {getRemainingTime(item)}s until harvest
-                  </Text>
-                  {fertilizer > 0 && (
-                    <TouchableOpacity
-                      style={styles.fertilizerButton}
-                      onPress={() => {
-                        const success = fertilizeItem(item.id);
-                        if (success) {
-                          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-                          Alert.alert('Fertilized!', 'Growth time cut in half!');
-                        }
-                      }}
-                    >
-                      <Text style={styles.fertilizerButtonText}>Use Fertilizer ⚡️</Text>
-                    </TouchableOpacity>
-                  )}
-                </>
-              )}
-            </View>
-          );
-        })
-      )}
-
-      {/* Show empty plot placeholders if garden is not full */}
-      {garden.length < MAX_PLOTS && (
-        <View style={styles.emptyPlotsContainer}>
-          {[...Array(MAX_PLOTS - garden.length)].map((_, index) => (
-            <View key={`empty-${index}`} style={styles.emptyPlot}>
-              <Text style={styles.emptyPlotText}>Empty Plot</Text>
-            </View>
-          ))}
-          <Text style={styles.infoText}>
-            To plant new crops, please use the Rewards Shop.
+        {garden.length === 0 ? (
+          <Text style={styles.emptyText}>
+            No crops planted yet. Please visit the Rewards Shop to plant new crops.
           </Text>
-        </View>
-      )}
-
-      <View style={styles.inventorySection}>
-        <Text style={styles.sectionHeader}>Inventory</Text>
-        {inventory.length === 0 ? (
-          <Text style={styles.emptyText}>No harvested items yet.</Text>
         ) : (
-          inventory.map(item => (
-            <View key={item.id} style={styles.inventoryItem}>
-              <Text style={styles.itemTitle}>{item.title}</Text>
-
-              <View style={{ marginVertical: 10 }}>
-                {item.title === 'Zucchini' && <Zucchini width={60} height={60} />}
-                {item.title === 'Broccoli' && <Broccoli width={60} height={60} />}
-                {item.title === 'Blueberry Bush' && <BlueberryBush width={60} height={60} />}
-                {item.title === 'Rose Bush' && <RoseBush width={60} height={60} />}
-                {item.title === 'Orchid' && <Orchid width={60} height={60} />}
-                {item.title === 'Garden Gnome' && <GardenGnome width={60} height={60} />}
+          garden.map(item => {
+            const elapsed = Date.now() - item.plantedAt;
+            const ready = elapsed >= item.harvestDuration;
+            const progress = getProgress(item);
+            return (
+              <View key={item.id} style={styles.plantedItem}>
+                <View style={styles.itemHeader}>
+                  {item.title === 'Zucchini' && (
+                    <View style={styles.iconContainer}>
+                      <SwayingPlant progress={progress}>
+                        <Zucchini width={60} height={60} />
+                      </SwayingPlant>
+                    </View>
+                  )}
+                  {item.title === 'Broccoli' && (
+                    <View style={styles.iconContainer}>
+                      <SwayingPlant progress={progress}>
+                        <Broccoli width={60} height={60} />
+                      </SwayingPlant>
+                    </View>
+                  )}
+                  {item.title === 'Blueberry Bush' && (
+                    <View style={styles.iconContainer}>
+                      <SwayingPlant progress={progress}>
+                        <BlueberryBush width={60} height={60} />
+                      </SwayingPlant>
+                    </View>
+                  )}
+                  {item.title === 'Rose Bush' && (
+                    <View style={styles.iconContainer}>
+                      <SwayingPlant progress={progress}>
+                        <RoseBush width={60} height={60} />
+                      </SwayingPlant>
+                    </View>
+                  )}
+                  {item.title === 'Orchid' && (
+                    <View style={styles.iconContainer}>
+                      <SwayingPlant progress={progress}>
+                        <Orchid width={60} height={60} />
+                      </SwayingPlant>
+                    </View>
+                  )}
+                  {item.title === 'Garden Gnome' && (
+                    <View style={styles.iconContainer}>
+                      <SwayingPlant progress={progress}>
+                        <GardenGnome width={60} height={60} />
+                      </SwayingPlant>
+                    </View>
+                  )}
+                  <View style={styles.textContainer}>
+                    <Text style={styles.itemTitle}>{item.title}</Text>
+                    <Text style={styles.itemDescription}>{item.description}</Text>
+                  </View>
+                </View>
+                {ready ? (
+                  <>
+                    <Text style={styles.readyText}>Ready to Harvest!</Text>
+                    <Button title="Harvest" onPress={() => handleHarvest(item)} />
+                  </>
+                ) : (
+                  <>
+                    <View style={styles.progressBarBackground}>
+                      <View style={[styles.progressBarFill, { width: `${progress * 100}%` }]} />
+                    </View>
+                    <Text style={styles.growthText}>
+                      Growing... {getRemainingTime(item)}s until harvest
+                    </Text>
+                    {fertilizer > 0 && (
+                      <TouchableOpacity
+                        style={styles.fertilizerButton}
+                        onPress={() => {
+                          const success = fertilizeItem(item.id);
+                          if (success) {
+                            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                            Alert.alert('Fertilized!', 'Growth time cut in half!');
+                          }
+                        }}
+                      >
+                        <Text style={styles.fertilizerButtonText}>Use Fertilizer ⚡️</Text>
+                      </TouchableOpacity>
+                    )}
+                  </>
+                )}
               </View>
-
-              <Text style={styles.sellPrice}>Sell Price: {item.sellPrice} seeds</Text>
-              <Button
-                title="Sell"
-                onPress={() => {
-                  sellItem(item.id);
-                  Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-                  Alert.alert('Item Sold', `${item.title} sold for ${item.sellPrice} seeds.`);
-                }}
-              />
-            </View>
-          ))
+            );
+          })
         )}
-      </View>
-      <CraftingArea />
-    </ScrollView>
+
+        {/* Show empty plot placeholders if garden is not full */}
+        {garden.length < MAX_PLOTS && (
+          <View style={styles.emptyPlotsContainer}>
+            {[...Array(MAX_PLOTS - garden.length)].map((_, index) => (
+              <View key={`empty-${index}`} style={styles.emptyPlot}>
+                <Text style={styles.emptyPlotText}>Empty Plot</Text>
+              </View>
+            ))}
+            <Text style={styles.infoText}>
+              To plant new crops, please use the Rewards Shop.
+            </Text>
+          </View>
+        )}
+
+        <View style={styles.inventorySection}>
+          <Text style={styles.sectionHeader}>Inventory</Text>
+          {inventory.length === 0 ? (
+            <Text style={styles.emptyText}>No harvested items yet.</Text>
+          ) : (
+            inventory.map(item => (
+              <View key={item.id} style={styles.inventoryItem}>
+                <Text style={styles.itemTitle}>{item.title}</Text>
+
+                <View style={{ marginVertical: 10 }}>
+                  {item.title === 'Zucchini' && <Zucchini width={60} height={60} />}
+                  {item.title === 'Broccoli' && <Broccoli width={60} height={60} />}
+                  {item.title === 'Blueberry Bush' && <BlueberryBush width={60} height={60} />}
+                  {item.title === 'Rose Bush' && <RoseBush width={60} height={60} />}
+                  {item.title === 'Orchid' && <Orchid width={60} height={60} />}
+                  {item.title === 'Garden Gnome' && <GardenGnome width={60} height={60} />}
+                </View>
+
+                <Text style={styles.sellPrice}>Sell Price: {item.sellPrice} seeds</Text>
+                <Button
+                  title="Sell"
+                  onPress={() => {
+                    sellItem(item.id);
+                    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                    Alert.alert('Item Sold', `${item.title} sold for ${item.sellPrice} seeds.`);
+                  }}
+                />
+              </View>
+            ))
+          )}
+        </View>
+        <CraftingArea />
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 

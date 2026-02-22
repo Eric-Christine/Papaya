@@ -815,7 +815,7 @@ Understanding these policies empowers you to support legislation that protects o
       1: '/Users/ericchristine/.gemini/antigravity/brain/c488cf2e-e3ab-462c-840a-f9a93b9af969/ev_definition_modern_1769373005408.png',
       2: '/Users/ericchristine/.gemini/antigravity/brain/c488cf2e-e3ab-462c-840a-f9a93b9af969/ev_benefits_eco_1769373021195.png',
       3: '/Users/ericchristine/.gemini/antigravity/brain/c488cf2e-e3ab-462c-840a-f9a93b9af969/ev_adoption_trends_global_1769373032861.png',
-      4: 'https://placehold.co/600x400/0288D1/ffffff/png?text=EV+Infrastructure',
+      4: '/Users/ericchristine/.gemini/antigravity/brain/c488cf2e-e3ab-462c-840a-f9a93b9af969/ev_infrastructure_charging_station_1769397970245.png',
       5: '/Users/ericchristine/.gemini/antigravity/brain/c488cf2e-e3ab-462c-840a-f9a93b9af969/electric_public_transport_shenzhen_1769372565618.png',
     };
     customImage = evImages[step as keyof typeof evImages] || evImages[1];
@@ -921,11 +921,11 @@ Competition is driving rapid innovation. As Western companies respond to China's
 The race to electrify the world is now a high-stakes geopolitical contest between the East and the West.`;
 
     const ev2Images = {
-      1: 'https://placehold.co/600x400/0288D1/ffffff/png?text=China+EV+Dominance',
-      2: 'https://placehold.co/600x400/0288D1/ffffff/png?text=Cheap+EV+Models',
-      3: 'https://placehold.co/600x400/0288D1/ffffff/png?text=BYD+vs+Tesla',
-      4: 'https://placehold.co/600x400/0288D1/ffffff/png?text=Trade+War+Tariffs',
-      5: 'https://placehold.co/600x400/0288D1/ffffff/png?text=Future+EV+Competition',
+      1: '/Users/ericchristine/.gemini/antigravity/brain/c488cf2e-e3ab-462c-840a-f9a93b9af969/china_ev_dominance_city_street_1769397990626.png',
+      2: '/Users/ericchristine/.gemini/antigravity/brain/c488cf2e-e3ab-462c-840a-f9a93b9af969/affordable_compact_ev_1769398004337.png',
+      3: '/Users/ericchristine/.gemini/antigravity/brain/c488cf2e-e3ab-462c-840a-f9a93b9af969/byd_vs_tesla_showcase_1769398018088.png',
+      4: '/Users/ericchristine/.gemini/antigravity/brain/c488cf2e-e3ab-462c-840a-f9a93b9af969/ev_trade_logistics_port_1769398031293.png',
+      5: '/Users/ericchristine/.gemini/antigravity/brain/c488cf2e-e3ab-462c-840a-f9a93b9af969/future_ev_manufacturing_automated_1769398043984.png',
     };
     customImage = ev2Images[step as keyof typeof ev2Images] || ev2Images[1];
 

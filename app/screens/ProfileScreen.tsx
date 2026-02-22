@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { UserContext } from '../contexts/UserContext';
 
 const ProfileScreen: React.FC = () => {
@@ -15,40 +16,42 @@ const ProfileScreen: React.FC = () => {
   const { user } = useContext(UserContext);
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      {/* Profile Header */}
-      <View style={styles.header}>
-        <Image source={{ uri: user.avatar }} style={styles.avatar} />
-        <Text style={styles.name}>{user.name}</Text>
-        <Text style={styles.email}>{user.email}</Text>
-        <Text style={styles.email}> lessons completed: {user.lessonsCompleted}</Text>
-      </View>
-
-      {/* User Statistics */}
-      <View style={styles.statsContainer}>
-        <View style={styles.statItem}>
-          <Text style={styles.statValue}>{user.lessonsCompleted}</Text>
-          <Text style={styles.statLabel}>Lessons Completed</Text>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#F5F5F5' }} edges={['top']}>
+      <ScrollView contentContainerStyle={styles.container}>
+        {/* Profile Header */}
+        <View style={styles.header}>
+          <Image source={{ uri: user.avatar }} style={styles.avatar} />
+          <Text style={styles.name}>{user.name}</Text>
+          <Text style={styles.email}>{user.email}</Text>
+          <Text style={styles.email}> lessons completed: {user.lessonsCompleted}</Text>
         </View>
-        <View style={styles.statItem}>
-          <Text style={styles.statValue}>{user.seeds} 🌱</Text>
-          <Text style={styles.statLabel}>Seeds Earned</Text>
-        </View>
-      </View>
 
-      {/* Action Buttons */}
-      <View style={styles.optionsContainer}>
-        <TouchableOpacity style={styles.optionButton}>
-          <Text style={styles.optionText}>Edit Profile</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.optionButton}>
-          <Text style={styles.optionText}>Settings</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.optionButton}>
-          <Text style={styles.optionText}>Logout</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+        {/* User Statistics */}
+        <View style={styles.statsContainer}>
+          <View style={styles.statItem}>
+            <Text style={styles.statValue}>{user.lessonsCompleted}</Text>
+            <Text style={styles.statLabel}>Lessons Completed</Text>
+          </View>
+          <View style={styles.statItem}>
+            <Text style={styles.statValue}>{user.seeds} 🌱</Text>
+            <Text style={styles.statLabel}>Seeds Earned</Text>
+          </View>
+        </View>
+
+        {/* Action Buttons */}
+        <View style={styles.optionsContainer}>
+          <TouchableOpacity style={styles.optionButton}>
+            <Text style={styles.optionText}>Edit Profile</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.optionButton}>
+            <Text style={styles.optionText}>Settings</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.optionButton}>
+            <Text style={styles.optionText}>Logout</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 

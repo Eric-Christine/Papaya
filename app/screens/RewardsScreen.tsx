@@ -9,6 +9,7 @@ import {
   Button,
   Alert,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import UserContext from '../contexts/UserContext';
 import { v4 as uuidv4 } from 'uuid';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -294,196 +295,198 @@ export default function RewardsScreen() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.header}>Garden Shop</Text>
-      <Text style={styles.seedCount}>Seeds: {user.seeds}</Text>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#F5F5F5' }} edges={['top']}>
+      <ScrollView contentContainerStyle={styles.container}>
+        <Text style={styles.header}>Garden Shop</Text>
+        <Text style={styles.seedCount}>Seeds: {user.seeds}</Text>
 
-      <Text style={styles.lessonCount}>Lessons Completed: {user.lessonsCompleted}</Text>
-      <Text style={styles.livesCount}>{'❤️'.repeat(lives)}</Text>
+        <Text style={styles.lessonCount}>Lessons Completed: {user.lessonsCompleted}</Text>
+        <Text style={styles.livesCount}>{'❤️'.repeat(lives)}</Text>
 
-      {/* Show message if garden is full */}
-      {user.garden.length >= MAX_PLOTS && (
-        <Text style={styles.fullGardenNotice}>
-          Your garden is full. Please harvest existing crops before purchasing new ones.
-        </Text>
-      )}
+        {/* Show message if garden is full */}
+        {user.garden.length >= MAX_PLOTS && (
+          <Text style={styles.fullGardenNotice}>
+            Your garden is full. Please harvest existing crops before purchasing new ones.
+          </Text>
+        )}
 
-      <View style={styles.section}>
-        <Text style={styles.sectionHeader}>Items for Purchase</Text>
-        {itemsData.map(item => (
-          <TouchableOpacity
-            key={item.id}
-            style={styles.itemCard}
-            onPress={() => handleItemPress(item)}
-          >
-            <View style={styles.itemInfo}>
-              <View style={styles.titleRow}>
-                {item.title === 'Zucchini' && (
-                  <View style={styles.iconContainer}>
-                    <Zucchini width={40} height={40} />
-                  </View>
-                )}
-                {item.title === 'Broccoli' && (
-                  <View style={styles.iconContainer}>
-                    <Broccoli width={40} height={40} />
-                  </View>
-                )}
-                {item.title === 'Blueberry Bush' && (
-                  <View style={styles.iconContainer}>
-                    <BlueberryBush width={40} height={40} />
-                  </View>
-                )}
-                {item.title === 'Rose Bush' && (
-                  <View style={styles.iconContainer}>
-                    <RoseBush width={40} height={40} />
-                  </View>
-                )}
-                {item.title === 'Orchid' && (
-                  <View style={styles.iconContainer}>
-                    <Orchid width={40} height={40} />
-                  </View>
-                )}
-                {item.title === 'Garden Gnome' && (
-                  <View style={styles.iconContainer}>
-                    <GardenGnome width={40} height={40} />
-                  </View>
-                )}
-                {item.title === 'Heart' && (
-                  <View style={styles.iconContainer}>
-                    <Heart width={40} height={40} />
-                  </View>
-                )}
-                {item.title === 'Fertilizer' && (
-                  <View style={styles.iconContainer}>
-                    <Fertilizer width={40} height={40} />
-                  </View>
-                )}
-                {item.title === 'Golden Watering Can' && (
-                  <View style={styles.iconContainer}>
-                    <Text style={{ fontSize: 28 }}>🪣</Text>
-                  </View>
-                )}
-                {item.title === 'Rainbow Flower' && (
-                  <View style={styles.iconContainer}>
-                    <Text style={{ fontSize: 28 }}>🌸</Text>
-                  </View>
-                )}
-                {item.title === 'Bee Hive' && (
-                  <View style={styles.iconContainer}>
-                    <Text style={{ fontSize: 28 }}>🐝</Text>
-                  </View>
-                )}
-                <Text style={styles.itemTitle}>{item.title}</Text>
-              </View>
-              <Text style={styles.itemDescription}>{item.description}</Text>
-              {item.requiredLessons && (
-                <Text style={styles.requiredText}>
-                  🔒 Requires {item.requiredLessons} lessons
-                </Text>
-              )}
-              {(item as any).requiredBadge && (
-                <Text style={styles.requiredText}>
-                  🔒 Requires: {(item as any).requiredBadge}
-                </Text>
-              )}
-              {(item as any).requiresCraft && (
-                <Text style={styles.requiredText}>
-                  🔒 Requires: Craft your first item
-                </Text>
-              )}
-            </View>
-            <Text style={styles.itemCost}>{item.cost} seeds</Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionHeader}>Badges</Text>
-        {badgesData.map(badge => {
-          const BadgeIcon = badge.icon;
-          // Determine if badge is unlocked
-          let isUnlocked = false;
-          const level = Math.floor(user.xp / 100) + 1;
-
-          switch (badge.id) {
-            case '1': // Sunflower: consistent care (using XP > 0 as proxy)
-              isUnlocked = user.xp > 0;
-              break;
-            case '2': // Green Thumb: first harvest
-              isUnlocked = user.inventory.length > 0;
-              break;
-            case '3': // Master Gardener: level 10
-              isUnlocked = level >= 10;
-              break;
-            case '4': // Level 2
-              isUnlocked = level >= 2;
-              break;
-            case '5': // Level 5
-              isUnlocked = level >= 5;
-              break;
-            default:
-              isUnlocked = false;
-          }
-
-          return (
-            <View key={badge.id} style={[styles.badgeCard, !isUnlocked && { opacity: 0.5, backgroundColor: '#F0F0F0' }]}>
-              <View style={styles.iconContainer}>
-                <BadgeIcon width={50} height={50} opacity={isUnlocked ? 1 : 0.3} />
-              </View>
-              <View style={styles.textContainer}>
-                <Text style={[styles.badgeTitle, !isUnlocked && { color: '#777' }]}>
-                  {badge.title} {isUnlocked ? '✅' : '🔒'}
-                </Text>
-                <Text style={styles.badgeDescription}>{badge.description}</Text>
-              </View>
-            </View>
-          );
-        })}
-      </View>
-
-      <Modal visible={modalVisible} animationType="slide" transparent>
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            {selectedItem && (
-              <>
-                <Text style={styles.modalTitle}>{selectedItem.title}</Text>
-                <Text style={styles.modalDescription}>{selectedItem.description}</Text>
-                <Text style={styles.modalCost}>Cost: {selectedItem.cost} seeds</Text>
-                {selectedItem.requiredLessons && (
-                  <Text style={styles.requiredTextModal}>
-                    🔒 Requires {selectedItem.requiredLessons} lessons completed
+        <View style={styles.section}>
+          <Text style={styles.sectionHeader}>Items for Purchase</Text>
+          {itemsData.map(item => (
+            <TouchableOpacity
+              key={item.id}
+              style={styles.itemCard}
+              onPress={() => handleItemPress(item)}
+            >
+              <View style={styles.itemInfo}>
+                <View style={styles.titleRow}>
+                  {item.title === 'Zucchini' && (
+                    <View style={styles.iconContainer}>
+                      <Zucchini width={40} height={40} />
+                    </View>
+                  )}
+                  {item.title === 'Broccoli' && (
+                    <View style={styles.iconContainer}>
+                      <Broccoli width={40} height={40} />
+                    </View>
+                  )}
+                  {item.title === 'Blueberry Bush' && (
+                    <View style={styles.iconContainer}>
+                      <BlueberryBush width={40} height={40} />
+                    </View>
+                  )}
+                  {item.title === 'Rose Bush' && (
+                    <View style={styles.iconContainer}>
+                      <RoseBush width={40} height={40} />
+                    </View>
+                  )}
+                  {item.title === 'Orchid' && (
+                    <View style={styles.iconContainer}>
+                      <Orchid width={40} height={40} />
+                    </View>
+                  )}
+                  {item.title === 'Garden Gnome' && (
+                    <View style={styles.iconContainer}>
+                      <GardenGnome width={40} height={40} />
+                    </View>
+                  )}
+                  {item.title === 'Heart' && (
+                    <View style={styles.iconContainer}>
+                      <Heart width={40} height={40} />
+                    </View>
+                  )}
+                  {item.title === 'Fertilizer' && (
+                    <View style={styles.iconContainer}>
+                      <Fertilizer width={40} height={40} />
+                    </View>
+                  )}
+                  {item.title === 'Golden Watering Can' && (
+                    <View style={styles.iconContainer}>
+                      <Text style={{ fontSize: 28 }}>🪣</Text>
+                    </View>
+                  )}
+                  {item.title === 'Rainbow Flower' && (
+                    <View style={styles.iconContainer}>
+                      <Text style={{ fontSize: 28 }}>🌸</Text>
+                    </View>
+                  )}
+                  {item.title === 'Bee Hive' && (
+                    <View style={styles.iconContainer}>
+                      <Text style={{ fontSize: 28 }}>🐝</Text>
+                    </View>
+                  )}
+                  <Text style={styles.itemTitle}>{item.title}</Text>
+                </View>
+                <Text style={styles.itemDescription}>{item.description}</Text>
+                {item.requiredLessons && (
+                  <Text style={styles.requiredText}>
+                    🔒 Requires {item.requiredLessons} lessons
                   </Text>
                 )}
-                {selectedItem.requiredBadge && (
-                  <Text style={styles.requiredTextModal}>
-                    🔒 Requires: {selectedItem.requiredBadge}
+                {(item as any).requiredBadge && (
+                  <Text style={styles.requiredText}>
+                    🔒 Requires: {(item as any).requiredBadge}
                   </Text>
                 )}
-                {selectedItem.requiresCraft && (
-                  <Text style={styles.requiredTextModal}>
+                {(item as any).requiresCraft && (
+                  <Text style={styles.requiredText}>
                     🔒 Requires: Craft your first item
                   </Text>
                 )}
-                <View style={styles.modalButtons}>
-                  <Button
-                    title="Cancel"
-                    onPress={() => {
-                      setModalVisible(false);
-                      setSelectedItem(null);
-                    }}
-                  />
-                  <Button
-                    title="Buy"
-                    onPress={() => handlePurchase(selectedItem)}
-                    disabled={user.seeds < selectedItem.cost}
-                  />
-                </View>
-              </>
-            )}
-          </View>
+              </View>
+              <Text style={styles.itemCost}>{item.cost} seeds</Text>
+            </TouchableOpacity>
+          ))}
         </View>
-      </Modal>
-    </ScrollView>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionHeader}>Badges</Text>
+          {badgesData.map(badge => {
+            const BadgeIcon = badge.icon;
+            // Determine if badge is unlocked
+            let isUnlocked = false;
+            const level = Math.floor(user.xp / 100) + 1;
+
+            switch (badge.id) {
+              case '1': // Sunflower: consistent care (using XP > 0 as proxy)
+                isUnlocked = user.xp > 0;
+                break;
+              case '2': // Green Thumb: first harvest
+                isUnlocked = user.inventory.length > 0;
+                break;
+              case '3': // Master Gardener: level 10
+                isUnlocked = level >= 10;
+                break;
+              case '4': // Level 2
+                isUnlocked = level >= 2;
+                break;
+              case '5': // Level 5
+                isUnlocked = level >= 5;
+                break;
+              default:
+                isUnlocked = false;
+            }
+
+            return (
+              <View key={badge.id} style={[styles.badgeCard, !isUnlocked && { opacity: 0.5, backgroundColor: '#F0F0F0' }]}>
+                <View style={styles.iconContainer}>
+                  <BadgeIcon width={50} height={50} opacity={isUnlocked ? 1 : 0.3} />
+                </View>
+                <View style={styles.textContainer}>
+                  <Text style={[styles.badgeTitle, !isUnlocked && { color: '#777' }]}>
+                    {badge.title} {isUnlocked ? '✅' : '🔒'}
+                  </Text>
+                  <Text style={styles.badgeDescription}>{badge.description}</Text>
+                </View>
+              </View>
+            );
+          })}
+        </View>
+
+        <Modal visible={modalVisible} animationType="slide" transparent>
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContent}>
+              {selectedItem && (
+                <>
+                  <Text style={styles.modalTitle}>{selectedItem.title}</Text>
+                  <Text style={styles.modalDescription}>{selectedItem.description}</Text>
+                  <Text style={styles.modalCost}>Cost: {selectedItem.cost} seeds</Text>
+                  {selectedItem.requiredLessons && (
+                    <Text style={styles.requiredTextModal}>
+                      🔒 Requires {selectedItem.requiredLessons} lessons completed
+                    </Text>
+                  )}
+                  {selectedItem.requiredBadge && (
+                    <Text style={styles.requiredTextModal}>
+                      🔒 Requires: {selectedItem.requiredBadge}
+                    </Text>
+                  )}
+                  {selectedItem.requiresCraft && (
+                    <Text style={styles.requiredTextModal}>
+                      🔒 Requires: Craft your first item
+                    </Text>
+                  )}
+                  <View style={styles.modalButtons}>
+                    <Button
+                      title="Cancel"
+                      onPress={() => {
+                        setModalVisible(false);
+                        setSelectedItem(null);
+                      }}
+                    />
+                    <Button
+                      title="Buy"
+                      onPress={() => handlePurchase(selectedItem)}
+                      disabled={user.seeds < selectedItem.cost}
+                    />
+                  </View>
+                </>
+              )}
+            </View>
+          </View>
+        </Modal>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 

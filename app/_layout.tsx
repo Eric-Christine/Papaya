@@ -35,10 +35,11 @@ export default function RootLayout() {
   return (
     <UserProvider>
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <Stack>
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="(tabs)/index" options={{ headerShown: false }} />
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" />
-          <Stack.Screen name="screens/GlobalEnergyMixScreen" options={{ title: 'Global Energy Mix', headerBackTitle: 'Back' }} />
+          <Stack.Screen name="+not-found" options={{ title: 'Oops!', headerShown: true }} />
+          <Stack.Screen name="screens/GlobalEnergyMixScreen" options={{ title: 'Global Energy Mix', headerBackTitle: 'Back', headerShown: true }} />
         </Stack>
         <StatusBar style="auto" />
         {isSplashVisible && (
