@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { lessonImages, lessonContents } from '../data/contentData';
 import GoBackToLessonsButton from '../components/GoBackToLessonsButton';
+import LessonIllustration, { art, isLessonArt } from '../components/LessonIllustration';
 
 
 
@@ -607,11 +608,11 @@ Understanding these policies empowers you to support legislation that protects o
     }
   } else if (title === 'Solar Power II') {
     const solarPower2Images = {
-      1: 'https://placehold.co/600x400/FFCC80/000000/png?text=10000x+Potential',
-      2: 'https://placehold.co/600x400/FFCC80/000000/png?text=Cost+Revolution',
-      3: 'https://placehold.co/600x400/FFCC80/000000/png?text=Trade+Politics',
-      4: 'https://placehold.co/600x400/FFCC80/000000/png?text=Exponential+Growth',
-      5: 'https://placehold.co/600x400/FFCC80/000000/png?text=Future+Grids',
+      1: art('energy', 'white-balance-sunny', '10,000x Potential', ['earth', 'flash']),
+      2: art('energy', 'cash-multiple', 'Cost Revolution', ['chart-line-variant', 'solar-panel']),
+      3: art('civic', 'handshake', 'Trade Politics', ['earth', 'ferry']),
+      4: art('energy', 'chart-line', 'Exponential Growth', ['solar-panel', 'trending-up']),
+      5: art('tech', 'transmission-tower', 'Future Grids', ['battery-charging-high', 'solar-power']),
     };
 
     customImage = solarPower2Images[step as keyof typeof solarPower2Images] || solarPower2Images[1];
@@ -812,11 +813,11 @@ Understanding these policies empowers you to support legislation that protects o
     }
   } else if (title === 'Electric Vehicles') {
     const evImages = {
-      1: '/Users/ericchristine/.gemini/antigravity/brain/c488cf2e-e3ab-462c-840a-f9a93b9af969/ev_definition_modern_1769373005408.png',
-      2: '/Users/ericchristine/.gemini/antigravity/brain/c488cf2e-e3ab-462c-840a-f9a93b9af969/ev_benefits_eco_1769373021195.png',
-      3: '/Users/ericchristine/.gemini/antigravity/brain/c488cf2e-e3ab-462c-840a-f9a93b9af969/ev_adoption_trends_global_1769373032861.png',
-      4: '/Users/ericchristine/.gemini/antigravity/brain/c488cf2e-e3ab-462c-840a-f9a93b9af969/ev_infrastructure_charging_station_1769397970245.png',
-      5: '/Users/ericchristine/.gemini/antigravity/brain/c488cf2e-e3ab-462c-840a-f9a93b9af969/electric_public_transport_shenzhen_1769372565618.png',
+      1: art('city', 'car-electric', 'What Is an EV?', ['battery', 'power-plug']),
+      2: art('land', 'leaf', 'EV Benefits', ['car-electric', 'air-filter']),
+      3: art('civic', 'chart-line', 'Adoption Trends', ['earth', 'car-multiple']),
+      4: art('city', 'ev-station', 'Charging Infrastructure', ['power-plug', 'map-marker']),
+      5: art('city', 'bus-electric', 'Electric Public Transport', ['train', 'city']),
     };
     customImage = evImages[step as keyof typeof evImages] || evImages[1];
 
@@ -921,11 +922,11 @@ Competition is driving rapid innovation. As Western companies respond to China's
 The race to electrify the world is now a high-stakes geopolitical contest between the East and the West.`;
 
     const ev2Images = {
-      1: '/Users/ericchristine/.gemini/antigravity/brain/c488cf2e-e3ab-462c-840a-f9a93b9af969/china_ev_dominance_city_street_1769397990626.png',
-      2: '/Users/ericchristine/.gemini/antigravity/brain/c488cf2e-e3ab-462c-840a-f9a93b9af969/affordable_compact_ev_1769398004337.png',
-      3: '/Users/ericchristine/.gemini/antigravity/brain/c488cf2e-e3ab-462c-840a-f9a93b9af969/byd_vs_tesla_showcase_1769398018088.png',
-      4: '/Users/ericchristine/.gemini/antigravity/brain/c488cf2e-e3ab-462c-840a-f9a93b9af969/ev_trade_logistics_port_1769398031293.png',
-      5: '/Users/ericchristine/.gemini/antigravity/brain/c488cf2e-e3ab-462c-840a-f9a93b9af969/future_ev_manufacturing_automated_1769398043984.png',
+      1: art('city', 'car-electric', 'China\'s EV Rise', ['factory', 'earth']),
+      2: art('city', 'car-hatchback', 'Affordable EVs', ['cash', 'battery']),
+      3: art('civic', 'car-multiple', 'BYD vs Tesla', ['trophy', 'chart-bar']),
+      4: art('sea', 'ferry', 'Trade & Logistics', ['earth', 'package-variant']),
+      5: art('tech', 'robot-industrial', 'Future Manufacturing', ['factory', 'car-electric']),
     };
     customImage = ev2Images[step as keyof typeof ev2Images] || ev2Images[1];
 
@@ -1048,13 +1049,13 @@ The Arctic is Earth's primary stability regulator. A stable Arctic means:
 Protecting the Arctic is not just about polar bears; it's about maintaining the climate stability that modern civilization is built upon.`;
 
     const arcticImages = {
-      1: 'https://placehold.co/600x400/B3E5FC/01579B/png?text=Albedo+Effect',
-      2: 'https://placehold.co/600x400/B3E5FC/01579B/png?text=Warming+Loop',
-      3: 'https://placehold.co/600x400/B3E5FC/01579B/png?text=Arctic+Amplification',
-      4: 'https://placehold.co/600x400/B3E5FC/01579B/png?text=Sea+Level+Rise',
-      5: 'https://placehold.co/600x400/B3E5FC/01579B/png?text=Jet+Stream',
-      6: 'https://placehold.co/600x400/B3E5FC/01579B/png?text=Permafrost',
-      7: 'https://placehold.co/600x400/B3E5FC/01579B/png?text=Global+Survival',
+      1: art('ice', 'mirror', 'Albedo Effect', ['white-balance-sunny', 'snowflake']),
+      2: art('ice', 'sync', 'Warming Loop', ['thermometer', 'snowflake-melt']),
+      3: art('ice', 'thermometer-chevron-up', 'Arctic Amplification', ['snowflake', 'earth']),
+      4: art('sea', 'waves-arrow-up', 'Sea Level Rise', ['home-flood', 'snowflake-melt']),
+      5: art('ice', 'weather-windy', 'Jet Stream', ['earth', 'snowflake']),
+      6: art('ice', 'molecule-co2', 'Permafrost', ['layers', 'thermometer']),
+      7: art('ice', 'earth', 'Global Survival', ['account-group', 'snowflake']),
     };
     customImage = arcticImages[step as keyof typeof arcticImages] || arcticImages[1];
 
@@ -1207,12 +1208,12 @@ Innovations are transforming food systems worldwide:
 A sustainable food future is possible—and it starts with the choices you make every day.`;
 
     const foodImages = {
-      1: 'https://placehold.co/600x400/FF8A65/ffffff/png?text=Food+Waste',
-      2: 'https://placehold.co/600x400/FF8A65/ffffff/png?text=Food+Banks',
-      3: 'https://placehold.co/600x400/FF8A65/ffffff/png?text=Composting',
-      4: 'https://placehold.co/600x400/FF8A65/ffffff/png?text=Complex+Sorting',
-      5: 'https://placehold.co/600x400/FF8A65/ffffff/png?text=Smart+Consumption',
-      6: 'https://placehold.co/600x400/FF8A65/ffffff/png?text=Future+of+Food',
+      1: art('food', 'food-off', 'Food Waste', ['trash-can-outline', 'food-apple']),
+      2: art('food', 'hand-heart', 'Food Banks', ['food-variant', 'account-group']),
+      3: art('land', 'compost', 'Composting', ['sprout', 'leaf']),
+      4: art('food', 'recycle', 'Complex Sorting', ['trash-can-outline', 'bottle-soda-outline']),
+      5: art('food', 'cart', 'Smart Consumption', ['format-list-checks', 'fridge']),
+      6: art('land', 'sprout', 'Future of Food', ['food-apple', 'earth']),
     };
     customImage = foodImages[step as keyof typeof foodImages] || foodImages[1];
 
@@ -1350,12 +1351,12 @@ AI's energy demands are real and growing, but so are the solutions:
 The key is **accountability, transparency, and investment in clean energy infrastructure** to power the AI era sustainably.`;
 
     const aiImages = {
-      1: 'https://placehold.co/600x400/7C4DFF/ffffff/png?text=Training+Costs',
-      2: 'https://placehold.co/600x400/7C4DFF/ffffff/png?text=Data+Centers',
-      3: 'https://placehold.co/600x400/7C4DFF/ffffff/png?text=Near-Term+Solutions',
-      4: 'https://placehold.co/600x400/7C4DFF/ffffff/png?text=Long-Term+Solutions',
-      5: 'https://placehold.co/600x400/7C4DFF/ffffff/png?text=AI+for+Climate',
-      6: 'https://placehold.co/600x400/7C4DFF/ffffff/png?text=The+Bottom+Line',
+      1: art('tech', 'brain', 'Training Costs', ['flash', 'cash']),
+      2: art('tech', 'server', 'Data Centers', ['water', 'flash']),
+      3: art('tech', 'chip', 'Near-Term Solutions', ['speedometer', 'leaf']),
+      4: art('tech', 'atom', 'Long-Term Solutions', ['solar-power', 'battery-charging-high']),
+      5: art('tech', 'robot', 'AI for Climate', ['earth', 'chart-line']),
+      6: art('tech', 'scale-balance', 'The Bottom Line', ['flash', 'leaf']),
     };
     customImage = aiImages[step as keyof typeof aiImages] || aiImages[1];
 
@@ -1438,9 +1439,9 @@ The key is **accountability, transparency, and investment in clean energy infras
     }
   } else if (title === 'Energy Mix') {
     const energyMixImages = {
-      1: '/Users/ericchristine/.gemini/antigravity/brain/72290e95-8328-4e58-945d-c7a4cd91d43f/energy_mix_overview_nano_banana_1769288229429.png',
-      2: '/Users/ericchristine/.gemini/antigravity/brain/72290e95-8328-4e58-945d-c7a4cd91d43f/clean_energy_nuclear_nano_banana_1769288242213.png',
-      3: '/Users/ericchristine/.gemini/antigravity/brain/72290e95-8328-4e58-945d-c7a4cd91d43f/future_energy_trends_nano_banana_1769288254296.png',
+      1: art('energy', 'chart-donut', 'Energy Mix Overview', ['solar-power', 'wind-turbine']),
+      2: art('nuclear', 'atom', 'Clean Energy & Nuclear', ['flash', 'leaf']),
+      3: art('energy', 'trending-up', 'Future Energy Trends', ['battery-charging-high', 'solar-power']),
     };
 
     customImage = energyMixImages[step as keyof typeof energyMixImages] || energyMixImages[1];
@@ -1776,13 +1777,13 @@ The key is **accountability, transparency, and investment in clean energy infras
 By embracing sustainable transportation and thoughtful urban design, cities can become healthier, more livable, and dramatically reduce their environmental impact.`;
 
     const publicTransportImages = {
-      1: '/Users/ericchristine/.gemini/antigravity/brain/c488cf2e-e3ab-462c-840a-f9a93b9af969/urban_carbon_crisis_1769372510770.png',
-      2: '/Users/ericchristine/.gemini/antigravity/brain/c488cf2e-e3ab-462c-840a-f9a93b9af969/public_transit_benefits_1769372525726.png',
-      3: '/Users/ericchristine/.gemini/antigravity/brain/c488cf2e-e3ab-462c-840a-f9a93b9af969/fifteen_minute_city_1769372537848.png',
-      4: '/Users/ericchristine/.gemini/antigravity/brain/c488cf2e-e3ab-462c-840a-f9a93b9af969/cycling_infrastructure_amsterdam_1769372550961.png',
-      5: '/Users/ericchristine/.gemini/antigravity/brain/c488cf2e-e3ab-462c-840a-f9a93b9af969/electric_public_transport_shenzhen_1769372565618.png',
-      6: '/Users/ericchristine/.gemini/antigravity/brain/c488cf2e-e3ab-462c-840a-f9a93b9af969/mixed_use_development_walkable_1769372578122.png',
-      7: '/Users/ericchristine/.gemini/antigravity/brain/c488cf2e-e3ab-462c-840a-f9a93b9af969/remote_work_urban_planning_smart_city_1769372591806.png',
+      1: art('city', 'smog', 'Urban Carbon Crisis', ['car', 'factory']),
+      2: art('city', 'bus', 'Public Transit Benefits', ['train', 'account-group']),
+      3: art('city', 'map-marker-radius', '15-Minute City', ['walk', 'store']),
+      4: art('city', 'bike', 'Cycling Infrastructure', ['road-variant', 'account-group']),
+      5: art('city', 'bus-electric', 'Electric Public Transport', ['ev-station', 'train']),
+      6: art('city', 'home-city', 'Walkable Mixed-Use', ['walk', 'store']),
+      7: art('tech', 'laptop', 'Remote Work & Smart Cities', ['home', 'wifi']),
     };
 
     customImage = publicTransportImages[step as keyof typeof publicTransportImages] || publicTransportImages[1];
@@ -1997,13 +1998,13 @@ Rainforests are irreplaceable treasures that regulate our climate, protect biodi
 The future of sustainability is largely urban. How we design, build, and live in cities will determine our collective environmental impact for generations to come.`;
 
     const urbanImages = {
-      1: '/Users/ericchristine/.gemini/antigravity/brain/c488cf2e-e3ab-462c-840a-f9a93b9af969/global_urbanization_trend_1769372275265.png',
-      2: '/Users/ericchristine/.gemini/antigravity/brain/c488cf2e-e3ab-462c-840a-f9a93b9af969/urban_efficiency_advantages_1769372289031.png',
-      3: '/Users/ericchristine/.gemini/antigravity/brain/c488cf2e-e3ab-462c-840a-f9a93b9af969/urban_consumption_reality_1769372302215.png',
-      4: '/Users/ericchristine/.gemini/antigravity/brain/c488cf2e-e3ab-462c-840a-f9a93b9af969/dense_vs_sprawling_cities_1769372314053.png',
-      5: '/Users/ericchristine/.gemini/antigravity/brain/c488cf2e-e3ab-462c-840a-f9a93b9af969/urbanization_environmental_pressures_1769372327672.png',
-      6: '/Users/ericchristine/.gemini/antigravity/brain/c488cf2e-e3ab-462c-840a-f9a93b9af969/sustainable_urban_design_solutions_1769372341310.png',
-      7: '/Users/ericchristine/.gemini/antigravity/brain/c488cf2e-e3ab-462c-840a-f9a93b9af969/personal_urban_footprint_1769372353916.png',
+      1: art('city', 'city', 'Global Urbanization', ['earth', 'trending-up']),
+      2: art('city', 'office-building', 'Urban Efficiency', ['flash', 'train']),
+      3: art('city', 'cart', 'Urban Consumption', ['trash-can-outline', 'truck-delivery']),
+      4: art('city', 'home-group', 'Dense vs Sprawling', ['city', 'car']),
+      5: art('city', 'factory', 'Environmental Pressures', ['smog', 'water']),
+      6: art('land', 'home-city', 'Sustainable Urban Design', ['tree', 'solar-power']),
+      7: art('city', 'foot-print', 'Your Urban Footprint', ['bike', 'home']),
     };
 
     customImage = urbanImages[step as keyof typeof urbanImages] || urbanImages[1];
@@ -2101,9 +2102,9 @@ The future of sustainability is largely urban. How we design, build, and live in
   } else if (title === 'Amazing Animals') {
     // Real wildlife photos for each screen
     const animalImages = {
-      1: 'https://images.unsplash.com/photo-1589656966895-2f33e7653819?w=600&h=400&fit=crop', // Polar bear
-      2: 'https://images.unsplash.com/photo-1551986782-d0169b3f8fa7?w=600&h=400&fit=crop', // Penguins
-      3: 'https://images.unsplash.com/photo-1497206365907-f5e630693df0?w=600&h=400&fit=crop', // Flamingos
+      1: art('ice', 'paw', 'Polar Bears, Lizards & Butterflies', ['butterfly', 'snowflake']),
+      2: art('ice', 'penguin', 'Penguins, Birds & Fish', ['bird', 'fish']),
+      3: art('sea', 'bird', 'Flamingos & Raccoons', ['earth', 'paw']),
     };
 
     const animalsContent1 = `🦋 Did you know? Animals around the world are showing incredible adaptations to climate change!
@@ -2208,9 +2209,9 @@ Scientists are working on new technologies to make nuclear energy safer, cheaper
 • **Closing the Fuel Cycle:** Next-gen reactors are being designed to run on the "waste" of older plants, potentially solving the waste problem while generating even more power!`;
 
     const nuclearImages = {
-      1: '/Users/ericchristine/.gemini/antigravity/brain/dbddb713-e42b-4c7b-b0d9-15034a45eaf1/modern_nuclear_plant_1769208341353.png',
-      2: '/Users/ericchristine/.gemini/antigravity/brain/dbddb713-e42b-4c7b-b0d9-15034a45eaf1/realistic_nuclear_waste_repository_1769208430994.png',
-      3: '/Users/ericchristine/.gemini/antigravity/brain/dbddb713-e42b-4c7b-b0d9-15034a45eaf1/realistic_fusion_reactor_iter_style_1769208481860.png',
+      1: art('nuclear', 'atom', 'Modern Nuclear Plant', ['factory', 'flash']),
+      2: art('nuclear', 'radioactive', 'Waste Storage', ['shield-check', 'layers']),
+      3: art('nuclear', 'white-balance-sunny', 'Fusion Power', ['atom', 'flash']),
     };
 
     customImage = nuclearImages[step as keyof typeof nuclearImages] || nuclearImages[1];
@@ -2276,9 +2277,9 @@ With the right technology, deserts can become centers for clean energy and life.
 • **Halophytes:** Scientists are farming "salt-loving" plants that can grow in desert soil using salty water, providing food and fuel.`;
 
     const desertImages = {
-      1: '/Users/ericchristine/.gemini/antigravity/brain/dbddb713-e42b-4c7b-b0d9-15034a45eaf1/desert_sunset_dunes_1769210720336.png',
-      2: '/Users/ericchristine/.gemini/antigravity/brain/dbddb713-e42b-4c7b-b0d9-15034a45eaf1/great_green_wall_sahel_1769210733047.png',
-      3: '/Users/ericchristine/.gemini/antigravity/brain/dbddb713-e42b-4c7b-b0d9-15034a45eaf1/desert_solar_farm_future_1769210745487.png',
+      1: art('desert', 'cactus', 'Desert Landscapes', ['white-balance-sunny', 'weather-windy']),
+      2: art('desert', 'tree', 'Great Green Wall', ['sprout', 'earth']),
+      3: art('desert', 'solar-panel-large', 'Desert Solar Farms', ['white-balance-sunny', 'transmission-tower']),
     };
 
     customImage = desertImages[step as keyof typeof desertImages] || desertImages[1];
@@ -2329,7 +2330,9 @@ With the right technology, deserts can become centers for clean energy and life.
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>{title}</Text>
       <View style={styles.card}>
-        {(customImage || lessonImages[title]) && (
+        {isLessonArt(customImage || lessonImages[title]) ? (
+          <LessonIllustration art={customImage || lessonImages[title]} style={styles.lessonImage} />
+        ) : (customImage || lessonImages[title]) && (
           <Image
             source={
               typeof (customImage || lessonImages[title]) === 'string'

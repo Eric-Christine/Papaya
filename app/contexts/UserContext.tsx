@@ -1,4 +1,4 @@
-import React, { createContext, useState, ReactNode } from 'react';
+import React, { createContext, useState, useRef, ReactNode } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Haptics from 'expo-haptics';
 import { GardenItem, InventoryItem } from '../types/garden';
@@ -66,22 +66,35 @@ export const UserContext = createContext<UserContextType>({
 
 const MAX_PLOTS = 4;
 
+const DEFAULT_USER: User = {
+  name: 'Gardener',
+  email: '',
+  avatar: '',
+  lessonsCompleted: 0,
+  seeds: 1000,
+  xp: 0,
+  fertilizer: 0,
+  garden: [],
+  inventory: [],
+  activeCrafts: [],
+  streak: 0,
+  lastStreakUpdate: 0,
+};
+
 export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User>({
-    name: 'Rachelle',
-    email: 'rjl@gmail.com',
-    avatar:
-      'https://firebasestorage.googleapis.com/v0/b/papaya-b8db9.firebasestorage.app/o/Untitled%20design.png?alt=media&token=b8fbba65-86ff-41f4-bec5-ae128d77e39d',
-    lessonsCompleted: 0,
-    seeds: 1000,
-    xp: 0,
-    fertilizer: 0,
-    garden: [],
-    inventory: [],
-    activeCrafts: [],
-    streak: 0,
-    lastStreakUpdate: 0,
-  });
+  const [user, setUser] = useState<User>(DEFAULT_USER);
+  // Mirrors the latest user state so actions can read it and return results synchronously.
+  // React may defer setState updater functions, so values computed inside them are not
+  // reliably available to the caller.
+  const userRef = useRef<User>(user);
+
+  const update = (updater: (prev: User) => User) => {
+    const next = updater(userRef.current);
+    if (next !== userRef.current) {
+      userRef.current = next;
+      setUser(next);
+    }
+  };
 
   const [isLoading, setIsLoading] = React.useState(true);
 
@@ -91,7 +104,10 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       try {
         const storedUser = await AsyncStorage.getItem('user_profile');
         if (storedUser) {
-          setUser(JSON.parse(storedUser));
+          // Merge over defaults so profiles saved by older versions keep working
+          const loaded = { ...DEFAULT_USER, ...JSON.parse(storedUser) };
+          userRef.current = loaded;
+          setUser(loaded);
         }
       } catch (error) {
         console.error('Failed to load user data:', error);
@@ -117,15 +133,15 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, [user, isLoading]);
 
   const addSeeds = (amount: number) => {
-    setUser(prev => ({ ...prev, seeds: prev.seeds + amount }));
+    update(prev => ({ ...prev, seeds: prev.seeds + amount }));
   };
 
   const addXp = (amount: number) => {
-    setUser(prev => ({ ...prev, xp: prev.xp + amount }));
+    update(prev => ({ ...prev, xp: prev.xp + amount }));
   };
 
   const buyFertilizer = (amount: number, cost: number) => {
-    setUser(prev => ({
+    update(prev => ({
       ...prev,
       seeds: prev.seeds - cost,
       fertilizer: prev.fertilizer + amount
@@ -134,7 +150,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const fertilizeItem = (id: string): boolean => {
     let success = false;
-    setUser(prev => {
+    update(prev => {
       if (prev.fertilizer <= 0) return prev;
 
       const itemIndex = prev.garden.findIndex(item => item.id === id);
@@ -161,12 +177,12 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const incrementLessons = () => {
-    setUser(prev => ({ ...prev, lessonsCompleted: prev.lessonsCompleted + 1 }));
+    update(prev => ({ ...prev, lessonsCompleted: prev.lessonsCompleted + 1 }));
   };
 
   const plantItem = (item: GardenItem): boolean => {
     let didPlant = false;
-    setUser(prev => {
+    update(prev => {
       if (prev.garden.length >= MAX_PLOTS) {
         console.warn('Cannot plant item: Garden is full (maximum 4 plots).');
         return prev;
@@ -178,7 +194,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const harvestItem = (id: string) => {
-    setUser(prev => {
+    update(prev => {
       const itemToHarvest = prev.garden.find(item => item.id === id);
       if (!itemToHarvest) return prev;
       const updatedGarden = prev.garden.filter(item => item.id !== id);
@@ -195,7 +211,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const sellItem = (id: string) => {
-    setUser(prev => {
+    update(prev => {
       const itemToSell = prev.inventory.find(item => item.id === id);
       if (!itemToSell) return prev;
       const updatedInventory = prev.inventory.filter(item => item.id !== id);
@@ -205,7 +221,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const startCraft = (recipeId: string): boolean => {
     let success = false;
-    setUser(prev => {
+    update(prev => {
       const recipe = craftingRecipes.find(r => r.id === recipeId);
       if (!recipe) return prev;
 
@@ -248,7 +264,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   const claimCraft = (craftId: string) => {
-    setUser(prev => {
+    update(prev => {
       const craft = prev.activeCrafts.find(c => c.id === craftId);
       if (!craft) return prev;
 
@@ -275,7 +291,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const twoDaysInMs = 48 * 60 * 60 * 1000;
     let result = { started: false, incremented: false, reset: false };
 
-    setUser(prev => {
+    update(prev => {
       const lastUpdate = prev.lastStreakUpdate;
       const timeDiff = now - lastUpdate;
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
@@ -7,7 +7,6 @@ import { useFonts } from 'expo-font';
 import 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
 
-import { useColorScheme } from '@/hooks/useColorScheme';
 import { UserProvider } from './contexts/UserContext';
 import AnimatedSplashScreen from '../components/ui/AnimatedSplashScreen';
 
@@ -15,7 +14,6 @@ import AnimatedSplashScreen from '../components/ui/AnimatedSplashScreen';
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
   const [isSplashVisible, setIsSplashVisible] = useState(true);
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
@@ -34,14 +32,13 @@ export default function RootLayout() {
 
   return (
     <UserProvider>
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+      <ThemeProvider value={DefaultTheme}>
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="(tabs)/index" options={{ headerShown: false }} />
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="+not-found" options={{ title: 'Oops!', headerShown: true }} />
           <Stack.Screen name="screens/GlobalEnergyMixScreen" options={{ title: 'Global Energy Mix', headerBackTitle: 'Back', headerShown: true }} />
         </Stack>
-        <StatusBar style="auto" />
+        <StatusBar style="dark" />
         {isSplashVisible && (
           <AnimatedSplashScreen
             onAnimationFinish={() => setIsSplashVisible(false)}

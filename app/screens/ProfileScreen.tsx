@@ -4,10 +4,9 @@ import {
   View,
   Text,
   StyleSheet,
-  Image,
-  TouchableOpacity,
   ScrollView,
 } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { UserContext } from '../contexts/UserContext';
 
@@ -20,10 +19,10 @@ const ProfileScreen: React.FC = () => {
       <ScrollView contentContainerStyle={styles.container}>
         {/* Profile Header */}
         <View style={styles.header}>
-          <Image source={{ uri: user.avatar }} style={styles.avatar} />
+          <View style={[styles.avatar, styles.avatarPlaceholder]}>
+            <MaterialCommunityIcons name="sprout" size={64} color="#2E7D32" />
+          </View>
           <Text style={styles.name}>{user.name}</Text>
-          <Text style={styles.email}>{user.email}</Text>
-          <Text style={styles.email}> lessons completed: {user.lessonsCompleted}</Text>
         </View>
 
         {/* User Statistics */}
@@ -34,21 +33,12 @@ const ProfileScreen: React.FC = () => {
           </View>
           <View style={styles.statItem}>
             <Text style={styles.statValue}>{user.seeds} 🌱</Text>
-            <Text style={styles.statLabel}>Seeds Earned</Text>
+            <Text style={styles.statLabel}>Seeds</Text>
           </View>
-        </View>
-
-        {/* Action Buttons */}
-        <View style={styles.optionsContainer}>
-          <TouchableOpacity style={styles.optionButton}>
-            <Text style={styles.optionText}>Edit Profile</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.optionButton}>
-            <Text style={styles.optionText}>Settings</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.optionButton}>
-            <Text style={styles.optionText}>Logout</Text>
-          </TouchableOpacity>
+          <View style={styles.statItem}>
+            <Text style={styles.statValue}>{user.streak} 🔥</Text>
+            <Text style={styles.statLabel}>Day Streak</Text>
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -71,14 +61,15 @@ const styles = StyleSheet.create({
     borderRadius: 60,
     marginBottom: 15,
   },
+  avatarPlaceholder: {
+    backgroundColor: '#E8F5E9',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   name: {
     fontSize: 26,
     fontWeight: 'bold',
     color: '#333',
-  },
-  email: {
-    fontSize: 16,
-    color: '#777',
   },
   statsContainer: {
     flexDirection: 'row',
@@ -100,21 +91,6 @@ const styles = StyleSheet.create({
   statLabel: {
     fontSize: 14,
     color: '#555',
-  },
-  optionsContainer: {
-    marginBottom: 20,
-  },
-  optionButton: {
-    backgroundColor: '#fff',
-    padding: 15,
-    borderRadius: 8,
-    marginBottom: 15,
-    elevation: 1,
-  },
-  optionText: {
-    fontSize: 16,
-    color: '#333',
-    textAlign: 'center',
   },
 });
 

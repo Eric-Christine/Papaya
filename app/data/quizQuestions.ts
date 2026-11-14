@@ -894,3 +894,285 @@ export const desertGeoengineeringQuizQuestions: Question[] = [
         explanation: "Geo-engineering projects often involve large-scale irrigation, water management, or climate intervention to help new forests survive in arid regions.",
     },
 ];
+
+export const solarPower2QuizQuestions: Question[] = [
+    {
+        question: "How does the solar energy reaching Earth compare with global energy demand?",
+        options: [
+            "It is roughly equal to demand",
+            "It is about 10 times demand",
+            "It is about 10,000 times demand",
+            "It is about half of demand",
+        ],
+        correctAnswer: 2,
+        explanation: "Roughly 10,000 times more solar energy is available than the world currently uses.",
+    },
+    {
+        question: "By how much have solar module prices fallen over the last decade?",
+        options: ["Over 90%", "About 25%", "About 50%", "They have risen"],
+        correctAnswer: 0,
+        explanation: "The 'Swanson Effect' has seen solar module prices drop by over 90% in a decade.",
+    },
+    {
+        question: "Approximately what share of the world's solar panels does China produce?",
+        options: ["20%", "40%", "60%", "80%"],
+        correctAnswer: 3,
+        explanation: "China produces approximately 80% of the world's solar panels.",
+    },
+    {
+        question: "What share of global electricity did solar provide in 2023?",
+        options: ["About 25%", "Less than 6%", "About 15%", "Over 40%"],
+        correctAnswer: 1,
+        explanation: "Despite its record growth, solar still provided roughly 5.5% of global electricity in 2023.",
+    },
+    {
+        question: "What is 'agrivoltaics'?",
+        options: [
+            "Storing solar power in farm batteries",
+            "Floating solar panels on reservoirs",
+            "Farming underneath solar panels",
+            "Using crops to make solar cells",
+        ],
+        correctAnswer: 2,
+        explanation: "Agrivoltaics combines farming and solar panels on the same land.",
+    },
+];
+
+export const electricVehicles2QuizQuestions: Question[] = [
+    {
+        question: "What share of global EV sales did China account for in 2023?",
+        options: ["20%", "40%", "60%", "90%"],
+        correctAnswer: 2,
+        explanation: "In 2023, China accounted for about 60% of all global EV sales.",
+    },
+    {
+        question: "How does BYD keep the price of models like the Seagull so low?",
+        options: [
+            "Vertical integration, including making its own batteries and chips",
+            "Importing finished cars from Europe",
+            "Selling cars without batteries",
+            "Outsourcing all manufacturing",
+        ],
+        correctAnswer: 0,
+        explanation: "BYD makes its own batteries and chips, which most car companies outsource.",
+    },
+    {
+        question: "What happened between BYD and Tesla in late 2023?",
+        options: [
+            "The two companies merged",
+            "Tesla stopped selling cars in China",
+            "BYD stopped making electric cars",
+            "BYD briefly overtook Tesla as the top seller of pure battery EVs",
+        ],
+        correctAnswer: 3,
+        explanation: "In late 2023, BYD briefly overtook Tesla as the world's top seller of battery electric vehicles.",
+    },
+    {
+        question: "To what level did the USA recently raise tariffs on Chinese EVs?",
+        options: ["10%", "100%", "38%", "250%"],
+        correctAnswer: 1,
+        explanation: "The USA hiked tariffs on Chinese EVs to 100%; the EU imposed provisional tariffs of up to 38%.",
+    },
+    {
+        question: "What do solid-state batteries promise?",
+        options: [
+            "Lower top speeds",
+            "Heavier vehicles",
+            "Longer range and faster charging",
+            "Shorter battery life",
+        ],
+        correctAnswer: 2,
+        explanation: "Solid-state batteries promise longer range and faster charging.",
+    },
+];
+
+export const arcticIceQuizQuestions: Question[] = [
+    {
+        question: "What does 'albedo' measure?",
+        options: [
+            "How thick sea ice is",
+            "How much solar energy a surface reflects",
+            "How salty ocean water is",
+            "How fast glaciers move",
+        ],
+        correctAnswer: 1,
+        explanation: "Albedo is a measure of how much solar energy a surface reflects.",
+    },
+    {
+        question: "How much sunlight does open ocean water reflect, compared with up to 85% for ice and snow?",
+        options: ["About 6%", "About 50%", "About 70%", "About 95%"],
+        correctAnswer: 0,
+        explanation: "Open ocean reflects only about 6% of sunlight and absorbs the rest as heat.",
+    },
+    {
+        question: "How fast is the Arctic warming compared with the rest of the planet?",
+        options: [
+            "At the same rate",
+            "Half as fast",
+            "10 times faster",
+            "3 to 4 times faster",
+        ],
+        correctAnswer: 3,
+        explanation: "The Arctic is warming 3 to 4 times faster than the global average, known as Arctic Amplification.",
+    },
+    {
+        question: "Why doesn't melting Arctic sea ice raise sea levels directly?",
+        options: [
+            "It evaporates instead of melting",
+            "It refreezes immediately",
+            "It is already floating in the ocean",
+            "It is too small to matter",
+        ],
+        correctAnswer: 2,
+        explanation: "Sea ice is already floating. Land-based ice, like the Greenland Ice Sheet, is what raises sea levels.",
+    },
+    {
+        question: "What happens to the Jet Stream as the Arctic warms?",
+        options: [
+            "It becomes wavy and sluggish, so weather systems get stuck",
+            "It disappears completely",
+            "It speeds up and straightens",
+            "It moves to the equator",
+        ],
+        correctAnswer: 0,
+        explanation: "A wavier, slower Jet Stream leads to prolonged heatwaves, floods and winter storms.",
+    },
+];
+
+export const foodQuizQuestions: Question[] = [
+    {
+        question: "About how much of all food produced globally is wasted each year?",
+        options: ["One-tenth", "Nearly one-third", "Two-thirds", "One-twentieth"],
+        correctAnswer: 1,
+        explanation: "About 1.3 billion tons of food is wasted every year, nearly one-third of all food produced.",
+    },
+    {
+        question: "Which greenhouse gas is released by food decomposing in landfills?",
+        options: ["Helium", "Oxygen", "Methane", "Ozone"],
+        correctAnswer: 2,
+        explanation: "Food rotting in landfills releases methane, a potent greenhouse gas.",
+    },
+    {
+        question: "How much household waste can home composting divert from landfills?",
+        options: ["About 30%", "About 5%", "About 75%", "About 95%"],
+        correctAnswer: 0,
+        explanation: "Home composting can divert about 30% of household waste from landfills.",
+    },
+    {
+        question: "What does a 'Best by' date on food tell you?",
+        options: [
+            "The food is unsafe after that date",
+            "When the food was produced",
+            "When the store must discard it",
+            "It is about quality, not safety",
+        ],
+        correctAnswer: 3,
+        explanation: "'Best by' is about quality. 'Use by' is the date that relates to safety.",
+    },
+    {
+        question: "What does FIFO stand for in the kitchen?",
+        options: [
+            "Food In, Food Out",
+            "First In, First Out",
+            "Freeze It, Forget It",
+            "Fresh Items For Others",
+        ],
+        correctAnswer: 1,
+        explanation: "First In, First Out means using older groceries before newer ones.",
+    },
+];
+
+export const aiEnergyQuizQuestions: Question[] = [
+    {
+        question: "Roughly what share of global electricity do data centers consume today?",
+        options: ["About 1-2%", "About 10-15%", "About 25%", "About 50%"],
+        correctAnswer: 0,
+        explanation: "Global data centers consume about 1-2% of global electricity, similar to the aviation industry.",
+    },
+    {
+        question: "What is a Power Purchase Agreement (PPA) used for by major tech companies?",
+        options: [
+            "Buying more GPUs",
+            "Selling data to utilities",
+            "Buying renewable energy to offset their consumption",
+            "Renting office space",
+        ],
+        correctAnswer: 2,
+        explanation: "Tech companies sign PPAs for renewable energy to offset their electricity use.",
+    },
+    {
+        question: "About how much of a data center's energy is typically spent on cooling?",
+        options: ["About 5%", "About 40%", "About 80%", "Almost none"],
+        correctAnswer: 1,
+        explanation: "Cooling typically accounts for around 40% of data center energy, which liquid cooling helps reduce.",
+    },
+    {
+        question: "Which zero-carbon technology are companies like Google and Microsoft exploring to power data centers?",
+        options: [
+            "Coal gasification",
+            "Diesel generators",
+            "Natural gas turbines",
+            "Small modular reactors (SMRs)",
+        ],
+        correctAnswer: 3,
+        explanation: "Small modular nuclear reactors could provide zero-carbon baseload power for data centers.",
+    },
+    {
+        question: "How has AI helped reduce energy use at Google's data centers?",
+        options: [
+            "DeepMind's AI cut cooling energy by 40%",
+            "It turned the servers off at night",
+            "It replaced all the hardware",
+            "It moved every data center to Iceland",
+        ],
+        correctAnswer: 0,
+        explanation: "DeepMind's AI reduced the energy used for cooling Google's data centers by 40%.",
+    },
+];
+
+export const achievementsQuizQuestions: Question[] = [
+    {
+        question: "Which international climate agreement was reached in 2015?",
+        options: [
+            "The Kyoto Protocol",
+            "The Montreal Protocol",
+            "The Paris Climate Accords",
+            "The Rio Declaration",
+        ],
+        correctAnswer: 2,
+        explanation: "The Paris Climate Accords were agreed in 2015.",
+    },
+    {
+        question: "Which of these is a technological innovation helping build a cleaner future?",
+        options: [
+            "Smart grids",
+            "Leaded gasoline",
+            "Single-use plastics",
+            "Coal-fired boilers",
+        ],
+        correctAnswer: 0,
+        explanation: "Advances in carbon capture, smart grids and sustainable materials are paving the way.",
+    },
+    {
+        question: "How are consumers contributing to climate progress?",
+        options: [
+            "By buying more disposable products",
+            "By embracing renewable energy, sustainable transport and eco-friendly products",
+            "By avoiding public transport",
+            "By using more fossil fuels",
+        ],
+        correctAnswer: 1,
+        explanation: "More consumers are choosing renewable energy, sustainable transportation and eco-friendly products.",
+    },
+    {
+        question: "Which trend is helping restore natural ecosystems?",
+        options: [
+            "Expanding landfills",
+            "Draining wetlands",
+            "Increasing logging",
+            "Declining deforestation and successful reforestation",
+        ],
+        correctAnswer: 3,
+        explanation: "Declining deforestation rates and reforestation initiatives are helping restore ecosystems.",
+    },
+];

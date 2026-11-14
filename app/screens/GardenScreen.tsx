@@ -12,6 +12,7 @@ import RoseBush from '../../components/plants/RoseBush';
 import Orchid from '../../components/plants/Orchid';
 import GardenGnome from '../../components/plants/GardenGnome';
 import CraftingArea from '../components/crafting/CraftingArea';
+import { formatDuration } from '../../utils/formatDuration';
 
 // ... (existing imports)
 
@@ -19,7 +20,7 @@ import CraftingArea from '../components/crafting/CraftingArea';
 
 // -----------------------------------------------------------------------------
 // SwayingPlant Component
-// Wraps a plant SVG and applies a gentle swaying animation + growth scaling.
+// Wraps a plant sprite and applies a gentle swaying animation + growth scaling.
 // -----------------------------------------------------------------------------
 const SwayingPlant = ({ children, progress }: { children: React.ReactNode; progress: number }) => {
   const rotation = useRef(new Animated.Value(0)).current;
@@ -118,7 +119,7 @@ export default function GardenScreen() {
 
         {garden.length === 0 ? (
           <Text style={styles.emptyText}>
-            No crops planted yet. Please visit the Rewards Shop to plant new crops.
+            No crops planted yet. Visit the Shop tab to plant new crops.
           </Text>
         ) : (
           garden.map(item => {
@@ -186,7 +187,7 @@ export default function GardenScreen() {
                       <View style={[styles.progressBarFill, { width: `${progress * 100}%` }]} />
                     </View>
                     <Text style={styles.growthText}>
-                      Growing... {getRemainingTime(item)}s until harvest
+                      Growing... {formatDuration(getRemainingTime(item))} until harvest
                     </Text>
                     {fertilizer > 0 && (
                       <TouchableOpacity
@@ -218,7 +219,7 @@ export default function GardenScreen() {
               </View>
             ))}
             <Text style={styles.infoText}>
-              To plant new crops, please use the Rewards Shop.
+              To plant new crops, visit the Shop tab.
             </Text>
           </View>
         )}

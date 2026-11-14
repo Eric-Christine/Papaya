@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import UserContext from '../../contexts/UserContext';
 import { craftingRecipes } from '../../data/craftingRecipes';
 import * as Haptics from 'expo-haptics';
+import { formatDuration } from '../../../utils/formatDuration';
 
 export default function CraftingArea() {
     const { user, startCraft, claimCraft } = useContext(UserContext);
@@ -61,7 +62,7 @@ export default function CraftingArea() {
                                         <Text style={styles.claimButtonText}>Claim & Sell ({recipe.sellPrice} seeds)</Text>
                                     </TouchableOpacity>
                                 ) : (
-                                    <Text style={styles.timerText}>Ready in {remaining}s</Text>
+                                    <Text style={styles.timerText}>Ready in {formatDuration(remaining)}</Text>
                                 )}
                             </View>
                         );

@@ -9,7 +9,7 @@ export const craftingRecipes: CraftingRecipe[] = [
             { itemId: 'Zucchini', itemTitle: 'Zucchini', quantity: 1 },
             { itemId: 'Broccoli', itemTitle: 'Broccoli', quantity: 1 },
         ],
-        duration: 10000, // 10 seconds for testing (real: maybe 5 mins?)
+        duration: 300000, // 5 minutes
         sellPrice: 1050, // (150 + 200) * 3 = 1050
     },
     {
@@ -20,7 +20,7 @@ export const craftingRecipes: CraftingRecipe[] = [
             { itemId: 'Rose Bush', itemTitle: 'Rose Bush', quantity: 1 },
             { itemId: 'Orchid', itemTitle: 'Orchid', quantity: 1 },
         ],
-        duration: 20000, // 20 seconds
+        duration: 600000, // 10 minutes
         sellPrice: 2100, // (300 + 400) * 3 = 2100
     },
     {
@@ -31,7 +31,7 @@ export const craftingRecipes: CraftingRecipe[] = [
             { itemId: 'Garden Gnome', itemTitle: 'Garden Gnome', quantity: 1 },
             { itemId: 'Blueberry Bush', itemTitle: 'Blueberry Bush', quantity: 1 },
         ],
-        duration: 30000, // 30 seconds
+        duration: 900000, // 15 minutes
         sellPrice: 2250, // (500 + 250) * 3 = 2250
     },
 ];

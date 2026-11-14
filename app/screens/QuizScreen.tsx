@@ -48,6 +48,19 @@ export default function QuizScreen() {
 
   const getQuizQuestions = (lessonType: string): Question[] => {
     switch (true) {
+      // Part II lessons must be matched before their part I titles
+      case lessonType.includes("solar power ii"):
+        return quizData.solarPower2QuizQuestions;
+      case lessonType.includes("electric vehicles ii"):
+        return quizData.electricVehicles2QuizQuestions;
+      case lessonType.includes("arctic"):
+        return quizData.arcticIceQuizQuestions;
+      case lessonType.includes("ai & energy"):
+        return quizData.aiEnergyQuizQuestions;
+      case lessonType.includes("achievements"):
+        return quizData.achievementsQuizQuestions;
+      case lessonType === "food":
+        return quizData.foodQuizQuestions;
       case lessonType.includes("sustainable living"):
         return quizData.sustainableLivingQuizQuestions;
       case lessonType.includes("energy storage"):
@@ -224,18 +237,23 @@ export default function QuizScreen() {
           setBonusAwarded(true);
         }
         const params = route.params as any;
+        // Only the first completion of a lesson counts towards lessonsCompleted
+        let alreadyCompleted = false;
         if (params?.lesson) {
           try {
             const lessonTitle = params.lesson;
             const completedMapJson = await AsyncStorage.getItem('completedLessonsMap');
             const completedMap = completedMapJson ? JSON.parse(completedMapJson) : {};
+            alreadyCompleted = !!completedMap[lessonTitle];
             completedMap[lessonTitle] = true;
             await AsyncStorage.setItem('completedLessonsMap', JSON.stringify(completedMap));
           } catch (e) {
             console.error('Failed to save completed lesson:', e);
           }
         }
-        incrementLessons();
+        if (!alreadyCompleted) {
+          incrementLessons();
+        }
         const result = updateStreak();
         setStreakResult(result);
         setQuizCompleted(true);
