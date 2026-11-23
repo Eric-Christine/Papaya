@@ -316,7 +316,7 @@ export default function QuizScreen() {
               <Text style={styles.streakAddedText}>
                 {streakResult.started ? "Streak Started!" : "Streak Continued!"}
               </Text>
-              <Text style={styles.streakCountText}>{user.streak} Days</Text>
+              <Text style={styles.streakCountText}>{user.streak} {user.streak === 1 ? 'Day' : 'Days'}</Text>
             </View>
           )}
 
@@ -335,10 +335,25 @@ export default function QuizScreen() {
         </View>
       ) : (
         <View style={styles.quizContainer}>
-          <View style={styles.livesContainer}>
-            <Text style={styles.heartsIndicatorText}>{'❤️'.repeat(lives)}</Text>
+          <View style={styles.statusBar}>
+            <View
+              style={styles.heartsRow}
+              accessibilityLabel={`${lives} of ${MAX_LIVES} lives left`}
+            >
+              {Array.from({ length: MAX_LIVES }, (_, i) => (
+                <MaterialCommunityIcons
+                  key={i}
+                  name={i < lives ? 'heart' : 'heart-outline'}
+                  size={17}
+                  color={i < lives ? '#EF5350' : '#E0C4C4'}
+                />
+              ))}
+            </View>
+            <View style={styles.seedsPill} accessibilityLabel={`${score} seeds earned`}>
+              <MaterialCommunityIcons name="sprout" size={18} color="#2E7D32" />
+              <Text style={styles.seedsText}>{score}</Text>
+            </View>
           </View>
-          <Text style={styles.xpText}>Seeds: {score} 🌱</Text>
           {seedAnimations.map(animation => (
             <SeedReward
               key={animation.id}
@@ -398,11 +413,40 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: 16,
   },
-  xpText: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: '#666',
+  statusBar: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
     marginBottom: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  heartsRow: {
+    flexDirection: 'row',
+    gap: 2,
+  },
+  seedsPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: '#E8F5E9',
+    borderRadius: 999,
+    paddingVertical: 5,
+    paddingHorizontal: 12,
+  },
+  seedsText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#2E7D32',
+    fontVariant: ['tabular-nums'],
   },
   feedbackCorrect: {
     fontSize: 18,
@@ -523,15 +567,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 24,
     lineHeight: 26,
-  },
-  livesContainer: {
-    width: '100%',
-    alignItems: 'center',
-    marginBottom: 4,
-  },
-  heartsIndicatorText: {
-    fontSize: 18,
-    letterSpacing: 2,
   },
   streakAddedContainer: {
     backgroundColor: '#FFF3E0',
