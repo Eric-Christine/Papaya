@@ -1,27 +1,26 @@
-import React, { useState, useContext, useCallback } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Modal,
-  TouchableOpacity,
-  Button,
-  Alert,
-} from 'react-native';
+import React, { useState, useContext, useCallback, useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import UserContext from '../contexts/UserContext';
-import { v4 as uuidv4 } from 'uuid';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Haptics from 'expo-haptics';
 import { useFocusEffect } from '@react-navigation/native';
-import Zucchini from '../../components/plants/Zucchini';
-import Broccoli from '../../components/plants/Broccoli';
-import BlueberryBush from '../../components/plants/BlueberryBush';
-import RoseBush from '../../components/plants/RoseBush';
-import Orchid from '../../components/plants/Orchid';
-import GardenGnome from '../../components/plants/GardenGnome';
-import Heart from '../../components/ui/Heart';
+import UserContext, { ActionResult } from '../contexts/UserContext';
+import { CropDefinition, CropRarity } from '../types/garden';
+import {
+  CROP_CATALOG,
+  FERTILIZER_PACK_COST,
+  FERTILIZER_PACK_COUNT,
+  FERTILIZER_SINGLE_COST,
+  HEART_COST,
+  SHOP_UPGRADES,
+  getDailyFeaturedCropId,
+  getEffectiveSeedCost,
+  getGardenLevel,
+  getMasteryInfo,
+} from '../data/shopCatalog';
+import { CropPixelSprite, MasteryStars, PixelIcon } from '../../components/pixel/PixelSprite';
+import { PixelIconName } from '../../components/pixel/cropSprites';
+import { formatDuration } from '../../utils/formatDuration';
 import {
   SunflowerBadge,
   GreenThumbBadge,
@@ -29,68 +28,6 @@ import {
   Level2Badge,
   Level5Badge,
 } from '../../components/badges/BadgeIcons';
-import Fertilizer from '../../components/items/Fertilizer'; // Import Fertilizer Icon
-
-const itemsData = [
-  {
-    id: '1',
-    title: 'Zucchini',
-    description: 'A fresh zucchini to brighten your garden.',
-    cost: 150,
-    harvestDuration: 300000, // 5 minutes
-  },
-  {
-    id: '2',
-    title: 'Broccoli',
-    description: 'A nutritious head of broccoli for a healthy meal.',
-    cost: 200,
-    harvestDuration: 600000, // 10 minutes
-  },
-  {
-    id: '3',
-    title: 'Blueberry Bush',
-    description: 'Produces sweet, tangy blueberries.',
-    cost: 250,
-    harvestDuration: 1800000, // 30 minutes
-  },
-  {
-    id: '4',
-    title: 'Rose Bush',
-    description: 'A beautiful rose bush to add color to your garden.',
-    cost: 300,
-    harvestDuration: 3600000, // 1 hour
-  },
-  {
-    id: '5',
-    title: 'Orchid',
-    description: 'An elegant orchid that only blooms after dedication.',
-    cost: 400,
-    harvestDuration: 7200000, // 2 hours
-    requiredLessons: 5,
-  },
-  {
-    id: '6',
-    title: 'Garden Gnome',
-    description: 'A magical gnome that rewards your garden wisdom.',
-    cost: 500,
-    harvestDuration: 10800000, // 3 hours
-    requiredLessons: 10,
-  },
-  {
-    id: '7',
-    title: 'Heart',
-    description: 'Buy a heart (extra life) for quizzes. Each heart costs 100 seeds.',
-    cost: 100,
-    harvestDuration: 0,
-  },
-  {
-    id: '8',
-    title: 'Fertilizer',
-    description: 'Use the fertilizer to cut the grow time in half!',
-    cost: 50,
-    harvestDuration: 0,
-  },
-];
 
 const badgesData = [
   {
@@ -125,31 +62,43 @@ const badgesData = [
   },
 ];
 
-const MAX_PLOTS = 4;
+const RARITY_COLORS: Record<CropRarity, string> = {
+  common: '#8D6E63',
+  uncommon: '#43A047',
+  rare: '#1E88E5',
+  epic: '#8E24AA',
+};
+
+const UPGRADE_ICONS: Record<string, PixelIconName> = {
+  rain_barrel: 'rain_barrel',
+  golden_trowel: 'golden_trowel',
+  scarecrow: 'scarecrow',
+};
+
 const MAX_LIVES = 10;
 const LIVES_KEY = 'quizLives';
 
 export default function RewardsScreen() {
-  const { user, addSeeds, plantItem, buyFertilizer } = useContext(UserContext);
-  const [selectedItem, setSelectedItem] = useState<any>(null);
-  const [modalVisible, setModalVisible] = useState(false);
+  const { user, addSeeds, buyFertilizer, buySeeds, buyUpgrade } = useContext(UserContext);
   const [lives, setLives] = useState<number>(MAX_LIVES);
+  const [toast, setToast] = useState<string | null>(null);
+  const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const handleItemPress = (item: typeof itemsData[0]) => {
-    setSelectedItem(item);
-    setModalVisible(true);
-  };
+  const { level } = getGardenLevel(user.xp);
+  const featuredId = getDailyFeaturedCropId(level);
+  const featured = CROP_CATALOG.find(c => c.id === featuredId)!;
+  const totalHarvests = Object.values(user.harvestCounts).reduce((sum, n) => sum + (n ?? 0), 0);
+
+  useEffect(() => () => {
+    if (toastTimer.current) clearTimeout(toastTimer.current);
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
       const fetchLives = async () => {
         try {
           const storedLives = await AsyncStorage.getItem(LIVES_KEY);
-          if (storedLives) {
-            setLives(parseInt(storedLives, 10));
-          } else {
-            setLives(MAX_LIVES);
-          }
+          setLives(storedLives ? parseInt(storedLives, 10) : MAX_LIVES);
         } catch (error) {
           console.error('Failed to fetch lives:', error);
         }
@@ -158,411 +107,546 @@ export default function RewardsScreen() {
     }, [])
   );
 
-  const handlePurchase = async (item: typeof itemsData[0]) => {
-    // If item is a Heart, handle special logic
-    if (item.title === 'Heart') {
-      if (user.seeds >= item.cost) {
-        const storedLives = await AsyncStorage.getItem(LIVES_KEY);
-        let currentLives = storedLives ? parseInt(storedLives, 10) : MAX_LIVES;
+  const showToast = (message: string) => {
+    setToast(message);
+    if (toastTimer.current) clearTimeout(toastTimer.current);
+    toastTimer.current = setTimeout(() => setToast(null), 1800);
+  };
 
-        if (currentLives >= MAX_LIVES) {
-          Alert.alert('Hearts Full', 'Your hearts are already full.');
-          return;
-        }
-        addSeeds(-item.cost);
-        currentLives += 1;
-        await AsyncStorage.setItem(LIVES_KEY, currentLives.toString());
-        setLives(currentLives); // Update UI immediately
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-        Alert.alert(
-          'Purchase Successful',
-          `You purchased a heart. You now have ${currentLives} heart(s).`
-        );
-        setModalVisible(false);
-        setSelectedItem(null);
-        return;
-      } else {
-        Alert.alert('Insufficient Seeds', 'You do not have enough seeds to purchase a heart.');
-        return;
-      }
-    }
-
-    // Fertilizer Logic
-    if (item.title === 'Fertilizer') {
-      if (user.seeds >= item.cost) {
-        buyFertilizer(1, item.cost);
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-        Alert.alert('Purchase Successful', 'You purchased a bag of Fertilizer! Use it in the Garden.');
-        setModalVisible(false);
-        setSelectedItem(null);
-        return;
-      } else {
-        Alert.alert('Insufficient Seeds', 'You do not have enough seeds to purchase Fertilizer.');
-        return;
-      }
-    }
-
-    // Check garden capacity for plants
-    if (user.garden.length >= MAX_PLOTS) {
-      Alert.alert(
-        'Garden Full',
-        'Your garden is full. Please harvest existing crops before planting new ones.'
-      );
-      return;
-    }
-
-    // Check lessons requirement
-    if (item.requiredLessons && user.lessonsCompleted < item.requiredLessons) {
-      Alert.alert(
-        'Not Eligible',
-        `You must complete at least ${item.requiredLessons} lessons to redeem this item.`
-      );
-      return;
-    }
-
-    // Check if user has enough seeds
-    if (user.seeds >= item.cost) {
-      // Deduct seeds
-      addSeeds(-item.cost);
-
-      // Attempt to plant
-      const didPlant = plantItem({
-        ...item,
-        growth: 'Planted',
-        plantedAt: Date.now(),
-        id: uuidv4(),
-      });
-
-      if (didPlant) {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-        Alert.alert('Purchase Successful', `You purchased and planted ${item.title}.`);
-      }
-      setModalVisible(false);
-      setSelectedItem(null);
+  const finish = (result: ActionResult, success: string) => {
+    if (result.ok) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      showToast(success);
     } else {
-      Alert.alert('Insufficient Seeds', 'You do not have enough seeds to purchase this item.');
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+      Alert.alert("Can't buy that yet", result.reason);
     }
   };
 
+  const handleBuySeeds = (crop: CropDefinition, quantity: number) => {
+    finish(buySeeds(crop.id, quantity), `+${quantity} ${crop.title} seed${quantity > 1 ? 's' : ''} in your bag`);
+  };
+
+  const handleBuyFertilizer = (amount: number, cost: number) => {
+    if (user.seeds < cost) {
+      finish({ ok: false, reason: `You need ${cost - user.seeds} more seeds.` }, '');
+      return;
+    }
+    buyFertilizer(amount, cost);
+    finish({ ok: true }, `+${amount} fertilizer`);
+  };
+
+  const handleBuyHeart = async () => {
+    if (user.seeds < HEART_COST) {
+      finish({ ok: false, reason: `You need ${HEART_COST - user.seeds} more seeds.` }, '');
+      return;
+    }
+    const storedLives = await AsyncStorage.getItem(LIVES_KEY);
+    const currentLives = storedLives ? parseInt(storedLives, 10) : MAX_LIVES;
+    if (currentLives >= MAX_LIVES) {
+      Alert.alert('Hearts Full', 'Your hearts are already full.');
+      return;
+    }
+    addSeeds(-HEART_COST);
+    await AsyncStorage.setItem(LIVES_KEY, String(currentLives + 1));
+    setLives(currentLives + 1);
+    finish({ ok: true }, '+1 quiz heart');
+  };
+
+  const lockReason = (crop: CropDefinition): string | null => {
+    if (crop.requiredLevel && level < crop.requiredLevel) return `Farm Level ${crop.requiredLevel}`;
+    if (crop.requiredLessons && user.lessonsCompleted < crop.requiredLessons) {
+      return `${crop.requiredLessons} lessons`;
+    }
+    return null;
+  };
+
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#F5F5F5' }} edges={['top']}>
+    <SafeAreaView style={styles.safeArea} edges={['top']}>
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.header}>Garden Shop</Text>
-        <Text style={styles.seedCount}>Seeds: {user.seeds}</Text>
-
-        <Text style={styles.lessonCount}>Lessons Completed: {user.lessonsCompleted}</Text>
-        <Text style={styles.livesCount}>{'❤️'.repeat(lives)}</Text>
-
-        {/* Show message if garden is full */}
-        {user.garden.length >= MAX_PLOTS && (
-          <Text style={styles.fullGardenNotice}>
-            Your garden is full. Please harvest existing crops before purchasing new ones.
-          </Text>
-        )}
-
-        <View style={styles.section}>
-          <Text style={styles.sectionHeader}>Items for Purchase</Text>
-          {itemsData.map(item => (
-            <TouchableOpacity
-              key={item.id}
-              style={styles.itemCard}
-              onPress={() => handleItemPress(item)}
-            >
-              <View style={styles.itemInfo}>
-                <View style={styles.titleRow}>
-                  {item.title === 'Zucchini' && (
-                    <View style={styles.iconContainer}>
-                      <Zucchini width={40} height={40} />
-                    </View>
-                  )}
-                  {item.title === 'Broccoli' && (
-                    <View style={styles.iconContainer}>
-                      <Broccoli width={40} height={40} />
-                    </View>
-                  )}
-                  {item.title === 'Blueberry Bush' && (
-                    <View style={styles.iconContainer}>
-                      <BlueberryBush width={40} height={40} />
-                    </View>
-                  )}
-                  {item.title === 'Rose Bush' && (
-                    <View style={styles.iconContainer}>
-                      <RoseBush width={40} height={40} />
-                    </View>
-                  )}
-                  {item.title === 'Orchid' && (
-                    <View style={styles.iconContainer}>
-                      <Orchid width={40} height={40} />
-                    </View>
-                  )}
-                  {item.title === 'Garden Gnome' && (
-                    <View style={styles.iconContainer}>
-                      <GardenGnome width={40} height={40} />
-                    </View>
-                  )}
-                  {item.title === 'Heart' && (
-                    <View style={styles.iconContainer}>
-                      <Heart width={40} height={40} />
-                    </View>
-                  )}
-                  {item.title === 'Fertilizer' && (
-                    <View style={styles.iconContainer}>
-                      <Fertilizer width={40} height={40} />
-                    </View>
-                  )}
-                  <Text style={styles.itemTitle}>{item.title}</Text>
-                </View>
-                <Text style={styles.itemDescription}>{item.description}</Text>
-                {item.requiredLessons && (
-                  <Text style={styles.requiredText}>
-                    🔒 Requires {item.requiredLessons} lessons
-                  </Text>
-                )}
-              </View>
-              <Text style={styles.itemCost}>{item.cost} seeds</Text>
-            </TouchableOpacity>
-          ))}
+        {/* Header */}
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Market</Text>
+          <View style={styles.headerChips}>
+            <View style={styles.chip}>
+              <PixelIcon name="seed_coin" size={18} />
+              <Text style={styles.chipText}>{user.seeds}</Text>
+            </View>
+            <View style={styles.chip}>
+              <PixelIcon name="heart" size={18} />
+              <Text style={styles.chipText}>{lives}</Text>
+            </View>
+          </View>
         </View>
 
-        <View style={styles.section}>
-          <Text style={styles.sectionHeader}>Badges</Text>
-          {badgesData.map(badge => {
-            const BadgeIcon = badge.icon;
-            // Determine if badge is unlocked
-            let isUnlocked = false;
-            const level = Math.floor(user.xp / 100) + 1;
+        {/* Daily special */}
+        <View style={styles.special}>
+          <View style={styles.specialSprite}>
+            <CropPixelSprite cropId={featured.id} size={64} />
+          </View>
+          <View style={styles.specialInfo}>
+            <Text style={styles.specialLabel}>TODAY'S SPECIAL · 25% OFF</Text>
+            <Text style={styles.specialTitle}>{featured.title} seeds</Text>
+            <Text style={styles.specialPrice}>
+              <Text style={styles.strike}>{featured.cost}</Text> {getEffectiveSeedCost(featured, level)} seeds
+            </Text>
+          </View>
+          <TouchableOpacity
+            style={[styles.buyButton, lockReason(featured) !== null && styles.buyButtonLocked]}
+            onPress={() => handleBuySeeds(featured, 1)}
+          >
+            <Text style={styles.buyButtonText}>Buy</Text>
+          </TouchableOpacity>
+        </View>
 
-            switch (badge.id) {
-              case '1': // Sunflower: consistent care (using XP > 0 as proxy)
-                isUnlocked = user.xp > 0;
-                break;
-              case '2': // Green Thumb: first harvest
-                isUnlocked = user.inventory.length > 0;
-                break;
-              case '3': // Master Gardener: level 10
-                isUnlocked = level >= 10;
-                break;
-              case '4': // Level 2
-                isUnlocked = level >= 2;
-                break;
-              case '5': // Level 5
-                isUnlocked = level >= 5;
-                break;
-              default:
-                isUnlocked = false;
-            }
-
+        {/* Seeds */}
+        <Text style={styles.sectionHeader}>Seed Packets</Text>
+        <Text style={styles.sectionHint}>Seeds go to your bag. Plant them on plowed soil in the Garden.</Text>
+        <View style={styles.seedGrid}>
+          {CROP_CATALOG.map(crop => {
+            const locked = lockReason(crop);
+            const price = getEffectiveSeedCost(crop, level);
+            const mastery = getMasteryInfo(user.harvestCounts[crop.id] ?? 0);
+            const owned = user.seedBag[crop.id] ?? 0;
             return (
-              <View key={badge.id} style={[styles.badgeCard, !isUnlocked && { opacity: 0.5, backgroundColor: '#F0F0F0' }]}>
-                <View style={styles.iconContainer}>
-                  <BadgeIcon width={50} height={50} opacity={isUnlocked ? 1 : 0.3} />
+              <View key={crop.id} style={[styles.seedCard, locked !== null && styles.seedCardLocked]}>
+                <View style={[styles.rarityTag, { backgroundColor: RARITY_COLORS[crop.rarity] }]}>
+                  <Text style={styles.rarityText}>{crop.rarity.toUpperCase()}</Text>
                 </View>
-                <View style={styles.textContainer}>
-                  <Text style={[styles.badgeTitle, !isUnlocked && { color: '#777' }]}>
-                    {badge.title} {isUnlocked ? '✅' : '🔒'}
-                  </Text>
-                  <Text style={styles.badgeDescription}>{badge.description}</Text>
-                </View>
+                {owned > 0 && (
+                  <View style={styles.ownedTag}>
+                    <Text style={styles.ownedText}>×{owned}</Text>
+                  </View>
+                )}
+                <CropPixelSprite cropId={crop.id} size={56} opacity={locked ? 0.45 : 1} />
+                <Text style={styles.seedTitle}>{crop.title}</Text>
+                <MasteryStars stars={mastery.stars} size={11} />
+                <Text style={styles.seedStats}>
+                  ⏱ {formatDuration(crop.harvestDuration / 1000)} · +{crop.xpReward} XP
+                </Text>
+                <Text style={styles.seedStats}>Sells for {crop.baseSellPrice}</Text>
+                <Text style={styles.ecoFact} numberOfLines={3}>🌍 {crop.ecoFact}</Text>
+                {locked ? (
+                  <View style={styles.lockedRow}>
+                    <Text style={styles.lockedText}>🔒 {locked}</Text>
+                  </View>
+                ) : (
+                  <View style={styles.buyRow}>
+                    <TouchableOpacity style={styles.buyButtonSmall} onPress={() => handleBuySeeds(crop, 1)}>
+                      <Text style={styles.buyButtonText}>{price}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.buyButtonSmallAlt} onPress={() => handleBuySeeds(crop, 5)}>
+                      <Text style={styles.buyButtonAltText}>×5</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
               </View>
             );
           })}
         </View>
 
-        <Modal visible={modalVisible} animationType="slide" transparent>
-          <View style={styles.modalOverlay}>
-            <View style={styles.modalContent}>
-              {selectedItem && (
-                <>
-                  <Text style={styles.modalTitle}>{selectedItem.title}</Text>
-                  <Text style={styles.modalDescription}>{selectedItem.description}</Text>
-                  <Text style={styles.modalCost}>Cost: {selectedItem.cost} seeds</Text>
-                  {selectedItem.requiredLessons && (
-                    <Text style={styles.requiredTextModal}>
-                      🔒 Requires {selectedItem.requiredLessons} lessons completed
-                    </Text>
-                  )}
-                  <View style={styles.modalButtons}>
-                    <Button
-                      title="Cancel"
-                      onPress={() => {
-                        setModalVisible(false);
-                        setSelectedItem(null);
-                      }}
-                    />
-                    <Button
-                      title="Buy"
-                      onPress={() => handlePurchase(selectedItem)}
-                      disabled={user.seeds < selectedItem.cost}
-                    />
-                  </View>
-                </>
+        {/* Supplies */}
+        <Text style={styles.sectionHeader}>Supplies</Text>
+        <View style={styles.listCard}>
+          <PixelIcon name="fertilizer" size={40} />
+          <View style={styles.listInfo}>
+            <Text style={styles.listTitle}>Fertilizer</Text>
+            <Text style={styles.listDescription}>Halves a crop's remaining grow time. You have {user.fertilizer}.</Text>
+          </View>
+          <View style={styles.listButtons}>
+            <TouchableOpacity style={styles.buyButtonSmall} onPress={() => handleBuyFertilizer(1, FERTILIZER_SINGLE_COST)}>
+              <Text style={styles.buyButtonText}>{FERTILIZER_SINGLE_COST}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.buyButtonSmallAlt}
+              onPress={() => handleBuyFertilizer(FERTILIZER_PACK_COUNT, FERTILIZER_PACK_COST)}
+            >
+              <Text style={styles.buyButtonAltText}>×{FERTILIZER_PACK_COUNT} {FERTILIZER_PACK_COST}</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+        <View style={styles.listCard}>
+          <PixelIcon name="heart" size={40} />
+          <View style={styles.listInfo}>
+            <Text style={styles.listTitle}>Quiz Heart</Text>
+            <Text style={styles.listDescription}>An extra life for quizzes. {lives}/{MAX_LIVES} hearts.</Text>
+          </View>
+          <TouchableOpacity style={styles.buyButtonSmall} onPress={handleBuyHeart}>
+            <Text style={styles.buyButtonText}>{HEART_COST}</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Upgrades */}
+        <Text style={styles.sectionHeader}>Farm Upgrades</Text>
+        {SHOP_UPGRADES.map(upgrade => {
+          const owned = user.upgrades.includes(upgrade.id);
+          const locked = !owned && upgrade.requiredLevel && level < upgrade.requiredLevel;
+          return (
+            <View key={upgrade.id} style={[styles.listCard, owned && styles.listCardOwned]}>
+              <PixelIcon name={UPGRADE_ICONS[upgrade.id]} size={44} opacity={locked ? 0.45 : 1} />
+              <View style={styles.listInfo}>
+                <Text style={styles.listTitle}>{upgrade.title}</Text>
+                <Text style={styles.upgradeEffect}>{upgrade.effectText}</Text>
+                <Text style={styles.listDescription}>{upgrade.description}</Text>
+              </View>
+              {owned ? (
+                <Text style={styles.ownedLabel}>OWNED</Text>
+              ) : locked ? (
+                <Text style={styles.lockedText}>🔒 LV {upgrade.requiredLevel}</Text>
+              ) : (
+                <TouchableOpacity
+                  style={styles.buyButtonSmall}
+                  onPress={() => finish(buyUpgrade(upgrade.id), `${upgrade.title} installed!`)}
+                >
+                  <Text style={styles.buyButtonText}>{upgrade.cost}</Text>
+                </TouchableOpacity>
               )}
             </View>
-          </View>
-        </Modal>
+          );
+        })}
+
+        {/* Badges */}
+        <Text style={styles.sectionHeader}>Badges</Text>
+        {badgesData.map(badge => {
+          const BadgeIcon = badge.icon;
+          let isUnlocked = false;
+          switch (badge.id) {
+            case '1': // Sunflower: consistent care (using XP > 0 as proxy)
+              isUnlocked = user.xp > 0;
+              break;
+            case '2': // Green Thumb: first harvest
+              isUnlocked = totalHarvests > 0 || user.inventory.length > 0;
+              break;
+            case '3': // Master Gardener: level 10
+              isUnlocked = level >= 10;
+              break;
+            case '4': // Level 2
+              isUnlocked = level >= 2;
+              break;
+            case '5': // Level 5
+              isUnlocked = level >= 5;
+              break;
+          }
+
+          return (
+            <View key={badge.id} style={[styles.badgeCard, !isUnlocked && styles.badgeCardLocked]}>
+              <BadgeIcon width={50} height={50} opacity={isUnlocked ? 1 : 0.3} />
+              <View style={styles.listInfo}>
+                <Text style={[styles.listTitle, !isUnlocked && { color: '#777' }]}>
+                  {badge.title} {isUnlocked ? '✅' : '🔒'}
+                </Text>
+                <Text style={styles.listDescription}>{badge.description}</Text>
+              </View>
+            </View>
+          );
+        })}
       </ScrollView>
+
+      {toast && (
+        <View style={styles.toast} pointerEvents="none">
+          <Text style={styles.toastText}>{toast}</Text>
+        </View>
+      )}
     </SafeAreaView>
   );
 }
 
+const PIXEL_FONT = 'SpaceMono';
+
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#F6EBD9',
+  },
   container: {
     flexGrow: 1,
-    backgroundColor: '#F5F5F5',
-    padding: 20,
-    alignItems: 'center',
+    padding: 16,
+    paddingBottom: 40,
   },
   header: {
-    fontSize: 28,
-    fontWeight: 'bold',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#5B371C',
+    borderWidth: 3,
+    borderColor: '#3B2210',
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+  },
+  headerTitle: {
+    fontFamily: PIXEL_FONT,
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#FFF8E1',
+  },
+  headerChips: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  chip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: '#FFF8E1',
+    borderRadius: 6,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+  },
+  chipText: {
+    fontFamily: PIXEL_FONT,
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#3B2210',
+  },
+  special: {
+    marginTop: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    backgroundColor: '#FFF3C4',
+    borderWidth: 3,
+    borderColor: '#F9A825',
+    borderRadius: 8,
+    padding: 10,
+  },
+  specialSprite: {
+    backgroundColor: '#FFE082',
+    borderRadius: 6,
+    padding: 2,
+  },
+  specialInfo: {
+    flex: 1,
+  },
+  specialLabel: {
+    fontFamily: PIXEL_FONT,
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#E65100',
+  },
+  specialTitle: {
+    fontSize: 17,
+    fontWeight: '700',
+    color: '#3B2210',
+  },
+  specialPrice: {
+    fontSize: 14,
+    fontWeight: '600',
     color: '#2E7D32',
-    marginBottom: 10,
   },
-  seedCount: {
-    fontSize: 18,
-    color: '#333',
-    marginBottom: 10,
-  },
-  lessonCount: {
-    marginBottom: 5,
-  },
-  livesCount: {
-    fontSize: 18,
-    color: '#C62828',
-    marginBottom: 20,
-    fontWeight: 'bold',
-  },
-  fullGardenNotice: {
-    fontSize: 16,
-    color: '#d9534f',
-    fontWeight: 'bold',
-    marginBottom: 15,
-    textAlign: 'center',
-  },
-  section: {
-    width: '100%',
-    marginBottom: 30,
+  strike: {
+    textDecorationLine: 'line-through',
+    color: '#A1887F',
   },
   sectionHeader: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#2E7D32',
-    marginBottom: 15,
+    fontFamily: PIXEL_FONT,
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#5B371C',
+    marginTop: 22,
+    marginBottom: 4,
   },
-  itemCard: {
+  sectionHint: {
+    fontSize: 13,
+    color: '#6D4C41',
+    marginBottom: 10,
+  },
+  seedGrid: {
     flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    padding: 15,
-    marginBottom: 15,
-    borderRadius: 8,
-    width: '100%',
+    flexWrap: 'wrap',
     justifyContent: 'space-between',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 2,
+    rowGap: 10,
   },
-  itemInfo: {
-    flex: 1,
+  seedCard: {
+    width: '48.5%',
+    alignItems: 'center',
+    backgroundColor: '#FFFDF7',
+    borderWidth: 3,
+    borderColor: '#C9A26B',
+    borderRadius: 8,
+    paddingTop: 22,
+    paddingBottom: 10,
+    paddingHorizontal: 8,
+    gap: 3,
   },
-  itemTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 5,
+  seedCardLocked: {
+    backgroundColor: '#EFE6D6',
+    borderColor: '#BCAAA4',
   },
-  titleRow: {
+  rarityTag: {
+    position: 'absolute',
+    top: 4,
+    left: 4,
+    borderRadius: 4,
+    paddingHorizontal: 5,
+    paddingVertical: 1,
+  },
+  rarityText: {
+    fontFamily: PIXEL_FONT,
+    fontSize: 8,
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
+  ownedTag: {
+    position: 'absolute',
+    top: 4,
+    right: 4,
+    backgroundColor: '#5B371C',
+    borderRadius: 4,
+    paddingHorizontal: 5,
+  },
+  ownedText: {
+    fontFamily: PIXEL_FONT,
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#FFF8E1',
+  },
+  seedTitle: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#3B2210',
+  },
+  seedStats: {
+    fontSize: 11,
+    color: '#6D4C41',
+  },
+  ecoFact: {
+    fontSize: 11,
+    color: '#2E7D32',
+    textAlign: 'center',
+    fontStyle: 'italic',
+    marginTop: 2,
+    minHeight: 42,
+  },
+  buyRow: {
+    flexDirection: 'row',
+    gap: 6,
+    marginTop: 6,
+  },
+  lockedRow: {
+    marginTop: 6,
+    paddingVertical: 6,
+  },
+  lockedText: {
+    fontFamily: PIXEL_FONT,
+    fontSize: 11,
+    color: '#8D6E63',
+    fontWeight: '700',
+  },
+  buyButton: {
+    backgroundColor: '#43A047',
+    borderWidth: 2,
+    borderColor: '#2E7D32',
+    borderRadius: 6,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+  },
+  buyButtonLocked: {
+    backgroundColor: '#A5A58D',
+    borderColor: '#8A8A73',
+  },
+  buyButtonSmall: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 5,
+    backgroundColor: '#43A047',
+    borderWidth: 2,
+    borderColor: '#2E7D32',
+    borderRadius: 6,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
   },
-  iconContainer: {
-    marginRight: 8,
+  buyButtonSmallAlt: {
+    backgroundColor: '#FFFFFF',
+    borderWidth: 2,
+    borderColor: '#43A047',
+    borderRadius: 6,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
   },
-  itemDescription: {
-    fontSize: 16,
-    color: '#666',
-    marginRight: 20,
+  buyButtonText: {
+    fontFamily: PIXEL_FONT,
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#FFFFFF',
   },
-  requiredText: {
-    fontSize: 14,
-    color: '#d9534f',
-    marginTop: 5,
-  },
-  itemCost: {
-    fontSize: 16,
-    fontWeight: 'bold',
+  buyButtonAltText: {
+    fontFamily: PIXEL_FONT,
+    fontSize: 12,
+    fontWeight: '700',
     color: '#2E7D32',
   },
-  textContainer: {
+  listCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    backgroundColor: '#FFFDF7',
+    borderWidth: 3,
+    borderColor: '#C9A26B',
+    borderRadius: 8,
+    padding: 10,
+    marginTop: 8,
+  },
+  listCardOwned: {
+    borderColor: '#43A047',
+    backgroundColor: '#F1F8E9',
+  },
+  listInfo: {
     flex: 1,
-    flexShrink: 1, // Ensure text wraps within container
+  },
+  listTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#3B2210',
+  },
+  listDescription: {
+    fontSize: 13,
+    color: '#6D4C41',
+    marginTop: 2,
+  },
+  listButtons: {
+    gap: 6,
+    alignItems: 'stretch',
+  },
+  upgradeEffect: {
+    fontFamily: PIXEL_FONT,
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#2E7D32',
+  },
+  ownedLabel: {
+    fontFamily: PIXEL_FONT,
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#2E7D32',
   },
   badgeCard: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 10,
     backgroundColor: '#FFFFFF',
-    padding: 15,
-    marginBottom: 15,
     borderRadius: 8,
-    width: '100%',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 2,
+    padding: 12,
+    marginTop: 8,
   },
-  badgeTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 5,
+  badgeCardLocked: {
+    opacity: 0.6,
+    backgroundColor: '#F0F0F0',
   },
-  badgeDescription: {
-    fontSize: 16,
-    color: '#666',
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalContent: {
-    width: '80%',
-    backgroundColor: '#FFF',
+  toast: {
+    position: 'absolute',
+    bottom: 20,
+    alignSelf: 'center',
+    backgroundColor: '#1B5E20',
+    borderWidth: 2,
+    borderColor: '#A5D6A7',
     borderRadius: 8,
-    padding: 20,
-    alignItems: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 14,
   },
-  modalTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#2E7D32',
-    marginBottom: 10,
-  },
-  modalDescription: {
-    fontSize: 16,
-    color: '#666',
-    marginBottom: 10,
-    textAlign: 'center',
-  },
-  modalCost: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#2E7D32',
-    marginBottom: 20,
-  },
-  requiredTextModal: {
-    fontSize: 14,
-    color: '#d9534f',
-    marginBottom: 20,
-  },
-  modalButtons: {
-    flexDirection: 'row',
-    width: '100%',
-    justifyContent: 'space-around',
+  toastText: {
+    fontFamily: PIXEL_FONT,
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#FFFFFF',
   },
 });

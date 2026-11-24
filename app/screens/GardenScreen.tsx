@@ -1,455 +1,849 @@
 // app/screens/GardenScreen.tsx
-import React, { useContext, useEffect, useState, useRef } from 'react';
-import { View, Text, StyleSheet, ScrollView, Button, Alert, Animated, Easing, TouchableOpacity } from 'react-native';
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  Alert,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  useWindowDimensions,
+  View,
+} from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import UserContext from '../contexts/UserContext';
-import { GardenItem } from '../types/garden';
-import Zucchini from '../../components/plants/Zucchini';
-import Broccoli from '../../components/plants/Broccoli';
-import BlueberryBush from '../../components/plants/BlueberryBush';
-import RoseBush from '../../components/plants/RoseBush';
-import Orchid from '../../components/plants/Orchid';
-import GardenGnome from '../../components/plants/GardenGnome';
+import { useNavigation } from '@react-navigation/native';
+import UserContext, { ActionResult } from '../contexts/UserContext';
+import { CropId, GardenTool } from '../types/garden';
 import CraftingArea from '../components/crafting/CraftingArea';
+import {
+  CROP_CATALOG,
+  TOTAL_FARM_PLOTS,
+  WATER_HYDRATION_DURATION_MS,
+  generateFarmOrder,
+  getCropById,
+  getGardenLevel,
+  getMasteryInfo,
+  getPlotUnlockCost,
+  getWaterState,
+  resolveCropId,
+} from '../data/shopCatalog';
+import AnimatedPlotTile, { PlotEffectEvent } from '../../components/pixel/AnimatedPlotTile';
+import { CropPixelSprite, MasteryStars, PixelIcon } from '../../components/pixel/PixelSprite';
+import { PixelIconName } from '../../components/pixel/cropSprites';
 import { formatDuration } from '../../utils/formatDuration';
 
-// ... (existing imports)
+const TOOLS: { id: GardenTool; label: string; icon: PixelIconName }[] = [
+  { id: 'smart', label: 'Auto', icon: 'sparkle' },
+  { id: 'plow', label: 'Plow', icon: 'plow' },
+  { id: 'plant', label: 'Plant', icon: 'seed_packet' },
+  { id: 'water', label: 'Water', icon: 'watering_can' },
+  { id: 'fertilize', label: 'Boost', icon: 'fertilizer' },
+  { id: 'harvest', label: 'Pick', icon: 'basket' },
+];
 
-
-
-// -----------------------------------------------------------------------------
-// SwayingPlant Component
-// Wraps a plant sprite and applies a gentle swaying animation + growth scaling.
-// -----------------------------------------------------------------------------
-const SwayingPlant = ({ children, progress }: { children: React.ReactNode; progress: number }) => {
-  const rotation = useRef(new Animated.Value(0)).current;
-
-  useEffect(() => {
-    // gentle sway animation
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(rotation, {
-          toValue: 1,
-          duration: 2000,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }),
-        Animated.timing(rotation, {
-          toValue: -1,
-          duration: 2000,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }),
-        Animated.timing(rotation, {
-          toValue: 0,
-          duration: 2000,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }),
-      ])
-    ).start();
-  }, []);
-
-  // Map 0 -> 1 to -5deg -> 5deg
-  const spin = rotation.interpolate({
-    inputRange: [-1, 1],
-    outputRange: ['-5deg', '5deg'],
-  });
-
-  // Scale from 0.5 (just planted) to 1.0 (fully grown)
-  // Ensure we don't scale down to 0 invisible
-  const scale = 0.5 + (Math.max(0, Math.min(progress, 1)) * 0.5);
-
-  return (
-    <Animated.View style={{ transform: [{ rotate: spin }, { scale }] }}>
-      {children}
-    </Animated.View>
-  );
-};
+const GRID_GAP = 8;
+const FIELD_PADDING = 10;
+const FIELD_BORDER = 4;
 
 export default function GardenScreen() {
-  const { user, harvestItem, sellItem, addXp, fertilizeItem } = useContext(UserContext);
-  const { garden, inventory, xp, fertilizer } = user; // Get xp and fertilizer from user context
-  const [tick, setTick] = useState(0);
-  const MAX_PLOTS = 4;
+  const {
+    user,
+    sellItem,
+    fertilizeItem,
+    plowPlot,
+    plantCrop,
+    waterPlot,
+    harvestPlot,
+    unlockPlot,
+    deliverOrder,
+    skipOrder,
+  } = useContext(UserContext);
+  const navigation = useNavigation<any>();
+  const { width } = useWindowDimensions();
 
-  // Gamification: Level and Progress derived from global XP
-  const level = Math.floor(xp / 100) + 1;
-  const xpProgress = xp % 100;
-  const progressPercent = xpProgress / 100;
+  const [now, setNow] = useState(Date.now());
+  const [tool, setTool] = useState<GardenTool>('smart');
+  const [selectedSeed, setSelectedSeed] = useState<CropId | null>(null);
+  const [effects, setEffects] = useState<Record<number, PlotEffectEvent>>({});
+  const effectCounter = useRef(0);
 
   useEffect(() => {
-    const interval = setInterval(() => setTick(t => t + 1), 1000);
+    const interval = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(interval);
   }, []);
 
-  const getRemainingTime = (item: GardenItem) => {
-    const elapsed = Date.now() - item.plantedAt;
-    const remaining = Math.max(item.harvestDuration - elapsed, 0);
-    return Math.ceil(remaining / 1000);
+  const { level, xpInLevel, xpForNextLevel, progress: levelProgress } = getGardenLevel(user.xp);
+  const water = getWaterState(user.waterDrops, user.waterUpdatedAt, user.upgrades, now);
+  const order = generateFarmOrder(level, user.orderNumber);
+
+  const fieldWidth = Math.min(width, 520) - 32;
+  const tileSize = Math.floor((fieldWidth - (FIELD_PADDING + FIELD_BORDER) * 2 - GRID_GAP * 2) / 3);
+
+  const seedsInBag = CROP_CATALOG.filter(c => (user.seedBag[c.id] ?? 0) > 0);
+  const activeSeed: CropId | null =
+    selectedSeed && (user.seedBag[selectedSeed] ?? 0) > 0 ? selectedSeed : seedsInBag[0]?.id ?? null;
+
+  const ripePlots = user.garden
+    .filter(g => now - g.plantedAt >= g.harvestDuration)
+    .map(g => g.plotIndex!)
+    .filter(p => p !== undefined);
+
+  const showEffect = (plotIndex: number, event: Omit<PlotEffectEvent, 'id'>) => {
+    effectCounter.current += 1;
+    setEffects(prev => ({ ...prev, [plotIndex]: { ...event, id: effectCounter.current } }));
   };
 
-  const getProgress = (item: GardenItem) => {
-    const elapsed = Date.now() - item.plantedAt;
-    return Math.min(elapsed / item.harvestDuration, 1);
+  const refuse = (plotIndex: number, result: ActionResult) => {
+    if (!result.ok) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+      showEffect(plotIndex, { type: 'info', label: result.reason });
+    }
   };
 
-  const handleHarvest = (item: GardenItem) => {
-    harvestItem(item.id);
-    addXp(50); // Award 50 XP per harvest
+  const goToShop = () => navigation.navigate('Shop');
+
+  const doHarvest = (plotIndex: number, quiet = false) => {
+    const levelBefore = getGardenLevel(user.xp).level;
+    const result = harvestPlot(plotIndex);
+    if (!result) return;
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    Alert.alert('Harvested!', `${item.title} harvested! +50 XP`);
+    showEffect(plotIndex, {
+      type: 'harvest',
+      label: result.isGolden ? `GOLDEN! +${result.xpEarned} XP` : `+${result.xpEarned} XP`,
+      isGolden: result.isGolden,
+    });
+    if (quiet) return;
+    const levelAfter = getGardenLevel(user.xp + result.xpEarned).level;
+    if (levelAfter > levelBefore) {
+      const unlocked = CROP_CATALOG.filter(c => c.requiredLevel === levelAfter).map(c => c.title);
+      Alert.alert(
+        `Farm Level ${levelAfter}!`,
+        unlocked.length ? `New seeds in the Shop: ${unlocked.join(', ')}.` : 'Your farm is growing. Keep it up!'
+      );
+    } else if (result.unlockedNewStar) {
+      Alert.alert(
+        `${result.item.title} Mastery ★${result.masteryStars}`,
+        'Mastered crops grow faster, sell for more and turn golden more often.'
+      );
+    }
+  };
+
+  const handleLockedPlot = (plotIndex: number) => {
+    if (plotIndex !== user.unlockedPlots) {
+      Alert.alert('Expand in order', 'Unlock the next plot of land first.');
+      return;
+    }
+    const cost = getPlotUnlockCost(plotIndex);
+    Alert.alert('Expand your farm?', `Clear this plot of land for ${cost} seeds.`, [
+      { text: 'Not now', style: 'cancel' },
+      {
+        text: `Buy for ${cost}`,
+        onPress: () => {
+          const result = unlockPlot();
+          if (result.ok) {
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+            showEffect(plotIndex, { type: 'plow', label: 'New land!' });
+          } else {
+            Alert.alert('Not enough seeds', result.reason);
+          }
+        },
+      },
+    ]);
+  };
+
+  const handlePlotPress = (plotIndex: number) => {
+    if (plotIndex >= user.unlockedPlots) {
+      handleLockedPlot(plotIndex);
+      return;
+    }
+    const item = user.garden.find(g => g.plotIndex === plotIndex);
+    const isTilled = user.tilledPlots.includes(plotIndex);
+    const isRipe = Boolean(item && now - item.plantedAt >= item.harvestDuration);
+    const isWet = Boolean(item?.wateredAt && now - item.wateredAt < WATER_HYDRATION_DURATION_MS);
+
+    let action: GardenTool = tool;
+    if (tool === 'smart') {
+      if (!item) action = isTilled ? 'plant' : 'plow';
+      else if (isRipe) action = 'harvest';
+      else if (!isWet && water.drops > 0) action = 'water';
+      else {
+        const left = Math.ceil((item.harvestDuration - (now - item.plantedAt)) / 1000);
+        showEffect(plotIndex, { type: 'info', label: `${formatDuration(left)} left` });
+        return;
+      }
+    }
+
+    switch (action) {
+      case 'plow': {
+        const result = plowPlot(plotIndex);
+        if (result.ok) {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+          showEffect(plotIndex, { type: 'plow', label: '+1 XP' });
+        } else refuse(plotIndex, result);
+        return;
+      }
+      case 'plant': {
+        if (!activeSeed) {
+          Alert.alert('Seed bag is empty', 'Buy seed packets in the Shop to plant more crops.', [
+            { text: 'Later', style: 'cancel' },
+            { text: 'Go to Shop', onPress: goToShop },
+          ]);
+          return;
+        }
+        const result = plantCrop(plotIndex, activeSeed);
+        if (result.ok) {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          showEffect(plotIndex, { type: 'plant', label: getCropById(activeSeed)?.title });
+        } else refuse(plotIndex, result);
+        return;
+      }
+      case 'water': {
+        const result = waterPlot(plotIndex);
+        if (result.ok) {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          showEffect(plotIndex, { type: 'water', label: 'Growing faster!' });
+        } else refuse(plotIndex, result);
+        return;
+      }
+      case 'fertilize': {
+        if (!item) {
+          refuse(plotIndex, { ok: false, reason: 'Nothing to boost.' });
+          return;
+        }
+        if (user.fertilizer <= 0) {
+          Alert.alert('No fertilizer', 'Buy fertilizer in the Shop or earn it from orders.', [
+            { text: 'Later', style: 'cancel' },
+            { text: 'Go to Shop', onPress: goToShop },
+          ]);
+          return;
+        }
+        if (fertilizeItem(item.id)) {
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+          showEffect(plotIndex, { type: 'fertilize', label: 'Time halved!' });
+        } else refuse(plotIndex, { ok: false, reason: 'Already ripe!' });
+        return;
+      }
+      case 'harvest': {
+        if (!isRipe) {
+          refuse(plotIndex, { ok: false, reason: item ? 'Not ripe yet' : 'Nothing to pick' });
+          return;
+        }
+        doHarvest(plotIndex);
+        return;
+      }
+    }
+  };
+
+  const harvestAll = () => {
+    ripePlots.forEach(p => doHarvest(p, true));
+  };
+
+  const handleDeliver = () => {
+    const result = deliverOrder();
+    if (result.ok) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      Alert.alert(
+        'Order delivered!',
+        `${order.customerName} paid ${order.rewardSeeds} seeds, ${order.rewardXp} XP` +
+          (order.rewardFertilizer ? ` and ${order.rewardFertilizer} fertilizer.` : '.')
+      );
+    } else {
+      Alert.alert('Not ready yet', result.reason);
+    }
+  };
+
+  // Barn: group harvested crops by type, golden ones separately
+  const barn = useMemo(() => {
+    const groups = new Map<string, { cropId: CropId; title: string; isGolden: boolean; ids: string[]; price: number }>();
+    user.inventory.forEach(item => {
+      const cropId = resolveCropId(item.cropId, item.title);
+      const key = `${cropId}:${item.isGolden ? 'g' : 'n'}`;
+      const group = groups.get(key);
+      if (group) {
+        group.ids.push(item.id);
+        group.price += item.sellPrice;
+      } else {
+        groups.set(key, { cropId, title: item.title, isGolden: Boolean(item.isGolden), ids: [item.id], price: item.sellPrice });
+      }
+    });
+    return [...groups.values()];
+  }, [user.inventory]);
+
+  const countInBarn = (cropId: CropId) =>
+    user.inventory.filter(i => resolveCropId(i.cropId, i.title) === cropId).length;
+  const orderReady = order.requirements.every(r => countInBarn(r.cropId) >= r.quantity);
+
+  const sellGroup = (ids: string[], title: string, total: number) => {
+    ids.forEach(id => sellItem(id));
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    Alert.alert('Sold!', `${ids.length} × ${title} for ${total} seeds.`);
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#E8F5E9' }} edges={['top']}>
+    <SafeAreaView style={styles.safeArea} edges={['top']}>
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.header}>Your Garden</Text>
-        <View style={styles.gamificationHeader}>
-          <View style={styles.levelRow}>
-            <Text style={styles.gamificationText}>Garden Level {level}</Text>
-            <Text style={styles.xpText}>{xpProgress}/100 XP</Text>
+        {/* HUD */}
+        <View style={styles.hud}>
+          <View style={styles.levelBadge}>
+            <Text style={styles.levelBadgeLabel}>LV</Text>
+            <Text style={styles.levelBadgeValue}>{level}</Text>
           </View>
-          <Text style={styles.fertilizerText}>⚡️ Fertilizer: {fertilizer}</Text>
-          <View style={styles.xpBarContainer}>
-            <View style={[styles.xpBarFill, { width: `${progressPercent * 100}%` }]} />
+          <View style={styles.hudMain}>
+            <Text style={styles.farmTitle}>{user.name}'s Farm</Text>
+            <View style={styles.xpTrack}>
+              <View style={[styles.xpFill, { width: `${Math.max(4, levelProgress * 100)}%` }]} />
+            </View>
+            <Text style={styles.xpLabel}>
+              {xpInLevel}/{xpForNextLevel} XP to level {level + 1}
+            </Text>
           </View>
         </View>
 
-        {garden.length === 0 ? (
-          <Text style={styles.emptyText}>
-            No crops planted yet. Visit the Shop tab to plant new crops.
-          </Text>
-        ) : (
-          garden.map(item => {
-            const elapsed = Date.now() - item.plantedAt;
-            const ready = elapsed >= item.harvestDuration;
-            const progress = getProgress(item);
-            return (
-              <View key={item.id} style={styles.plantedItem}>
-                <View style={styles.itemHeader}>
-                  {item.title === 'Zucchini' && (
-                    <View style={styles.iconContainer}>
-                      <SwayingPlant progress={progress}>
-                        <Zucchini width={60} height={60} />
-                      </SwayingPlant>
-                    </View>
-                  )}
-                  {item.title === 'Broccoli' && (
-                    <View style={styles.iconContainer}>
-                      <SwayingPlant progress={progress}>
-                        <Broccoli width={60} height={60} />
-                      </SwayingPlant>
-                    </View>
-                  )}
-                  {item.title === 'Blueberry Bush' && (
-                    <View style={styles.iconContainer}>
-                      <SwayingPlant progress={progress}>
-                        <BlueberryBush width={60} height={60} />
-                      </SwayingPlant>
-                    </View>
-                  )}
-                  {item.title === 'Rose Bush' && (
-                    <View style={styles.iconContainer}>
-                      <SwayingPlant progress={progress}>
-                        <RoseBush width={60} height={60} />
-                      </SwayingPlant>
-                    </View>
-                  )}
-                  {item.title === 'Orchid' && (
-                    <View style={styles.iconContainer}>
-                      <SwayingPlant progress={progress}>
-                        <Orchid width={60} height={60} />
-                      </SwayingPlant>
-                    </View>
-                  )}
-                  {item.title === 'Garden Gnome' && (
-                    <View style={styles.iconContainer}>
-                      <SwayingPlant progress={progress}>
-                        <GardenGnome width={60} height={60} />
-                      </SwayingPlant>
-                    </View>
-                  )}
-                  <View style={styles.textContainer}>
-                    <Text style={styles.itemTitle}>{item.title}</Text>
-                    <Text style={styles.itemDescription}>{item.description}</Text>
-                  </View>
-                </View>
-                {ready ? (
-                  <>
-                    <Text style={styles.readyText}>Ready to Harvest!</Text>
-                    <Button title="Harvest" onPress={() => handleHarvest(item)} />
-                  </>
-                ) : (
-                  <>
-                    <View style={styles.progressBarBackground}>
-                      <View style={[styles.progressBarFill, { width: `${progress * 100}%` }]} />
-                    </View>
-                    <Text style={styles.growthText}>
-                      Growing... {formatDuration(getRemainingTime(item))} until harvest
-                    </Text>
-                    {fertilizer > 0 && (
-                      <TouchableOpacity
-                        style={styles.fertilizerButton}
-                        onPress={() => {
-                          const success = fertilizeItem(item.id);
-                          if (success) {
-                            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-                            Alert.alert('Fertilized!', 'Growth time cut in half!');
-                          }
-                        }}
-                      >
-                        <Text style={styles.fertilizerButtonText}>Use Fertilizer ⚡️</Text>
-                      </TouchableOpacity>
-                    )}
-                  </>
-                )}
-              </View>
-            );
-          })
-        )}
-
-        {/* Show empty plot placeholders if garden is not full */}
-        {garden.length < MAX_PLOTS && (
-          <View style={styles.emptyPlotsContainer}>
-            {[...Array(MAX_PLOTS - garden.length)].map((_, index) => (
-              <View key={`empty-${index}`} style={styles.emptyPlot}>
-                <Text style={styles.emptyPlotText}>Empty Plot</Text>
-              </View>
-            ))}
-            <Text style={styles.infoText}>
-              To plant new crops, visit the Shop tab.
-            </Text>
+        <View style={styles.resourceRow}>
+          <View style={styles.resourceChip}>
+            <PixelIcon name="seed_coin" size={20} />
+            <Text style={styles.resourceText}>{user.seeds}</Text>
           </View>
+          <View style={styles.resourceChip}>
+            <PixelIcon name="water_drop" size={20} />
+            <Text style={styles.resourceText}>
+              {water.drops}/{water.max}
+            </Text>
+            {water.msToNext > 0 && (
+              <Text style={styles.resourceSub}>+1 in {formatDuration(Math.ceil(water.msToNext / 1000))}</Text>
+            )}
+          </View>
+          <View style={styles.resourceChip}>
+            <PixelIcon name="fertilizer" size={20} />
+            <Text style={styles.resourceText}>{user.fertilizer}</Text>
+          </View>
+        </View>
+
+        {/* Tool bar */}
+        <View style={styles.toolbar}>
+          {TOOLS.map(t => (
+            <TouchableOpacity
+              key={t.id}
+              style={[styles.toolButton, tool === t.id && styles.toolButtonActive]}
+              onPress={() => {
+                Haptics.selectionAsync();
+                setTool(t.id);
+              }}
+              accessibilityRole="button"
+              accessibilityState={{ selected: tool === t.id }}
+              accessibilityLabel={`${t.label} tool`}
+            >
+              <PixelIcon name={t.icon} size={26} />
+              <Text style={[styles.toolLabel, tool === t.id && styles.toolLabelActive]}>{t.label}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        {/* Farm field */}
+        <View style={[styles.field, { width: fieldWidth, padding: FIELD_PADDING }]}>
+          <View style={[styles.grid, { gap: GRID_GAP }]}>
+            {Array.from({ length: TOTAL_FARM_PLOTS }, (_, plotIndex) => (
+              <AnimatedPlotTile
+                key={plotIndex}
+                plotIndex={plotIndex}
+                isUnlocked={plotIndex < user.unlockedPlots}
+                isTilled={user.tilledPlots.includes(plotIndex)}
+                item={user.garden.find(g => g.plotIndex === plotIndex)}
+                now={now}
+                tileSize={tileSize}
+                effectEvent={effects[plotIndex]}
+                onPress={() => handlePlotPress(plotIndex)}
+              />
+            ))}
+          </View>
+        </View>
+
+        {ripePlots.length > 1 && (
+          <TouchableOpacity style={styles.harvestAllButton} onPress={harvestAll}>
+            <PixelIcon name="basket" size={22} />
+            <Text style={styles.harvestAllText}>Harvest all ({ripePlots.length})</Text>
+          </TouchableOpacity>
         )}
 
-        <View style={styles.inventorySection}>
-          <Text style={styles.sectionHeader}>Inventory</Text>
-          {inventory.length === 0 ? (
-            <Text style={styles.emptyText}>No harvested items yet.</Text>
+        {/* Seed bag */}
+        <View style={styles.panel}>
+          <View style={styles.panelHeader}>
+            <PixelIcon name="seed_packet" size={22} />
+            <Text style={styles.panelTitle}>Seed Bag</Text>
+            <TouchableOpacity onPress={goToShop} style={styles.panelLink}>
+              <Text style={styles.panelLinkText}>Buy seeds ›</Text>
+            </TouchableOpacity>
+          </View>
+          {seedsInBag.length === 0 ? (
+            <Text style={styles.emptyText}>Your seed bag is empty. Visit the Shop to buy seed packets.</Text>
           ) : (
-            inventory.map(item => (
-              <View key={item.id} style={styles.inventoryItem}>
-                <Text style={styles.itemTitle}>{item.title}</Text>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.seedTray}>
+              {seedsInBag.map(crop => {
+                const selected = activeSeed === crop.id;
+                const mastery = getMasteryInfo(user.harvestCounts[crop.id] ?? 0);
+                return (
+                  <TouchableOpacity
+                    key={crop.id}
+                    style={[styles.seedCard, selected && styles.seedCardActive]}
+                    onPress={() => {
+                      Haptics.selectionAsync();
+                      setSelectedSeed(crop.id);
+                      setTool(current => (current === 'smart' ? 'smart' : 'plant'));
+                    }}
+                    accessibilityLabel={`${crop.title} seeds, ${user.seedBag[crop.id]} left`}
+                  >
+                    <CropPixelSprite cropId={crop.id} size={40} />
+                    <Text style={styles.seedName} numberOfLines={1}>{crop.title}</Text>
+                    <MasteryStars stars={mastery.stars} size={10} />
+                    <View style={styles.seedCount}>
+                      <Text style={styles.seedCountText}>×{user.seedBag[crop.id]}</Text>
+                    </View>
+                  </TouchableOpacity>
+                );
+              })}
+            </ScrollView>
+          )}
+        </View>
 
-                <View style={{ marginVertical: 10 }}>
-                  {item.title === 'Zucchini' && <Zucchini width={60} height={60} />}
-                  {item.title === 'Broccoli' && <Broccoli width={60} height={60} />}
-                  {item.title === 'Blueberry Bush' && <BlueberryBush width={60} height={60} />}
-                  {item.title === 'Rose Bush' && <RoseBush width={60} height={60} />}
-                  {item.title === 'Orchid' && <Orchid width={60} height={60} />}
-                  {item.title === 'Garden Gnome' && <GardenGnome width={60} height={60} />}
+        {/* Order board */}
+        <View style={styles.panel}>
+          <View style={styles.panelHeader}>
+            <PixelIcon name="crate" size={22} />
+            <Text style={styles.panelTitle}>Order Board</Text>
+          </View>
+          <Text style={styles.orderTitle}>{order.title}</Text>
+          <Text style={styles.orderCustomer}>for {order.customerName}</Text>
+          <View style={styles.orderReqs}>
+            {order.requirements.map(req => {
+              const have = countInBarn(req.cropId);
+              const met = have >= req.quantity;
+              return (
+                <View key={req.cropId} style={[styles.orderReq, met && styles.orderReqMet]}>
+                  <CropPixelSprite cropId={req.cropId} size={34} />
+                  <Text style={styles.orderReqText}>
+                    {Math.min(have, req.quantity)}/{req.quantity}
+                  </Text>
                 </View>
+              );
+            })}
+          </View>
+          <Text style={styles.orderReward}>
+            Reward: {order.rewardSeeds} seeds · {order.rewardXp} XP
+            {order.rewardFertilizer ? ` · ${order.rewardFertilizer} fertilizer` : ''}
+          </Text>
+          <View style={styles.orderButtons}>
+            <TouchableOpacity
+              style={[styles.deliverButton, !orderReady && styles.deliverButtonDisabled]}
+              onPress={handleDeliver}
+            >
+              <Text style={styles.deliverButtonText}>{orderReady ? 'Deliver' : 'Grow the crops'}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.skipButton} onPress={skipOrder}>
+              <Text style={styles.skipButtonText}>New order</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
 
-                <Text style={styles.sellPrice}>Sell Price: {item.sellPrice} seeds</Text>
-                <Button
-                  title="Sell"
-                  onPress={() => {
-                    sellItem(item.id);
-                    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-                    Alert.alert('Item Sold', `${item.title} sold for ${item.sellPrice} seeds.`);
-                  }}
-                />
+        {/* Barn */}
+        <View style={styles.panel}>
+          <View style={styles.panelHeader}>
+            <PixelIcon name="basket" size={22} />
+            <Text style={styles.panelTitle}>Barn</Text>
+          </View>
+          {barn.length === 0 ? (
+            <Text style={styles.emptyText}>Harvested crops are stored here until you sell, cook or deliver them.</Text>
+          ) : (
+            barn.map(group => (
+              <View key={`${group.cropId}:${group.isGolden}`} style={[styles.barnRow, group.isGolden && styles.barnRowGolden]}>
+                <CropPixelSprite cropId={group.cropId} size={40} />
+                <View style={styles.barnInfo}>
+                  <Text style={styles.barnTitle}>
+                    {group.isGolden ? '✨ Golden ' : ''}
+                    {group.title} ×{group.ids.length}
+                  </Text>
+                  <Text style={styles.barnPrice}>{Math.round(group.price / group.ids.length)} seeds each</Text>
+                </View>
+                <TouchableOpacity
+                  style={styles.sellButton}
+                  onPress={() => sellGroup(group.ids, group.title, group.price)}
+                >
+                  <Text style={styles.sellButtonText}>Sell {group.price}</Text>
+                </TouchableOpacity>
               </View>
             ))
           )}
         </View>
+
         <CraftingArea />
       </ScrollView>
     </SafeAreaView>
   );
 }
 
+const PIXEL_FONT = 'SpaceMono';
+
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#CFE8B4',
+  },
   container: {
     flexGrow: 1,
-    backgroundColor: '#E8F5E9',
-    padding: 20,
+    padding: 16,
     alignItems: 'center',
+    paddingBottom: 40,
   },
-  header: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#2E7D32',
-    marginBottom: 10,
-  },
-  gamificationHeader: {
-    backgroundColor: '#C8E6C9',
+  hud: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#5B371C',
+    borderWidth: 3,
+    borderColor: '#3B2210',
+    borderRadius: 8,
     padding: 10,
-    borderRadius: 8,
-    marginBottom: 20,
-    width: '100%',
+    gap: 12,
   },
-  levelRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-    marginBottom: 8,
-  },
-  gamificationText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#1B5E20',
-  },
-  xpText: {
-    fontSize: 14,
-    color: '#388E3C',
-    fontWeight: '600',
-  },
-  xpBarContainer: {
-    height: 10,
-    backgroundColor: '#E8F5E9',
-    borderRadius: 5,
-    width: '100%',
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: '#C8E6C9',
-  },
-  xpBarFill: {
-    height: '100%',
-    backgroundColor: '#4CAF50',
-    borderRadius: 5,
-  },
-  emptyText: {
-    fontSize: 18,
-    color: '#666',
-    textAlign: 'center',
-    marginTop: 20,
-  },
-  plantedItem: {
-    backgroundColor: '#FFFFFF',
-    padding: 15,
-    marginBottom: 15,
-    borderRadius: 8,
-    width: '100%',
+  levelBadge: {
+    width: 54,
+    height: 54,
+    borderRadius: 6,
+    backgroundColor: '#FFD54F',
+    borderWidth: 3,
+    borderColor: '#F9A825',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 2,
+    justifyContent: 'center',
   },
-  itemHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 5,
-    width: '100%',
+  levelBadgeLabel: {
+    fontFamily: PIXEL_FONT,
+    fontSize: 10,
+    color: '#5B371C',
+    lineHeight: 12,
   },
-  iconContainer: {
-    marginRight: 10,
+  levelBadgeValue: {
+    fontFamily: PIXEL_FONT,
+    fontSize: 22,
+    fontWeight: '700',
+    color: '#3B2210',
+    lineHeight: 26,
   },
-  textContainer: {
+  hudMain: {
     flex: 1,
   },
-  itemTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 5,
-  },
-  itemDescription: {
+  farmTitle: {
+    fontFamily: PIXEL_FONT,
     fontSize: 16,
-    color: '#666',
-    marginBottom: 5,
+    fontWeight: '700',
+    color: '#FFF8E1',
+    marginBottom: 6,
   },
-  progressBarBackground: {
-    width: '100%',
-    height: 10,
-    backgroundColor: '#ccc',
-    borderRadius: 5,
-    overflow: 'hidden',
-    marginTop: 10,
-  },
-  progressBarFill: {
-    height: '100%',
-    backgroundColor: '#2E7D32',
-  },
-  growthText: {
-    fontSize: 16,
-    color: '#2E7D32',
-    marginTop: 5,
-  },
-  readyText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#2E7D32',
-    marginTop: 5,
-  },
-  emptyPlotsContainer: {
-    width: '100%',
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  emptyPlot: {
-    backgroundColor: '#F1F8E9',
+  xpTrack: {
+    height: 12,
+    backgroundColor: '#2E1A0C',
     borderWidth: 2,
-    borderColor: '#C5E1A5',
-    borderStyle: 'dashed',
-    padding: 20,
-    marginVertical: 5,
-    borderRadius: 8,
-    width: '90%',
-    alignItems: 'center',
+    borderColor: '#8D5A32',
+    borderRadius: 3,
+    overflow: 'hidden',
   },
-  emptyPlotText: {
-    fontSize: 16,
-    color: '#888',
+  xpFill: {
+    height: '100%',
+    backgroundColor: '#7ED357',
   },
-  infoText: {
-    fontSize: 16,
-    color: '#666',
-    marginTop: 10,
-    textAlign: 'center',
+  xpLabel: {
+    fontFamily: PIXEL_FONT,
+    fontSize: 10,
+    color: '#E6D3B8',
+    marginTop: 4,
   },
-  inventorySection: {
+  resourceRow: {
     width: '100%',
-    marginTop: 30,
-    borderTopWidth: 1,
-    borderTopColor: '#CCC',
-    paddingTop: 20,
+    flexDirection: 'row',
+    gap: 8,
+    marginTop: 10,
   },
-  sectionHeader: {
-    fontSize: 24,
-    fontWeight: 'bold',
+  resourceChip: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: 4,
+    backgroundColor: '#FFF8E1',
+    borderWidth: 2,
+    borderColor: '#C9A26B',
+    borderRadius: 6,
+    paddingVertical: 6,
+    paddingHorizontal: 8,
+  },
+  resourceText: {
+    fontFamily: PIXEL_FONT,
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#3B2210',
+  },
+  resourceSub: {
+    fontFamily: PIXEL_FONT,
+    fontSize: 9,
+    color: '#6D4C41',
+    width: '100%',
+  },
+  toolbar: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 12,
+    gap: 4,
+  },
+  toolButton: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: 6,
+    backgroundColor: '#8D5A32',
+    borderWidth: 2,
+    borderColor: '#5B371C',
+    borderRadius: 6,
+  },
+  toolButtonActive: {
+    backgroundColor: '#FFD54F',
+    borderColor: '#F57F17',
+    transform: [{ translateY: -2 }],
+  },
+  toolLabel: {
+    fontFamily: PIXEL_FONT,
+    fontSize: 9,
+    color: '#FFF8E1',
+    marginTop: 2,
+  },
+  toolLabelActive: {
+    color: '#3B2210',
+    fontWeight: '700',
+  },
+  field: {
+    marginTop: 12,
+    backgroundColor: '#5DA548',
+    borderWidth: FIELD_BORDER,
+    borderColor: '#8D5A32',
+    borderRadius: 8,
+    shadowColor: '#1B1209',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 0,
+    elevation: 4,
+  },
+  grid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  harvestAllButton: {
+    marginTop: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: '#FFD54F',
+    borderWidth: 3,
+    borderColor: '#F57F17',
+    borderRadius: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 18,
+  },
+  harvestAllText: {
+    fontFamily: PIXEL_FONT,
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#3B2210',
+  },
+  panel: {
+    width: '100%',
+    marginTop: 16,
+    backgroundColor: '#FFF8E1',
+    borderWidth: 3,
+    borderColor: '#C9A26B',
+    borderRadius: 8,
+    padding: 12,
+  },
+  panelHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 8,
+  },
+  panelTitle: {
+    fontFamily: PIXEL_FONT,
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#5B371C',
+    flex: 1,
+  },
+  panelLink: {
+    paddingVertical: 4,
+    paddingLeft: 8,
+  },
+  panelLinkText: {
+    fontFamily: PIXEL_FONT,
+    fontSize: 12,
     color: '#2E7D32',
-    marginBottom: 15,
+    fontWeight: '700',
   },
-  inventoryItem: {
+  emptyText: {
+    fontSize: 14,
+    color: '#6D4C41',
+    lineHeight: 20,
+  },
+  seedTray: {
+    gap: 8,
+    paddingVertical: 2,
+  },
+  seedCard: {
+    width: 78,
+    alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    padding: 15,
-    marginBottom: 15,
-    borderRadius: 8,
-    width: '100%',
+    borderWidth: 2,
+    borderColor: '#E0CDA9',
+    borderRadius: 6,
+    paddingVertical: 6,
+    paddingHorizontal: 4,
+    gap: 2,
+  },
+  seedCardActive: {
+    borderColor: '#2E7D32',
+    backgroundColor: '#E8F5E9',
+  },
+  seedName: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#3B2210',
+  },
+  seedCount: {
+    position: 'absolute',
+    top: 2,
+    right: 2,
+    backgroundColor: '#5B371C',
+    borderRadius: 4,
+    paddingHorizontal: 4,
+  },
+  seedCountText: {
+    fontFamily: PIXEL_FONT,
+    fontSize: 10,
+    color: '#FFF8E1',
+    fontWeight: '700',
+  },
+  orderTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#3B2210',
+  },
+  orderCustomer: {
+    fontSize: 13,
+    color: '#6D4C41',
+    marginBottom: 8,
+  },
+  orderReqs: {
+    flexDirection: 'row',
+    gap: 8,
+    marginBottom: 8,
+  },
+  orderReq: {
+    flexDirection: 'row',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 2,
+    gap: 4,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 2,
+    borderColor: '#E0CDA9',
+    borderRadius: 6,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
   },
-  sellPrice: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#2E7D32',
-    marginVertical: 5,
+  orderReqMet: {
+    borderColor: '#43A047',
+    backgroundColor: '#E8F5E9',
   },
-  fertilizerText: {
-    fontSize: 16,
-    color: '#F9A825',
-    fontWeight: 'bold',
-    marginBottom: 5,
+  orderReqText: {
+    fontFamily: PIXEL_FONT,
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#3B2210',
   },
-  fertilizerButton: {
+  orderReward: {
+    fontSize: 13,
+    color: '#5B371C',
+    fontWeight: '600',
+  },
+  orderButtons: {
+    flexDirection: 'row',
+    gap: 8,
     marginTop: 10,
-    backgroundColor: '#FFF9C4',
-    padding: 8,
-    borderRadius: 5,
-    borderWidth: 1,
-    borderColor: '#FBC02D',
   },
-  fertilizerButtonText: {
-    color: '#F57F17',
-    fontWeight: 'bold',
+  deliverButton: {
+    flex: 1,
+    backgroundColor: '#43A047',
+    borderWidth: 2,
+    borderColor: '#2E7D32',
+    borderRadius: 6,
+    paddingVertical: 10,
+    alignItems: 'center',
+  },
+  deliverButtonDisabled: {
+    backgroundColor: '#A5A58D',
+    borderColor: '#8A8A73',
+  },
+  deliverButtonText: {
+    fontFamily: PIXEL_FONT,
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#FFFFFF',
+  },
+  skipButton: {
+    backgroundColor: '#FFFFFF',
+    borderWidth: 2,
+    borderColor: '#C9A26B',
+    borderRadius: 6,
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    alignItems: 'center',
+  },
+  skipButtonText: {
+    fontFamily: PIXEL_FONT,
+    fontSize: 12,
+    color: '#5B371C',
+  },
+  barnRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 2,
+    borderColor: '#E0CDA9',
+    borderRadius: 6,
+    padding: 8,
+    marginBottom: 6,
+  },
+  barnRowGolden: {
+    borderColor: '#FFD54F',
+    backgroundColor: '#FFFDE7',
+  },
+  barnInfo: {
+    flex: 1,
+  },
+  barnTitle: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#3B2210',
+  },
+  barnPrice: {
+    fontSize: 12,
+    color: '#6D4C41',
+  },
+  sellButton: {
+    backgroundColor: '#F9A825',
+    borderWidth: 2,
+    borderColor: '#F57F17',
+    borderRadius: 6,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+  },
+  sellButtonText: {
+    fontFamily: PIXEL_FONT,
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#3B2210',
   },
 });

@@ -1,9 +1,36 @@
 import React, { createContext, useState, useRef, ReactNode } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Haptics from 'expo-haptics';
-import { GardenItem, InventoryItem } from '../types/garden';
+import {
+  CropId,
+  GardenItem,
+  HarvestResult,
+  InventoryItem,
+  ShopUpgradeId,
+} from '../types/garden';
 import { ActiveCraft } from '../types/crafting';
 import { craftingRecipes } from '../data/craftingRecipes';
+import {
+  GOLDEN_BASE_CHANCE,
+  GOLDEN_SELL_MULTIPLIER,
+  GOLDEN_XP_MULTIPLIER,
+  INITIAL_UNLOCKED_PLOTS,
+  SCARECROW_GOLDEN_BONUS,
+  SHOP_UPGRADES,
+  TOTAL_FARM_PLOTS,
+  WATER_GROWTH_BOOST,
+  WATER_HYDRATION_DURATION_MS,
+  BASE_MAX_WATER_DROPS,
+  generateFarmOrder,
+  getCropById,
+  getEffectiveGrowDuration,
+  getEffectiveSeedCost,
+  getGardenLevel,
+  getMasteryInfo,
+  getPlotUnlockCost,
+  getWaterState,
+  resolveCropId,
+} from '../data/shopCatalog';
 import { v4 as uuidv4 } from 'uuid';
 
 type User = {
@@ -19,7 +46,19 @@ type User = {
   activeCrafts: ActiveCraft[];
   streak: number;
   lastStreakUpdate: number;
+  // Farm
+  unlockedPlots: number;
+  tilledPlots: number[];
+  seedBag: Partial<Record<CropId, number>>;
+  waterDrops: number;
+  waterUpdatedAt: number;
+  upgrades: ShopUpgradeId[];
+  harvestCounts: Partial<Record<CropId, number>>;
+  orderNumber: number;
 };
+
+// ok: true, or ok: false with a reason that can be shown to the player
+export type ActionResult = { ok: true } | { ok: false; reason: string };
 
 type UserContextType = {
   user: User;
@@ -28,43 +67,20 @@ type UserContextType = {
   buyFertilizer: (amount: number, cost: number) => void;
   fertilizeItem: (id: string) => boolean;
   incrementLessons: () => void;
-  plantItem: (item: GardenItem) => boolean;
-  harvestItem: (id: string) => void;
   sellItem: (id: string) => void;
   startCraft: (recipeId: string) => boolean;
   claimCraft: (craftId: string) => void;
   updateStreak: () => { started: boolean; incremented: boolean; reset: boolean };
+  buySeeds: (cropId: CropId, quantity: number) => ActionResult;
+  plowPlot: (plotIndex: number) => ActionResult;
+  plantCrop: (plotIndex: number, cropId: CropId) => ActionResult;
+  waterPlot: (plotIndex: number) => ActionResult;
+  harvestPlot: (plotIndex: number) => HarvestResult | null;
+  unlockPlot: () => ActionResult;
+  buyUpgrade: (upgradeId: ShopUpgradeId) => ActionResult;
+  deliverOrder: () => ActionResult;
+  skipOrder: () => void;
 };
-
-export const UserContext = createContext<UserContextType>({
-  user: {
-    name: '',
-    email: '',
-    avatar: '',
-    lessonsCompleted: 0,
-    seeds: 0,
-    xp: 0,
-    fertilizer: 0,
-    garden: [],
-    inventory: [],
-    activeCrafts: [],
-    streak: 0,
-    lastStreakUpdate: 0,
-  },
-  addSeeds: () => { },
-  addXp: () => { },
-  buyFertilizer: () => { },
-  fertilizeItem: () => false,
-  incrementLessons: () => { },
-  plantItem: () => false,
-  harvestItem: () => { },
-  sellItem: () => { },
-  startCraft: () => false,
-  claimCraft: () => { },
-  updateStreak: () => ({ started: false, incremented: false, reset: false }),
-});
-
-const MAX_PLOTS = 4;
 
 const DEFAULT_USER: User = {
   name: 'Gardener',
@@ -79,6 +95,62 @@ const DEFAULT_USER: User = {
   activeCrafts: [],
   streak: 0,
   lastStreakUpdate: 0,
+  unlockedPlots: INITIAL_UNLOCKED_PLOTS,
+  tilledPlots: [],
+  seedBag: { radish: 2, carrot: 1 },
+  waterDrops: BASE_MAX_WATER_DROPS,
+  waterUpdatedAt: 0,
+  upgrades: [],
+  harvestCounts: {},
+  orderNumber: 0,
+};
+
+export const UserContext = createContext<UserContextType>({
+  user: DEFAULT_USER,
+  addSeeds: () => { },
+  addXp: () => { },
+  buyFertilizer: () => { },
+  fertilizeItem: () => false,
+  incrementLessons: () => { },
+  sellItem: () => { },
+  startCraft: () => false,
+  claimCraft: () => { },
+  updateStreak: () => ({ started: false, incremented: false, reset: false }),
+  buySeeds: () => ({ ok: false, reason: '' }),
+  plowPlot: () => ({ ok: false, reason: '' }),
+  plantCrop: () => ({ ok: false, reason: '' }),
+  waterPlot: () => ({ ok: false, reason: '' }),
+  harvestPlot: () => null,
+  unlockPlot: () => ({ ok: false, reason: '' }),
+  buyUpgrade: () => ({ ok: false, reason: '' }),
+  deliverOrder: () => ({ ok: false, reason: '' }),
+  skipOrder: () => { },
+});
+
+// Profiles saved before the pixel farm have crops without a plot or crop id.
+// Give each one a plot so it shows up on the farm grid.
+const migrateUser = (stored: Partial<User>): User => {
+  const merged: User = { ...DEFAULT_USER, ...stored };
+  const taken = new Set<number>();
+  merged.garden.forEach(item => {
+    if (item.plotIndex !== undefined) taken.add(item.plotIndex);
+  });
+  let nextFree = 0;
+  const garden = merged.garden.map(item => {
+    let plotIndex = item.plotIndex;
+    if (plotIndex === undefined) {
+      while (taken.has(nextFree)) nextFree++;
+      plotIndex = nextFree;
+      taken.add(plotIndex);
+    }
+    return { ...item, plotIndex, cropId: resolveCropId(item.cropId, item.title) };
+  });
+  const highestPlot = Math.max(-1, ...garden.map(g => g.plotIndex ?? 0));
+  return {
+    ...merged,
+    garden,
+    unlockedPlots: Math.min(TOTAL_FARM_PLOTS, Math.max(merged.unlockedPlots, highestPlot + 1)),
+  };
 };
 
 export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
@@ -96,6 +168,20 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
+  // Runs a farm action: the step returns the next user, or a reason string to refuse.
+  const attempt = (step: (prev: User) => User | string): ActionResult => {
+    let result: ActionResult = { ok: true };
+    update(prev => {
+      const next = step(prev);
+      if (typeof next === 'string') {
+        result = { ok: false, reason: next };
+        return prev;
+      }
+      return next;
+    });
+    return result;
+  };
+
   const [isLoading, setIsLoading] = React.useState(true);
 
   // Load user data on mount
@@ -105,7 +191,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         const storedUser = await AsyncStorage.getItem('user_profile');
         if (storedUser) {
           // Merge over defaults so profiles saved by older versions keep working
-          const loaded = { ...DEFAULT_USER, ...JSON.parse(storedUser) };
+          const loaded = migrateUser(JSON.parse(storedUser));
           userRef.current = loaded;
           setUser(loaded);
         }
@@ -168,6 +254,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       updatedGarden[itemIndex] = {
         ...item,
         plantedAt: item.plantedAt - timeToSkip,
+        fertilizedCount: (item.fertilizedCount ?? 0) + 1,
       };
 
       success = true;
@@ -180,36 +267,6 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     update(prev => ({ ...prev, lessonsCompleted: prev.lessonsCompleted + 1 }));
   };
 
-  const plantItem = (item: GardenItem): boolean => {
-    let didPlant = false;
-    update(prev => {
-      if (prev.garden.length >= MAX_PLOTS) {
-        console.warn('Cannot plant item: Garden is full (maximum 4 plots).');
-        return prev;
-      }
-      didPlant = true;
-      return { ...prev, garden: [...prev.garden, item] };
-    });
-    return didPlant;
-  };
-
-  const harvestItem = (id: string) => {
-    update(prev => {
-      const itemToHarvest = prev.garden.find(item => item.id === id);
-      if (!itemToHarvest) return prev;
-      const updatedGarden = prev.garden.filter(item => item.id !== id);
-      const inventoryItem: InventoryItem = {
-        id: itemToHarvest.id,
-        title: itemToHarvest.title,
-        description: itemToHarvest.description,
-        cost: itemToHarvest.cost,
-        sellPrice: Math.round(itemToHarvest.cost * 1.5),
-        harvestedAt: Date.now(),
-      };
-      return { ...prev, garden: updatedGarden, inventory: [...prev.inventory, inventoryItem] };
-    });
-  };
-
   const sellItem = (id: string) => {
     update(prev => {
       const itemToSell = prev.inventory.find(item => item.id === id);
@@ -217,6 +274,193 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const updatedInventory = prev.inventory.filter(item => item.id !== id);
       return { ...prev, inventory: updatedInventory, seeds: prev.seeds + itemToSell.sellPrice };
     });
+  };
+
+  const buySeeds = (cropId: CropId, quantity: number): ActionResult =>
+    attempt(prev => {
+      const crop = getCropById(cropId);
+      if (!crop) return 'Unknown seed.';
+      const { level } = getGardenLevel(prev.xp);
+      if (crop.requiredLevel && level < crop.requiredLevel) {
+        return `Reach Farm Level ${crop.requiredLevel} to grow ${crop.title}.`;
+      }
+      if (crop.requiredLessons && prev.lessonsCompleted < crop.requiredLessons) {
+        return `Complete ${crop.requiredLessons} lessons to unlock ${crop.title}.`;
+      }
+      const total = getEffectiveSeedCost(crop, level) * quantity;
+      if (prev.seeds < total) return `You need ${total - prev.seeds} more seeds.`;
+      return {
+        ...prev,
+        seeds: prev.seeds - total,
+        seedBag: { ...prev.seedBag, [cropId]: (prev.seedBag[cropId] ?? 0) + quantity },
+      };
+    });
+
+  const plowPlot = (plotIndex: number): ActionResult =>
+    attempt(prev => {
+      if (plotIndex >= prev.unlockedPlots) return 'Expand your land first.';
+      if (prev.garden.some(g => g.plotIndex === plotIndex)) return 'Something is growing here.';
+      if (prev.tilledPlots.includes(plotIndex)) return 'Already plowed.';
+      return { ...prev, tilledPlots: [...prev.tilledPlots, plotIndex], xp: prev.xp + 1 };
+    });
+
+  const plantCrop = (plotIndex: number, cropId: CropId): ActionResult =>
+    attempt(prev => {
+      const crop = getCropById(cropId);
+      if (!crop) return 'Unknown seed.';
+      if (prev.garden.some(g => g.plotIndex === plotIndex)) return 'Something is growing here.';
+      if (!prev.tilledPlots.includes(plotIndex)) return 'Plow the soil first.';
+      const owned = prev.seedBag[cropId] ?? 0;
+      if (owned <= 0) return `No ${crop.title} seeds left.`;
+
+      const now = Date.now();
+      const item: GardenItem = {
+        id: uuidv4(),
+        cropId,
+        plotIndex,
+        title: crop.title,
+        description: crop.description,
+        growth: 'Planted',
+        plantedAt: now,
+        harvestDuration: getEffectiveGrowDuration(crop, prev.harvestCounts[cropId] ?? 0, prev.upgrades),
+        cost: crop.cost,
+        baseSellPrice: crop.baseSellPrice,
+        xpReward: crop.xpReward,
+        waterCount: 0,
+        fertilizedCount: 0,
+      };
+      return {
+        ...prev,
+        garden: [...prev.garden, item],
+        tilledPlots: prev.tilledPlots.filter(p => p !== plotIndex),
+        seedBag: { ...prev.seedBag, [cropId]: owned - 1 },
+      };
+    });
+
+  const waterPlot = (plotIndex: number): ActionResult =>
+    attempt(prev => {
+      const now = Date.now();
+      const index = prev.garden.findIndex(g => g.plotIndex === plotIndex);
+      if (index === -1) return 'Nothing to water here.';
+      const item = prev.garden[index];
+      const remaining = item.harvestDuration - (now - item.plantedAt);
+      if (remaining <= 0) return 'Ready to harvest!';
+      if (item.wateredAt && now - item.wateredAt < WATER_HYDRATION_DURATION_MS) {
+        return 'Soil is still wet.';
+      }
+      const water = getWaterState(prev.waterDrops, prev.waterUpdatedAt, prev.upgrades, now);
+      if (water.drops <= 0) return 'Watering can is empty.';
+
+      const boost = Math.min(remaining, Math.round(item.harvestDuration * WATER_GROWTH_BOOST));
+      const garden = [...prev.garden];
+      garden[index] = {
+        ...item,
+        plantedAt: item.plantedAt - boost,
+        wateredAt: now,
+        waterCount: (item.waterCount ?? 0) + 1,
+      };
+      return { ...prev, garden, waterDrops: water.drops - 1, waterUpdatedAt: water.anchor };
+    });
+
+  const harvestPlot = (plotIndex: number): HarvestResult | null => {
+    let result: HarvestResult | null = null;
+    update(prev => {
+      const now = Date.now();
+      const item = prev.garden.find(g => g.plotIndex === plotIndex);
+      if (!item || now - item.plantedAt < item.harvestDuration) return prev;
+
+      const cropId = resolveCropId(item.cropId, item.title);
+      const crop = getCropById(cropId)!;
+      const harvestCount = (prev.harvestCounts[cropId] ?? 0) + 1;
+      const before = getMasteryInfo(harvestCount - 1);
+      const after = getMasteryInfo(harvestCount);
+      const goldenChance =
+        GOLDEN_BASE_CHANCE +
+        before.goldenBonus +
+        (prev.upgrades.includes('scarecrow') ? SCARECROW_GOLDEN_BONUS : 0);
+      const isGolden = Math.random() < goldenChance;
+      const baseSell = item.baseSellPrice ?? crop.baseSellPrice;
+      const xpEarned = (item.xpReward ?? crop.xpReward) * (isGolden ? GOLDEN_XP_MULTIPLIER : 1);
+
+      const harvested: InventoryItem = {
+        id: item.id,
+        cropId,
+        title: crop.title,
+        description: crop.description,
+        cost: item.cost,
+        sellPrice: Math.round(baseSell * after.sellMultiplier * (isGolden ? GOLDEN_SELL_MULTIPLIER : 1)),
+        harvestedAt: now,
+        isGolden,
+        masteryStars: after.stars,
+      };
+      result = {
+        item: harvested,
+        xpEarned,
+        isGolden,
+        harvestCount,
+        masteryStars: after.stars,
+        unlockedNewStar: after.stars > before.stars,
+      };
+      return {
+        ...prev,
+        garden: prev.garden.filter(g => g.id !== item.id),
+        // Harvested soil stays plowed, ready for the next seed
+        tilledPlots: [...prev.tilledPlots, plotIndex],
+        inventory: [...prev.inventory, harvested],
+        xp: prev.xp + xpEarned,
+        harvestCounts: { ...prev.harvestCounts, [cropId]: harvestCount },
+      };
+    });
+    return result;
+  };
+
+  const unlockPlot = (): ActionResult =>
+    attempt(prev => {
+      if (prev.unlockedPlots >= TOTAL_FARM_PLOTS) return 'Your farm is fully expanded.';
+      const cost = getPlotUnlockCost(prev.unlockedPlots);
+      if (prev.seeds < cost) return `You need ${cost - prev.seeds} more seeds.`;
+      return { ...prev, seeds: prev.seeds - cost, unlockedPlots: prev.unlockedPlots + 1 };
+    });
+
+  const buyUpgrade = (upgradeId: ShopUpgradeId): ActionResult =>
+    attempt(prev => {
+      const upgrade = SHOP_UPGRADES.find(u => u.id === upgradeId);
+      if (!upgrade) return 'Unknown upgrade.';
+      if (prev.upgrades.includes(upgradeId)) return 'You already own this.';
+      const { level } = getGardenLevel(prev.xp);
+      if (upgrade.requiredLevel && level < upgrade.requiredLevel) {
+        return `Reach Farm Level ${upgrade.requiredLevel} first.`;
+      }
+      if (prev.seeds < upgrade.cost) return `You need ${upgrade.cost - prev.seeds} more seeds.`;
+      return { ...prev, seeds: prev.seeds - upgrade.cost, upgrades: [...prev.upgrades, upgradeId] };
+    });
+
+  const deliverOrder = (): ActionResult =>
+    attempt(prev => {
+      const order = generateFarmOrder(getGardenLevel(prev.xp).level, prev.orderNumber);
+      const used = new Set<string>();
+      for (const req of order.requirements) {
+        // Deliver regular crops before golden ones, which sell for more
+        const matches = prev.inventory
+          .filter(i => resolveCropId(i.cropId, i.title) === req.cropId && !used.has(i.id))
+          .sort((a, b) => Number(Boolean(a.isGolden)) - Number(Boolean(b.isGolden)));
+        if (matches.length < req.quantity) {
+          return `Need ${req.quantity - matches.length} more ${req.title}.`;
+        }
+        matches.slice(0, req.quantity).forEach(i => used.add(i.id));
+      }
+      return {
+        ...prev,
+        inventory: prev.inventory.filter(i => !used.has(i.id)),
+        seeds: prev.seeds + order.rewardSeeds,
+        xp: prev.xp + order.rewardXp,
+        fertilizer: prev.fertilizer + order.rewardFertilizer,
+        orderNumber: prev.orderNumber + 1,
+      };
+    });
+
+  const skipOrder = () => {
+    update(prev => ({ ...prev, orderNumber: prev.orderNumber + 1 }));
   };
 
   const startCraft = (recipeId: string): boolean => {
@@ -333,12 +577,19 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         buyFertilizer,
         fertilizeItem,
         incrementLessons,
-        plantItem,
-        harvestItem,
         sellItem,
         startCraft,
         claimCraft,
         updateStreak,
+        buySeeds,
+        plowPlot,
+        plantCrop,
+        waterPlot,
+        harvestPlot,
+        unlockPlot,
+        buyUpgrade,
+        deliverOrder,
+        skipOrder,
       }}
     >
       {children}

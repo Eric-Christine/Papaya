@@ -2,6 +2,17 @@ import { CraftingRecipe } from '../types/crafting';
 
 export const craftingRecipes: CraftingRecipe[] = [
     {
+        id: 'recipe_harvest_soup',
+        title: 'Garden Harvest Soup',
+        description: 'Warm, slow-simmered soup made from fresh root crops and vine tomatoes.',
+        ingredients: [
+            { itemId: 'Carrot', itemTitle: 'Carrot', quantity: 1 },
+            { itemId: 'Tomato', itemTitle: 'Tomato', quantity: 1 },
+        ],
+        duration: 120000, // 2 minutes
+        sellPrice: 520,
+    },
+    {
         id: 'recipe_salad',
         title: 'Green Salad',
         description: 'A healthy mix of fresh greens.',
@@ -11,6 +22,17 @@ export const craftingRecipes: CraftingRecipe[] = [
         ],
         duration: 300000, // 5 minutes
         sellPrice: 1050, // (150 + 200) * 3 = 1050
+    },
+    {
+        id: 'recipe_autumn_roast',
+        title: 'Autumn Harvest Bake',
+        description: 'Sweet roasted pumpkin paired with zesty glazed radishes.',
+        ingredients: [
+            { itemId: 'Pumpkin', itemTitle: 'Pumpkin', quantity: 1 },
+            { itemId: 'Radish', itemTitle: 'Radish', quantity: 2 },
+        ],
+        duration: 420000, // 7 minutes
+        sellPrice: 1200,
     },
     {
         id: 'recipe_bouquet',
